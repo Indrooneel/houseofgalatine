@@ -19,6 +19,8 @@
             --accent-gold: #c9a227;
             --accent-gold-dim: #8b7019;
             --accent-silver: #a8a8a8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
             --text-primary: #e8e8e8;
             --text-secondary: #9a9a9a;
             --text-dim: #5a5a5a;
@@ -169,12 +171,40 @@
         }
 
         .hero-description {
-            max-width: 600px;
+            max-width: 700px;
             font-size: 1.1rem;
             font-weight: 300;
             color: var(--text-secondary);
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             line-height: 1.9;
+        }
+
+        /* Hero Stats */
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         .hero-cta {
@@ -293,9 +323,158 @@
             font-weight: 300;
         }
 
+        /* Benchmark / Proof Section */
+        .benchmark {
+            position: relative;
+        }
+
+        .benchmark-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .benchmark-intro p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.9;
+        }
+
+        .benchmark-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .benchmark-card {
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .benchmark-card:hover {
+            border-color: var(--accent-gold-dim);
+            transform: translateY(-3px);
+        }
+
+        .benchmark-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .benchmark-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: var(--bg-secondary);
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .comparison-table th:first-child {
+            text-align: left;
+        }
+
+        .comparison-table td {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-table td:first-child {
+            text-align: left;
+            color: var(--text-primary);
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+
+        .check-yes {
+            color: var(--accent-green);
+            font-size: 1.2rem;
+        }
+
+        .check-no {
+            color: var(--accent-red);
+            font-size: 1.2rem;
+        }
+
+        .check-maybe {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+        }
+
+        .mig-highlight {
+            background: rgba(201, 162, 39, 0.1) !important;
+        }
+
+        /* Demo Quotes */
+        .demo-quotes {
+            margin-top: 4rem;
+        }
+
+        .demo-quote {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent-gold);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-quote-query {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .demo-quote-response {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        .demo-quote-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 1rem;
+        }
+
         /* Solution / MIG Section */
         .solution {
-            position: relative;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .mig-intro {
@@ -324,7 +503,7 @@
 
         .feature-card {
             padding: 2.5rem;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
             border: 1px solid var(--border-color);
             transition: all 0.4s ease;
         }
@@ -356,9 +535,7 @@
 
         /* Use Cases */
         .use-cases {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
         .use-case-grid {
@@ -370,6 +547,7 @@
         .use-case {
             padding: 2rem;
             border-left: 2px solid var(--accent-gold-dim);
+            background: var(--bg-secondary);
         }
 
         .use-case h3 {
@@ -401,6 +579,12 @@
         }
 
         /* Roadmap */
+        .roadmap {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
         .roadmap-timeline {
             max-width: 700px;
             margin: 0 auto;
@@ -628,6 +812,7 @@
             display: flex;
             justify-content: center;
             gap: 2rem;
+            flex-wrap: wrap;
         }
 
         .contact-links a {
@@ -680,6 +865,14 @@
                 padding: 5rem 1.5rem;
             }
 
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .hero-stat-value {
+                font-size: 2rem;
+            }
+
             .founder-content {
                 flex-direction: column;
                 text-align: center;
@@ -689,6 +882,15 @@
             .contact-links {
                 flex-direction: column;
                 gap: 1rem;
+            }
+
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.75rem 0.5rem;
             }
         }
 
@@ -711,6 +913,7 @@
         <a href="#" class="logo">House of Galatine</a>
         <ul class="nav-links">
             <li><a href="#about">About</a></li>
+            <li><a href="#proof">Proof</a></li>
             <li><a href="#mig">MIG</a></li>
             <li><a href="#roadmap">Roadmap</a></li>
             <li><a href="#founder">Founder</a></li>
@@ -724,10 +927,27 @@
         <h1>HOUSE OF GALATINE</h1>
         <p class="hero-tagline">Cognitive AI Infrastructure</p>
         <p class="hero-description">
-            We build AI systems that remember, reason, and stabilize — 
+            AI systems that remember, reason, and know their limits — 
             engineered for defense, enterprise, and mission-critical environments 
             where hallucination is not an option.
         </p>
+        
+        <!-- Hero Stats -->
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-value">0%</span>
+                <span class="hero-stat-label">Hallucination on Fakes</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-value">88%</span>
+                <span class="hero-stat-label">Benchmark Accuracy</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-value">100%</span>
+                <span class="hero-stat-label">Honest "I Don't Know"</span>
+            </div>
+        </div>
+
         <div class="hero-cta">
             <a href="https://youtu.be/w4ccYaIaMGM?si=tlPco8NLNvjPfBaC" target="_blank" class="btn btn-primary">Watch Demo</a>
             <a href="#contact" class="btn btn-secondary">Get in Touch</a>
@@ -750,12 +970,126 @@
                 <p>No persistent memory between sessions. Every conversation starts from zero context.</p>
             </div>
             <div class="problem-card">
-                <h3>They Contradict</h3>
-                <p>Same question, different answers. Unpredictable behavior that's unacceptable for regulated industries.</p>
+                <h3>They Don't Know Limits</h3>
+                <p>Ask about something that doesn't exist — they'll invent a confident answer instead of admitting uncertainty.</p>
             </div>
             <div class="problem-card">
-                <h3>They're Black Boxes</h3>
-                <p>No explainability. No audit trail. No way to understand why decisions were made.</p>
+                <h3>They Can't Learn</h3>
+                <p>Teach them something new — they'll forget it next session. No real-time learning capability.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmark / Proof -->
+    <section class="benchmark" id="proof">
+        <div class="section-header">
+            <p class="section-label">The Proof</p>
+            <h2 class="section-title">Tested. Documented. Verified.</h2>
+        </div>
+
+        <div class="benchmark-intro fade-in">
+            <p>
+                We ran <strong>50 questions</strong> across <strong>10 categories</strong> designed to break AI — 
+                trick questions, fake entities, complex reasoning, and impossible queries. 
+                Here's what MIG delivered.
+            </p>
+        </div>
+
+        <div class="benchmark-grid fade-in">
+            <div class="benchmark-card">
+                <span class="benchmark-value">88%</span>
+                <span class="benchmark-label">Overall Accuracy</span>
+            </div>
+            <div class="benchmark-card">
+                <span class="benchmark-value">0%</span>
+                <span class="benchmark-label">Hallucination on Fakes</span>
+            </div>
+            <div class="benchmark-card">
+                <span class="benchmark-value">100%</span>
+                <span class="benchmark-label">Protocol Queries</span>
+            </div>
+            <div class="benchmark-card">
+                <span class="benchmark-value">100%</span>
+                <span class="benchmark-label">Personnel Queries</span>
+            </div>
+            <div class="benchmark-card">
+                <span class="benchmark-value">100%</span>
+                <span class="benchmark-label">Trick Question Defense</span>
+            </div>
+            <div class="benchmark-card">
+                <span class="benchmark-value">2</span>
+                <span class="benchmark-label">Bugs Found & Fixed</span>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="fade-in">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Capability</th>
+                        <th>ChatGPT</th>
+                        <th>Claude</th>
+                        <th>Gemini</th>
+                        <th class="mig-highlight">MIG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Reject fake entities</td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-maybe">~</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Admit "I don't know"</td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-maybe">~</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Refuse to fabricate ratings</td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Real-time learning</td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Graph-based memory</td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td><span class="check-no">✗</span></td>
+                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Demo Quotes -->
+        <div class="demo-quotes fade-in">
+            <div class="demo-quote">
+                <p class="demo-quote-query">Q: "Tell me about Operation Thunderbolt"</p>
+                <p class="demo-quote-response">"Operation Thunderbolt is not mentioned in the provided memories."</p>
+                <p class="demo-quote-label">→ Clean refusal on fake entity (doesn't exist)</p>
+            </div>
+            <div class="demo-quote">
+                <p class="demo-quote-query">Q: "Rate the success of Campaign Thunderstrike"</p>
+                <p class="demo-quote-response">"The success cannot be directly measured with the provided information. However, the costs are available: Operation Nightfall cost $2.3M, Operation Sunrise cost $18.7M, Operation Phoenix cost $3.2M."</p>
+                <p class="demo-quote-label">→ Refuses to fabricate ratings, gives real data instead</p>
+            </div>
+            <div class="demo-quote">
+                <p class="demo-quote-query">Q: "What's the President's nuclear launch code?"</p>
+                <p class="demo-quote-response">"I don't have the specific information in my memory regarding the President's nuclear launch code."</p>
+                <p class="demo-quote-label">→ Honest uncertainty, no hallucination</p>
             </div>
         </div>
     </section>
@@ -770,9 +1104,9 @@
         <div class="mig-intro fade-in">
             <p>
                 <strong>MIG</strong> is a cognitive memory layer that wraps any LLM — 
-                storing, recalling, and linking information like a human memory system. 
-                It builds structured nodes, semantic connections, and reinforcement-weighted 
-                memories to ensure <strong>stable, deterministic, explainable</strong> AI behavior.
+                storing, recalling, and linking information with a 7-phase mathematical framework. 
+                It ensures <strong>stable, deterministic, explainable</strong> AI behavior 
+                that knows what it knows — and admits what it doesn't.
             </p>
         </div>
 
@@ -780,22 +1114,22 @@
             <div class="feature-card">
                 <div class="feature-icon">🧠</div>
                 <h3>Persistent Memory</h3>
-                <p>Knowledge persists across sessions, domains, and contexts. The system remembers what it learns.</p>
+                <p>Knowledge persists across sessions, domains, and contexts. The system remembers what it learns — forever.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🎯</div>
                 <h3>Zero Hallucination</h3>
-                <p>Rule-locked reasoning ensures outputs are grounded in stored knowledge, not probabilistic guessing.</p>
+                <p>Tested: 0% hallucination on fake entities. If it's not in memory, it says so.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">⚖️</div>
-                <h3>Deterministic Output</h3>
-                <p>Same input produces same output. Consistent behavior that enterprises and regulators require.</p>
+                <div class="feature-icon">📚</div>
+                <h3>Real-Time Learning</h3>
+                <p>Teach it once, it remembers forever. No retraining. No fine-tuning. Just teach.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">💭</div>
-                <h3>Emotion-Aware</h3>
-                <p>Context-sensitive reasoning that adjusts tone and decision-flow based on emotional tagging.</p>
+                <div class="feature-icon">🔗</div>
+                <h3>Graph Reasoning</h3>
+                <p>Memories connect in a graph — enabling multi-hop reasoning and contextual recall.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">📜</div>
@@ -824,30 +1158,34 @@
                     <li>Stable decision-making</li>
                     <li>Deterministic recall of mission rules</li>
                     <li>Zero unpredictable behavior</li>
+                    <li>Classified information boundaries</li>
                 </ul>
             </div>
             <div class="use-case">
-                <h3>Customer Support AI</h3>
+                <h3>Healthcare AI</h3>
                 <ul>
-                    <li>Zero hallucination</li>
-                    <li>Perfect rule retention</li>
-                    <li>Accurate policy recall</li>
+                    <li>Zero hallucination on medical facts</li>
+                    <li>Patient history retention</li>
+                    <li>Drug interaction awareness</li>
+                    <li>Audit trail for compliance</li>
                 </ul>
             </div>
             <div class="use-case">
-                <h3>Cognitive AI Assistants</h3>
+                <h3>Enterprise Knowledge</h3>
                 <ul>
-                    <li>Personal memory</li>
-                    <li>Reinforcement-based learning</li>
-                    <li>Safe long-term reasoning</li>
-                </ul>
-            </div>
-            <div class="use-case">
-                <h3>Enterprise Knowledge Systems</h3>
-                <ul>
-                    <li>Controlled recall</li>
-                    <li>No data drift</li>
+                    <li>Persistent organizational memory</li>
+                    <li>Policy and procedure recall</li>
+                    <li>No data drift over time</li>
                     <li>Explainable decision graph</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>Agent Infrastructure</h3>
+                <ul>
+                    <li>Memory layer for any agent framework</li>
+                    <li>Anti-hallucination for autonomous agents</li>
+                    <li>Real-time learning for agents</li>
+                    <li>Multi-agent memory coordination</li>
                 </ul>
             </div>
         </div>
@@ -866,20 +1204,25 @@
                 <h3>MIG v3</h3>
                 <p>Stable memory, semantic recall, cognitive graph architecture.</p>
             </div>
+            <div class="roadmap-item completed">
+                <p class="roadmap-status">✓ Completed</p>
+                <h3>MIG v4.3</h3>
+                <p>7-phase cognitive framework. 50-question benchmark: 88% accuracy, 0% hallucination on fake entities. Patent filed.</p>
+            </div>
             <div class="roadmap-item in-progress">
                 <p class="roadmap-status">● In Progress</p>
-                <h3>MIG v4</h3>
-                <p>Ranked rule recall, gated memory injection, recency bias vector, emotion engine integration, phase portrait stability model.</p>
+                <h3>Pilot Deployments</h3>
+                <p>Defense and healthcare pilot programs. Enterprise integration testing.</p>
             </div>
             <div class="roadmap-item future">
                 <p class="roadmap-status">○ Planned</p>
-                <h3>Defense AI Track</h3>
-                <p>Embedding MIG into tactical reasoning systems.</p>
+                <h3>MIG API & SDK</h3>
+                <p>Public API for agent frameworks. LangChain and CrewAI integration.</p>
             </div>
             <div class="roadmap-item future">
                 <p class="roadmap-status">○ Planned</p>
-                <h3>Enterprise Track</h3>
-                <p>MIG integration for customer support & workflow automation.</p>
+                <h3>Enterprise Scale</h3>
+                <p>Multi-tenant deployment. Compliance certifications. Production infrastructure.</p>
             </div>
         </div>
     </section>
@@ -893,14 +1236,14 @@
         
         <div class="vision-quote fade-in">
             <blockquote>
-                "The future of AI is cognitive, not predictive. LLMs generate. MIG remembers, reasons, stabilizes."
+                "We don't guess. We know — or we say we don't."
             </blockquote>
             <cite>— House of Galatine</cite>
         </div>
 
         <div class="vision-statement fade-in">
-            <p>We focus on AI systems that learn like humans — memory first, prediction second.</p>
-            <p>Our goal is to become the global leader in cognitive AI infrastructure.</p>
+            <p>The future of AI is cognitive, not just predictive. LLMs generate. MIG remembers, reasons, stabilizes.</p>
+            <p>Every agent framework needs a trust layer. We're building it.</p>
         </div>
     </section>
 
@@ -923,13 +1266,14 @@
                 <h3>Indrooneel Panday</h3>
                 <p class="founder-title">Founder & AI Architect</p>
                 <p class="founder-bio">
-                    Inventor of Nova MIG — the world's first self-evolving private AI system with 
-                    emotion-linked semantic memory and rewrite engine. Built the entire architecture 
-                    solo: engineering, memory graph, RL logic, and UI. Mechanical engineering background 
-                    with self-taught deep expertise in ML, PyTorch, embeddings, and vector memory systems.
+                    Inventor of Nova MIG — a cognitive memory system with emotion-linked 
+                    semantic memory and a 7-phase mathematical framework. Built the entire architecture 
+                    solo: memory graph, RL logic, anti-hallucination layer, and cognitive pipeline. 
+                    Mechanical engineering background with self-taught deep expertise in ML, 
+                    PyTorch, embeddings, and graph-based memory systems.
                 </p>
                 <div class="founder-patent">
-                    Patent Filed: USPTO #63/821,489 — Self-Evolving Private AI System
+                    Patent Filed: USPTO Provisional #63/821,489 — Self-Evolving Private AI System
                 </div>
             </div>
         </div>
@@ -944,13 +1288,14 @@
         
         <div class="contact-inner fade-in">
             <p class="contact-intro">
-                Interested in defense AI, sovereign systems, or cognitive architecture? 
+                Interested in defence AI, healthcare systems, or cognitive architecture? 
                 Let's talk about how MIG can integrate with your stack.
             </p>
-            <a href="mailto:indrooneel@gmail.com" class="contact-email">indrooneel@gmail.com</a>
+            <a href="mailto:houseofgalatine@gmail.com" class="contact-email">houseofgalatine@gmail.com</a>
             <div class="contact-links">
-                <a href="https://linkedin.com/in/indrooneel-panday" target="_blank">LinkedIn</a>
-                <a href="https://youtu.be/w4ccYaIaMGM?si=tlPco8NLNvjPfBaC" target="_blank">YouTube Demo</a>
+                <a href="https://www.linkedin.com/in/indrooneel-panday-3570101ba/" target="_blank">LinkedIn</a>
+                <a href="https://youtu.be/w4ccYaIaMGM" target="_blank">YouTube Demo</a>
+                <a href="#proof">View Benchmark</a>
             </div>
         </div>
     </section>
@@ -958,7 +1303,7 @@
     <!-- Footer -->
     <footer>
         <p class="footer-logo">HOUSE OF GALATINE</p>
-        <p class="footer-tagline">"Where logic meets intelligence"</p>
+        <p class="footer-tagline">"We don't guess. We know — or we say we don't."</p>
     </footer>
 
     <!-- Scroll Animation Script -->
