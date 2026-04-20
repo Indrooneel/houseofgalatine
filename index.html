@@ -3,1339 +3,885 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House of Galatine — Cognitive AI Infrastructure</title>
-    <meta name="description" content="Nova MIG - Memory Intelligence Graph. A cognitive memory layer for any LLM. Zero hallucination. Deterministic recall. Built for defense, enterprise, and mission-critical AI.">
-    
-    <!-- Fonts -->
+    <title>House of Galatine — MIG: AI Execution Control Layer</title>
+    <meta name="description" content="MIG is an AI Execution Control Layer. It sits between AI agents and the actions they take. Nothing executes without MIG approval.">
+    <meta property="og:title" content="House of Galatine — MIG: AI Execution Control Layer">
+    <meta property="og:description" content="AI can think whatever it wants. Nothing executes without MIG approval.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://houseofgalatine.com">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-primary: #0a0a0b;
-            --bg-secondary: #111113;
-            --bg-tertiary: #18181b;
-            --accent-gold: #c9a227;
-            --accent-gold-dim: #8b7019;
-            --accent-silver: #a8a8a8;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --text-primary: #e8e8e8;
-            --text-secondary: #9a9a9a;
-            --text-dim: #5a5a5a;
-            --border-color: #2a2a2d;
-            --glow-gold: rgba(201, 162, 39, 0.15);
+            --bg: #050508;
+            --bg-surface: #0a0a10;
+            --bg-card: #0d0d16;
+            --border: #1a1a28;
+            --border-hover: #2a2a40;
+            --allow: #00e88a;
+            --deny: #ff3356;
+            --approval: #f0b000;
+            --text: #d4d4e0;
+            --text-dim: #6a6a80;
+            --text-muted: #3a3a50;
+            --accent: #00e88a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Raleway', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.7;
             overflow-x: hidden;
         }
 
-        /* Subtle background texture */
-        body::before {
+        /* ═══ GRAIN OVERLAY ═══ */
+        body::after {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(ellipse at 20% 20%, var(--glow-gold) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(168, 168, 168, 0.03) 0%, transparent 50%);
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             pointer-events: none;
-            z-index: -1;
+            z-index: 9999;
         }
 
-        /* Navigation */
+        /* ═══ NAV ═══ */
         nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem 3rem;
+            top: 0; left: 0; right: 0;
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
-            z-index: 1000;
+            z-index: 100;
+            background: rgba(5,5,8,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
 
-        .logo {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            color: var(--accent-gold);
+        .nav-brand {
+            font-family: 'Instrument Serif', serif;
+            font-size: 18px;
+            color: var(--text);
             text-decoration: none;
+            letter-spacing: 0.02em;
         }
+
+        .nav-brand span { color: var(--accent); }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 32px;
             list-style: none;
         }
 
         .nav-links a {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
             text-decoration: none;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            transition: color 0.3s ease;
+            transition: color 0.3s;
         }
 
-        .nav-links a:hover {
-            color: var(--accent-gold);
+        .nav-links a:hover { color: var(--accent); }
+
+        .nav-cta {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            padding: 8px 20px;
+            background: rgba(0,232,138,0.08);
+            border: 1px solid rgba(0,232,138,0.2);
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.3s;
         }
 
-        /* Hero Section */
+        .nav-cta:hover {
+            background: rgba(0,232,138,0.15);
+            box-shadow: 0 0 20px rgba(0,232,138,0.1);
+        }
+
+        /* ═══ HERO ═══ */
         .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 6rem 2rem;
+            padding: 140px 40px 100px;
             position: relative;
-        }
-
-        .hero-emblem {
-            width: 80px;
-            height: 80px;
-            border: 2px solid var(--accent-gold);
-            transform: rotate(45deg);
-            margin-bottom: 3rem;
-            position: relative;
-            animation: emblemPulse 4s ease-in-out infinite;
-        }
-
-        .hero-emblem::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--accent-gold-dim);
-        }
-
-        @keyframes emblemPulse {
-            0%, 100% { box-shadow: 0 0 30px var(--glow-gold); }
-            50% { box-shadow: 0 0 60px var(--glow-gold), 0 0 100px rgba(201, 162, 39, 0.1); }
-        }
-
-        .hero h1 {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 400;
-            letter-spacing: 0.2em;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 50%, var(--text-primary) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 8s linear infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .hero-tagline {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            color: var(--accent-gold);
-            letter-spacing: 0.3em;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-        }
-
-        .hero-description {
-            max-width: 700px;
-            font-size: 1.1rem;
-            font-weight: 300;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.9;
-        }
-
-        /* Hero Stats */
-        .hero-stats {
-            display: flex;
-            gap: 3rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .hero-stat {
-            text-align: center;
-        }
-
-        .hero-stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            display: block;
-        }
-
-        .hero-stat-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 1rem 2.5rem;
-            font-family: 'Raleway', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            text-decoration: none;
-            border: 1px solid var(--accent-gold);
-            transition: all 0.4s ease;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--accent-gold);
-            color: var(--bg-primary);
-        }
-
-        .btn-primary:hover {
-            background: transparent;
-            color: var(--accent-gold);
-            box-shadow: 0 0 30px var(--glow-gold);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--accent-gold);
-        }
-
-        .btn-secondary:hover {
-            background: var(--accent-gold);
-            color: var(--bg-primary);
-        }
-
-        /* Section Styles */
-        section {
-            padding: 8rem 2rem;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .section-header {
+        .hero-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(42px, 7vw, 80px);
+            font-weight: 400;
+            line-height: 1.1;
+            color: #f0f0f4;
+            margin-bottom: 32px;
+            max-width: 900px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            font-weight: 300;
+            color: var(--text-dim);
+            max-width: 560px;
+            line-height: 1.8;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.8s forwards;
+        }
+
+        .btn-primary {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(0,232,138,0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--text-dim);
+            color: var(--text);
+        }
+
+        /* ═══ TAGLINE BAR ═══ */
+        .tagline-bar {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 28px 40px;
             text-align: center;
-            margin-bottom: 5rem;
+            background: var(--bg-surface);
+        }
+
+        .tagline-bar p {
+            font-family: 'Instrument Serif', serif;
+            font-size: 20px;
+            font-style: italic;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+        }
+
+        .tagline-bar p span { color: var(--accent); }
+
+        /* ═══ PROBLEM ═══ */
+        .problem {
+            padding: 120px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
         .section-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.3em;
-            color: var(--accent-gold-dim);
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
         }
 
         .section-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 4vw, 40px);
             font-weight: 400;
-            letter-spacing: 0.1em;
-            color: var(--text-primary);
+            color: #f0f0f4;
+            margin-bottom: 20px;
         }
 
-        /* Problem Section */
-        .problem {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+        .section-desc {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 56px;
+            line-height: 1.8;
         }
 
         .problem-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
         }
 
-        .problem-card {
-            padding: 2.5rem;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
+        .problem-item {
+            background: var(--bg);
+            padding: 40px 32px;
         }
 
-        .problem-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold-dim), transparent);
-        }
-
-        .problem-card h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            letter-spacing: 0.05em;
-        }
-
-        .problem-card p {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-        }
-
-        /* Benchmark / Proof Section */
-        .benchmark {
-            position: relative;
-        }
-
-        .benchmark-intro {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 4rem;
-        }
-
-        .benchmark-intro p {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            line-height: 1.9;
-        }
-
-        .benchmark-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .benchmark-card {
-            padding: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .benchmark-card:hover {
-            border-color: var(--accent-gold-dim);
-            transform: translateY(-3px);
-        }
-
-        .benchmark-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .benchmark-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Comparison Table */
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 1.25rem 1rem;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .comparison-table th {
-            background: var(--bg-secondary);
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            letter-spacing: 0.05em;
-        }
-
-        .comparison-table th:first-child {
-            text-align: left;
-        }
-
-        .comparison-table td {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .comparison-table td:first-child {
-            text-align: left;
-            color: var(--text-primary);
-        }
-
-        .comparison-table tr:nth-child(even) {
-            background: var(--bg-secondary);
-        }
-
-        .check-yes {
-            color: var(--accent-green);
-            font-size: 1.2rem;
-        }
-
-        .check-no {
-            color: var(--accent-red);
-            font-size: 1.2rem;
-        }
-
-        .check-maybe {
-            color: var(--accent-gold);
-            font-size: 1.2rem;
-        }
-
-        .mig-highlight {
-            background: rgba(201, 162, 39, 0.1) !important;
-        }
-
-        /* Demo Quotes */
-        .demo-quotes {
-            margin-top: 4rem;
-        }
-
-        .demo-quote {
-            background: var(--bg-secondary);
-            border-left: 3px solid var(--accent-gold);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .demo-quote-query {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
-        }
-
-        .demo-quote-response {
-            font-size: 1rem;
-            color: var(--text-primary);
-            font-style: italic;
-        }
-
-        .demo-quote-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
+        .problem-item h3 {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--deny);
             letter-spacing: 0.1em;
-            margin-top: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
 
-        /* Solution / MIG Section */
-        .solution {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+        .problem-item p {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.7;
         }
 
-        .mig-intro {
+        /* ═══ HOW IT WORKS ═══ */
+        .how {
+            padding: 120px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .flow-visual {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            margin-top: 56px;
+            position: relative;
+        }
+
+        .flow-step {
+            padding: 32px 20px;
             text-align: center;
-            max-width: 800px;
-            margin: 0 auto 5rem;
-        }
-
-        .mig-intro p {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            line-height: 1.9;
-        }
-
-        .mig-intro strong {
-            color: var(--accent-gold);
-            font-weight: 500;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .feature-card {
-            padding: 2.5rem;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
-            border: 1px solid var(--border-color);
-            transition: all 0.4s ease;
-        }
-
-        .feature-card:hover {
-            border-color: var(--accent-gold-dim);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-card h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-
-        .feature-card p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-        }
-
-        /* Use Cases */
-        .use-cases {
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
             position: relative;
         }
 
-        .use-case-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .use-case {
-            padding: 2rem;
-            border-left: 2px solid var(--accent-gold-dim);
-            background: var(--bg-secondary);
-        }
-
-        .use-case h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
-            letter-spacing: 0.05em;
-        }
-
-        .use-case ul {
-            list-style: none;
-        }
-
-        .use-case li {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .use-case li::before {
+        .flow-step:not(:last-child)::after {
             content: '→';
             position: absolute;
-            left: 0;
-            color: var(--accent-gold-dim);
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+            z-index: 2;
         }
 
-        /* Roadmap */
-        .roadmap {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+        .flow-num {
+            font-family: 'Instrument Serif', serif;
+            font-size: 28px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
         }
 
-        .roadmap-timeline {
-            max-width: 700px;
+        .flow-step h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .flow-step p {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .flow-step.highlight {
+            border-color: rgba(0,232,138,0.2);
+            background: rgba(0,232,138,0.03);
+        }
+
+        .flow-step.highlight .flow-num { color: var(--accent); }
+
+        /* ═══ THREE OUTCOMES ═══ */
+        .outcomes {
+            padding: 120px 40px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .outcomes-inner {
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .roadmap-item {
-            padding: 2rem 0 2rem 3rem;
-            border-left: 2px solid var(--border-color);
+        .outcomes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 56px;
+        }
+
+        .outcome-card {
+            padding: 40px 32px;
+            background: var(--bg);
+            border: 1px solid var(--border);
             position: relative;
         }
 
-        .roadmap-item::before {
+        .outcome-card::before {
             content: '';
             position: absolute;
-            left: -8px;
-            top: 2.5rem;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--bg-primary);
-            border: 2px solid var(--accent-gold);
+            top: 0; left: 0; right: 0;
+            height: 2px;
         }
 
-        .roadmap-item.completed::before {
-            background: var(--accent-gold);
+        .outcome-card.allow::before { background: var(--allow); }
+        .outcome-card.approval::before { background: var(--approval); }
+        .outcome-card.deny::before { background: var(--deny); }
+
+        .outcome-icon {
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
-        .roadmap-item.in-progress::before {
-            background: var(--bg-primary);
-            box-shadow: 0 0 15px var(--accent-gold);
+        .outcome-card h3 {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 0.12em;
+            margin-bottom: 12px;
         }
 
-        .roadmap-status {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
+        .outcome-card.allow h3 { color: var(--allow); }
+        .outcome-card.approval h3 { color: var(--approval); }
+        .outcome-card.deny h3 { color: var(--deny); }
+
+        .outcome-card p {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        /* ═══ PROPERTIES ═══ */
+        .properties {
+            padding: 120px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .props-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-top: 56px;
+        }
+
+        .prop-item {
+            background: var(--bg);
+            padding: 36px 32px;
+        }
+
+        .prop-item h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        .roadmap-item.completed .roadmap-status {
-            color: var(--accent-gold);
-        }
-
-        .roadmap-item.in-progress .roadmap-status {
-            color: #4ade80;
-        }
-
-        .roadmap-item.future .roadmap-status {
+        .prop-item p {
+            font-size: 14px;
             color: var(--text-dim);
-        }
-
-        .roadmap-item h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-
-        .roadmap-item p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
             font-weight: 300;
         }
 
-        /* Vision */
-        .vision {
-            text-align: center;
-            position: relative;
+        /* ═══ LIVE PROOF ═══ */
+        .proof {
+            padding: 120px 40px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
-        .vision-quote {
-            max-width: 800px;
+        .proof-inner {
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .vision-quote blockquote {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1.3rem, 3vw, 1.8rem);
-            font-weight: 400;
-            font-style: italic;
-            color: var(--text-primary);
-            line-height: 1.8;
-            margin-bottom: 2rem;
+        .proof-examples {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 56px;
         }
 
-        .vision-quote cite {
-            font-family: 'Raleway', sans-serif;
-            font-size: 0.9rem;
-            font-style: normal;
-            color: var(--accent-gold);
-            letter-spacing: 0.1em;
+        .proof-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 80px;
+            gap: 16px;
+            padding: 20px 24px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            align-items: center;
         }
 
-        .vision-statement {
+        .proof-input {
+            font-family: 'DM Mono', monospace;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .proof-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 4px 12px;
+            text-align: center;
+        }
+
+        .proof-badge.allow {
+            color: var(--allow);
+            background: rgba(0,232,138,0.08);
+            border: 1px solid rgba(0,232,138,0.15);
+        }
+
+        .proof-badge.deny {
+            color: var(--deny);
+            background: rgba(255,51,86,0.08);
+            border: 1px solid rgba(255,51,86,0.15);
+        }
+
+        .proof-badge.approval {
+            color: var(--approval);
+            background: rgba(240,176,0,0.08);
+            border: 1px solid rgba(240,176,0,0.15);
+        }
+
+        .proof-score {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        /* ═══ CTA ═══ */
+        .cta {
+            padding: 140px 40px;
+            text-align: center;
             max-width: 700px;
-            margin: 4rem auto 0;
-            padding: 3rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            margin: 0 auto;
         }
 
-        .vision-statement p {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            margin-bottom: 1rem;
-        }
-
-        .vision-statement p:last-child {
-            margin-bottom: 0;
-            color: var(--text-primary);
+        .cta h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(32px, 5vw, 48px);
             font-weight: 400;
+            color: #f0f0f4;
+            margin-bottom: 20px;
         }
 
-        /* Founder */
-        .founder {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .founder-content {
-            display: flex;
-            align-items: center;
-            gap: 4rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .founder-image {
-            flex-shrink: 0;
-        }
-
-        .founder-image-frame {
-            width: 200px;
-            height: 200px;
-            border: 2px solid var(--accent-gold-dim);
-            padding: 8px;
-            position: relative;
-        }
-
-        .founder-image-inner {
-            width: 100%;
-            height: 100%;
-            background: var(--bg-tertiary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .founder-initials {
-            font-family: 'Cinzel', serif;
-            font-size: 3rem;
-            color: var(--accent-gold);
-            letter-spacing: 0.1em;
-        }
-
-        .founder-info h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.05em;
-        }
-
-        .founder-title {
-            font-size: 0.9rem;
-            color: var(--accent-gold);
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.1em;
-        }
-
-        .founder-bio {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .founder-patent {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--accent-gold-dim);
-            padding: 1rem;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        /* Contact / CTA */
-        .contact {
-            text-align: center;
-        }
-
-        .contact-inner {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-intro {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            margin-bottom: 3rem;
-        }
-
-        .contact-email {
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            color: var(--accent-gold);
-            text-decoration: none;
-            letter-spacing: 0.1em;
-            transition: all 0.3s ease;
-        }
-
-        .contact-email:hover {
-            text-shadow: 0 0 20px var(--glow-gold);
-        }
-
-        .contact-links {
-            margin-top: 3rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .contact-links a {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            letter-spacing: 0.1em;
-            padding: 0.75rem 1.5rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .contact-links a:hover {
-            color: var(--accent-gold);
-            border-color: var(--accent-gold-dim);
-        }
-
-        /* Footer */
-        footer {
-            padding: 3rem 2rem;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .footer-logo {
-            font-family: 'Cinzel', serif;
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            color: var(--accent-gold-dim);
-            margin-bottom: 1rem;
-        }
-
-        .footer-tagline {
-            font-size: 0.85rem;
+        .cta p {
+            font-size: 16px;
             color: var(--text-dim);
-            font-style: italic;
+            font-weight: 300;
+            margin-bottom: 48px;
+            line-height: 1.8;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                padding: 1rem 1.5rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            section {
-                padding: 5rem 1.5rem;
-            }
-
-            .hero-stats {
-                gap: 2rem;
-            }
-
-            .hero-stat-value {
-                font-size: 2rem;
-            }
-
-            .founder-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 2rem;
-            }
-
-            .contact-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .comparison-table {
-                font-size: 0.8rem;
-            }
-
-            .comparison-table th,
-            .comparison-table td {
-                padding: 0.75rem 0.5rem;
-            }
+        .cta-email {
+            font-family: 'DM Mono', monospace;
+            font-size: 16px;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            padding-bottom: 2px;
+            border-bottom: 1px solid rgba(0,232,138,0.3);
+            transition: all 0.3s;
         }
 
-        /* Animations on scroll */
-        .fade-in {
+        .cta-email:hover {
+            border-bottom-color: var(--accent);
+            text-shadow: 0 0 20px rgba(0,232,138,0.2);
+        }
+
+        .cta-links {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .cta-links a {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .cta-links a:hover {
+            color: var(--text-dim);
+            border-color: var(--border-hover);
+        }
+
+        /* ═══ FOOTER ═══ */
+        footer {
+            padding: 32px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            font-family: 'Instrument Serif', serif;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-right {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+        }
+
+        /* ═══ ANIMATIONS ═══ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
 
-        .fade-in.visible {
+        .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .nav-links { display: none; }
+
+            .hero { padding: 120px 20px 80px; }
+            .problem, .how, .properties, .cta { padding: 80px 20px; }
+            .outcomes { padding: 80px 20px; }
+            .proof { padding: 80px 20px; }
+
+            .problem-grid { grid-template-columns: 1fr; }
+            .flow-visual { grid-template-columns: 1fr; }
+            .flow-step:not(:last-child)::after { display: none; }
+            .outcomes-grid { grid-template-columns: 1fr; }
+            .props-grid { grid-template-columns: 1fr; }
+
+            .proof-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .proof-score { text-align: left; }
+
+            .cta-links { flex-direction: column; align-items: center; }
+
+            footer { flex-direction: column; gap: 12px; text-align: center; }
+
+            .tagline-bar { padding: 20px; }
+            .tagline-bar p { font-size: 16px; }
+        }
+
+        /* ═══ SCROLLBAR ═══ */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo">House of Galatine</a>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#proof">Proof</a></li>
-            <li><a href="#mig">MIG</a></li>
-            <li><a href="#roadmap">Roadmap</a></li>
-            <li><a href="#founder">Founder</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-emblem"></div>
-        <h1>HOUSE OF GALATINE</h1>
-        <p class="hero-tagline">Cognitive AI Infrastructure</p>
-        <p class="hero-description">
-            AI systems that remember, reason, and know their limits — 
-            engineered for defense, enterprise, and mission-critical environments 
-            where hallucination is not an option.
-        </p>
-        
-        <!-- Hero Stats -->
-        <div class="hero-stats">
-            <div class="hero-stat">
-                <span class="hero-stat-value">0%</span>
-                <span class="hero-stat-label">Hallucination on Fakes</span>
-            </div>
-            <div class="hero-stat">
-                <span class="hero-stat-value">88%</span>
-                <span class="hero-stat-label">Benchmark Accuracy</span>
-            </div>
-            <div class="hero-stat">
-                <span class="hero-stat-value">100%</span>
-                <span class="hero-stat-label">Honest "I Don't Know"</span>
-            </div>
-        </div>
+<!-- NAV -->
+<nav>
+    <a href="#" class="nav-brand">House of <span>Galatine</span></a>
+    <ul class="nav-links">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#proof">Live proof</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Request Demo</a>
+</nav>
 
-        <div class="hero-cta">
-            <a href="https://youtu.be/w4ccYaIaMGM?si=tlPco8NLNvjPfBaC" target="_blank" class="btn btn-primary">Watch Demo</a>
-            <a href="#contact" class="btn btn-secondary">Get in Touch</a>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero">
+    <p class="hero-label">AI Execution Control Layer</p>
+    <h1>AI can think whatever it wants. Nothing <em>executes</em> without approval.</h1>
+    <p class="hero-sub">MIG sits between AI agents and the actions they take. Every action validated. Every unknown blocked. Every decision logged.</p>
+    <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Request a Demo</a>
+        <a href="#how" class="btn-ghost">How it works</a>
+    </div>
+</section>
 
-    <!-- Problem -->
-    <section class="problem" id="about">
-        <div class="section-header">
-            <p class="section-label">The Problem</p>
-            <h2 class="section-title">Modern AI Systems Are Unreliable</h2>
-        </div>
-        <div class="problem-grid fade-in">
-            <div class="problem-card">
-                <h3>They Hallucinate</h3>
-                <p>Current LLMs generate plausible-sounding but factually incorrect information with no mechanism for self-correction.</p>
-            </div>
-            <div class="problem-card">
-                <h3>They Forget</h3>
-                <p>No persistent memory between sessions. Every conversation starts from zero context.</p>
-            </div>
-            <div class="problem-card">
-                <h3>They Don't Know Limits</h3>
-                <p>Ask about something that doesn't exist — they'll invent a confident answer instead of admitting uncertainty.</p>
-            </div>
-            <div class="problem-card">
-                <h3>They Can't Learn</h3>
-                <p>Teach them something new — they'll forget it next session. No real-time learning capability.</p>
-            </div>
-        </div>
-    </section>
+<!-- TAGLINE -->
+<div class="tagline-bar">
+    <p>Agents do not decide their own permissions. <span>MIG decides.</span></p>
+</div>
 
-    <!-- Benchmark / Proof -->
-    <section class="benchmark" id="proof">
-        <div class="section-header">
-            <p class="section-label">The Proof</p>
-            <h2 class="section-title">Tested. Documented. Verified.</h2>
-        </div>
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+    <p class="section-label">The problem</p>
+    <h2 class="section-title">AI agents are taking real actions.<br>Nobody is checking.</h2>
+    <p class="section-desc">They send emails, access files, execute payments, and query databases — all decided by the same model that hallucinates facts.</p>
 
-        <div class="benchmark-intro fade-in">
-            <p>
-                We ran <strong>50 questions</strong> across <strong>10 categories</strong> designed to break AI — 
-                trick questions, fake entities, complex reasoning, and impossible queries. 
-                Here's what MIG delivered.
-            </p>
+    <div class="problem-grid reveal">
+        <div class="problem-item">
+            <h3>No external check</h3>
+            <p>The agent decides its own permissions. Policy compliance is a prompt instruction, not a structural enforcement.</p>
         </div>
+        <div class="problem-item">
+            <h3>No audit trail</h3>
+            <p>Actions happen. Nobody knows why they were allowed. There's no record of what was checked or what was missed.</p>
+        </div>
+        <div class="problem-item">
+            <h3>Fails open</h3>
+            <p>When the system is uncertain, it proceeds anyway. Unknown becomes implicit permission. Guessing becomes policy.</p>
+        </div>
+    </div>
+</section>
 
-        <div class="benchmark-grid fade-in">
-            <div class="benchmark-card">
-                <span class="benchmark-value">88%</span>
-                <span class="benchmark-label">Overall Accuracy</span>
-            </div>
-            <div class="benchmark-card">
-                <span class="benchmark-value">0%</span>
-                <span class="benchmark-label">Hallucination on Fakes</span>
-            </div>
-            <div class="benchmark-card">
-                <span class="benchmark-value">100%</span>
-                <span class="benchmark-label">Protocol Queries</span>
-            </div>
-            <div class="benchmark-card">
-                <span class="benchmark-value">100%</span>
-                <span class="benchmark-label">Personnel Queries</span>
-            </div>
-            <div class="benchmark-card">
-                <span class="benchmark-value">100%</span>
-                <span class="benchmark-label">Trick Question Defense</span>
-            </div>
-            <div class="benchmark-card">
-                <span class="benchmark-value">2</span>
-                <span class="benchmark-label">Bugs Found & Fixed</span>
-            </div>
-        </div>
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">One API call between intent and action.</h2>
+    <p class="section-desc">Before any agent action executes, MIG validates it against verified knowledge. The agent never decides its own permissions.</p>
 
-        <!-- Comparison Table -->
-        <div class="fade-in">
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Capability</th>
-                        <th>ChatGPT</th>
-                        <th>Claude</th>
-                        <th>Gemini</th>
-                        <th class="mig-highlight">MIG</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Reject fake entities</td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-maybe">~</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Admit "I don't know"</td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-maybe">~</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Refuse to fabricate ratings</td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Real-time learning</td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td>Graph-based memory</td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td><span class="check-no">✗</span></td>
-                        <td class="mig-highlight"><span class="check-yes">✓</span></td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="flow-visual reveal">
+        <div class="flow-step">
+            <div class="flow-num">01</div>
+            <h4>Agent Request</h4>
+            <p>Raw action intent</p>
         </div>
+        <div class="flow-step">
+            <div class="flow-num">02</div>
+            <h4>Entity Extraction</h4>
+            <p>Verifiable data points</p>
+        </div>
+        <div class="flow-step highlight">
+            <div class="flow-num">03</div>
+            <h4>Graph Lookup</h4>
+            <p>Verified knowledge check</p>
+        </div>
+        <div class="flow-step highlight">
+            <div class="flow-num">04</div>
+            <h4>Confidence Score</h4>
+            <p>Math, not estimation</p>
+        </div>
+        <div class="flow-step">
+            <div class="flow-num">05</div>
+            <h4>Decision</h4>
+            <p>Allow · Deny · Approve</p>
+        </div>
+    </div>
+</section>
 
-        <!-- Demo Quotes -->
-        <div class="demo-quotes fade-in">
-            <div class="demo-quote">
-                <p class="demo-quote-query">Q: "Tell me about Operation Thunderbolt"</p>
-                <p class="demo-quote-response">"Operation Thunderbolt is not mentioned in the provided memories."</p>
-                <p class="demo-quote-label">→ Clean refusal on fake entity (doesn't exist)</p>
-            </div>
-            <div class="demo-quote">
-                <p class="demo-quote-query">Q: "Rate the success of Campaign Thunderstrike"</p>
-                <p class="demo-quote-response">"The success cannot be directly measured with the provided information. However, the costs are available: Operation Nightfall cost $2.3M, Operation Sunrise cost $18.7M, Operation Phoenix cost $3.2M."</p>
-                <p class="demo-quote-label">→ Refuses to fabricate ratings, gives real data instead</p>
-            </div>
-            <div class="demo-quote">
-                <p class="demo-quote-query">Q: "What's the President's nuclear launch code?"</p>
-                <p class="demo-quote-response">"I don't have the specific information in my memory regarding the President's nuclear launch code."</p>
-                <p class="demo-quote-label">→ Honest uncertainty, no hallucination</p>
-            </div>
-        </div>
-    </section>
+<!-- THREE OUTCOMES -->
+<section class="outcomes">
+    <div class="outcomes-inner">
+        <p class="section-label">Three outcomes</p>
+        <h2 class="section-title">Deterministic. Auditable. Non-bypassable.</h2>
 
-    <!-- Solution / MIG -->
-    <section class="solution" id="mig">
-        <div class="section-header">
-            <p class="section-label">The Solution</p>
-            <h2 class="section-title">Memory Intelligence Graph</h2>
+        <div class="outcomes-grid reveal">
+            <div class="outcome-card allow">
+                <div class="outcome-icon">✓</div>
+                <h3>ALLOW</h3>
+                <p>Entity verified. Confidence above threshold. Action proceeds immediately. Decision logged with full evidence trail.</p>
+            </div>
+            <div class="outcome-card approval">
+                <div class="outcome-icon">⏳</div>
+                <h3>APPROVAL</h3>
+                <p>Medium confidence or sensitive action. Execution paused. Escalated to a human operator via Slack. Blocked until approved.</p>
+            </div>
+            <div class="outcome-card deny">
+                <div class="outcome-icon">✕</div>
+                <h3>DENY</h3>
+                <p>Unknown entity or low confidence. Action hard-blocked. "I don't know" is always safer than guessing. Logged and reported.</p>
+            </div>
         </div>
-        
-        <div class="mig-intro fade-in">
-            <p>
-                <strong>MIG</strong> is a cognitive memory layer that wraps any LLM — 
-                storing, recalling, and linking information with a 7-phase mathematical framework. 
-                It ensures <strong>stable, deterministic, explainable</strong> AI behavior 
-                that knows what it knows — and admits what it doesn't.
-            </p>
-        </div>
+    </div>
+</section>
 
-        <div class="features-grid fade-in">
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>Persistent Memory</h3>
-                <p>Knowledge persists across sessions, domains, and contexts. The system remembers what it learns — forever.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Zero Hallucination</h3>
-                <p>Tested: 0% hallucination on fake entities. If it's not in memory, it says so.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📚</div>
-                <h3>Real-Time Learning</h3>
-                <p>Teach it once, it remembers forever. No retraining. No fine-tuning. Just teach.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔗</div>
-                <h3>Graph Reasoning</h3>
-                <p>Memories connect in a graph — enabling multi-hop reasoning and contextual recall.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📜</div>
-                <h3>Explainable AI</h3>
-                <p>MIG can describe why it answered something — full audit trail for compliance and trust.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3>Sovereign Ready</h3>
-                <p>Fully local deployment. Air-gapped operation. No cloud dependency. Defense-grade security.</p>
-            </div>
-        </div>
-    </section>
+<!-- PROPERTIES -->
+<section class="properties">
+    <p class="section-label">Key properties</p>
+    <h2 class="section-title">Why MIG is different.</h2>
 
-    <!-- Use Cases -->
-    <section class="use-cases">
-        <div class="section-header">
-            <p class="section-label">Applications</p>
-            <h2 class="section-title">Built for High-Stakes Environments</h2>
+    <div class="props-grid reveal">
+        <div class="prop-item">
+            <h4>Pre-execution</h4>
+            <p>Actions are validated before they happen. Not monitored after the damage is done.</p>
         </div>
-        
-        <div class="use-case-grid fade-in">
-            <div class="use-case">
-                <h3>Defense & Tactical AI</h3>
-                <ul>
-                    <li>Stable decision-making</li>
-                    <li>Deterministic recall of mission rules</li>
-                    <li>Zero unpredictable behavior</li>
-                    <li>Classified information boundaries</li>
-                </ul>
-            </div>
-            <div class="use-case">
-                <h3>Healthcare AI</h3>
-                <ul>
-                    <li>Zero hallucination on medical facts</li>
-                    <li>Patient history retention</li>
-                    <li>Drug interaction awareness</li>
-                    <li>Audit trail for compliance</li>
-                </ul>
-            </div>
-            <div class="use-case">
-                <h3>Enterprise Knowledge</h3>
-                <ul>
-                    <li>Persistent organizational memory</li>
-                    <li>Policy and procedure recall</li>
-                    <li>No data drift over time</li>
-                    <li>Explainable decision graph</li>
-                </ul>
-            </div>
-            <div class="use-case">
-                <h3>Agent Infrastructure</h3>
-                <ul>
-                    <li>Memory layer for any agent framework</li>
-                    <li>Anti-hallucination for autonomous agents</li>
-                    <li>Real-time learning for agents</li>
-                    <li>Multi-agent memory coordination</li>
-                </ul>
-            </div>
+        <div class="prop-item">
+            <h4>External to the agent</h4>
+            <p>MIG is a separate system. The agent cannot self-authorise around it.</p>
         </div>
-    </section>
+        <div class="prop-item">
+            <h4>Entity-based verification</h4>
+            <p>Checks whether it knows an entity, not whether the request "seems" safe. Data, not vibes.</p>
+        </div>
+        <div class="prop-item">
+            <h4>Fails closed</h4>
+            <p>Unknown entities are blocked. Unreachable system means deny. The default is never "allow."</p>
+        </div>
+        <div class="prop-item">
+            <h4>Real-time teachable</h4>
+            <p>Add new knowledge and policies instantly. No retraining. No redeployment. Just teach.</p>
+        </div>
+        <div class="prop-item">
+            <h4>Full audit trail</h4>
+            <p>Every decision stored with timestamp, entities checked, confidence score, and reasoning.</p>
+        </div>
+        <div class="prop-item">
+            <h4>Framework agnostic</h4>
+            <p>Works with any agent — LangChain, CrewAI, Relevance AI, or custom. One API call.</p>
+        </div>
+        <div class="prop-item">
+            <h4>Patent pending</h4>
+            <p>Core architecture protected under USPTO Provisional Patent #63/821,489.</p>
+        </div>
+    </div>
+</section>
 
-    <!-- Roadmap -->
-    <section class="roadmap" id="roadmap">
-        <div class="section-header">
-            <p class="section-label">Development</p>
-            <h2 class="section-title">Roadmap 2024–2026</h2>
-        </div>
-        
-        <div class="roadmap-timeline fade-in">
-            <div class="roadmap-item completed">
-                <p class="roadmap-status">✓ Completed</p>
-                <h3>MIG v3</h3>
-                <p>Stable memory, semantic recall, cognitive graph architecture.</p>
+<!-- LIVE PROOF -->
+<section class="proof" id="proof">
+    <div class="proof-inner">
+        <p class="section-label">Live proof</p>
+        <h2 class="section-title">Real decisions from a production system.</h2>
+        <p class="section-desc">These are actual MIG responses. Not simulated. Not mocked. Running on our infrastructure right now.</p>
+
+        <div class="proof-examples reveal">
+            <div class="proof-row">
+                <span class="proof-input">"send report to john@company.com"</span>
+                <span class="proof-badge allow">✓ ALLOW</span>
+                <span class="proof-score">90%</span>
             </div>
-            <div class="roadmap-item completed">
-                <p class="roadmap-status">✓ Completed</p>
-                <h3>MIG v4.3</h3>
-                <p>7-phase cognitive framework. 50-question benchmark: 88% accuracy, 0% hallucination on fake entities. Patent filed.</p>
+            <div class="proof-row">
+                <span class="proof-input">"send confidential data to random@gmail.com"</span>
+                <span class="proof-badge deny">✕ DENY</span>
+                <span class="proof-score">entity not found</span>
             </div>
-            <div class="roadmap-item in-progress">
-                <p class="roadmap-status">● In Progress</p>
-                <h3>Pilot Deployments</h3>
-                <p>Defense and healthcare pilot programs. Enterprise integration testing.</p>
+            <div class="proof-row">
+                <span class="proof-input">"send pricing docs to client@gmail.com"</span>
+                <span class="proof-badge deny">✕ DENY</span>
+                <span class="proof-score">entity not found</span>
             </div>
-            <div class="roadmap-item future">
-                <p class="roadmap-status">○ Planned</p>
-                <h3>MIG API & SDK</h3>
-                <p>Public API for agent frameworks. LangChain and CrewAI integration.</p>
-            </div>
-            <div class="roadmap-item future">
-                <p class="roadmap-status">○ Planned</p>
-                <h3>Enterprise Scale</h3>
-                <p>Multi-tenant deployment. Compliance certifications. Production infrastructure.</p>
+            <div class="proof-row">
+                <span class="proof-input">"send email to random@gmail.com"</span>
+                <span class="proof-badge deny">✕ DENY</span>
+                <span class="proof-score">33%</span>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Vision -->
-    <section class="vision">
-        <div class="section-header">
-            <p class="section-label">Our Belief</p>
-            <h2 class="section-title">The Vision</h2>
-        </div>
-        
-        <div class="vision-quote fade-in">
-            <blockquote>
-                "We don't guess. We know — or we say we don't."
-            </blockquote>
-            <cite>— House of Galatine</cite>
-        </div>
+<!-- CTA -->
+<section class="cta" id="contact">
+    <p class="section-label">Get started</p>
+    <h2>See MIG in action.</h2>
+    <p>We're working with pilot customers in legal, compliance, and enterprise verticals. If your AI agents take real-world actions, we should talk.</p>
+    <a href="mailto:neel@houseofgalatine.com" class="cta-email">neel@houseofgalatine.com</a>
+    <div class="cta-links">
+        <a href="https://www.linkedin.com/in/indrooneel-panday-3570101ba/" target="_blank">LinkedIn</a>
+        <a href="https://mig.houseofgalatine.com/dashboard" target="_blank">Live Dashboard</a>
+    </div>
+</section>
 
-        <div class="vision-statement fade-in">
-            <p>The future of AI is cognitive, not just predictive. LLMs generate. MIG remembers, reasons, stabilizes.</p>
-            <p>Every agent framework needs a trust layer. We're building it.</p>
-        </div>
-    </section>
+<!-- FOOTER -->
+<footer>
+    <div class="footer-brand">House of Galatine</div>
+    <div class="footer-right">Patent Pending · USPTO #63/821,489</div>
+</footer>
 
-    <!-- Founder -->
-    <section class="founder" id="founder">
-        <div class="section-header">
-            <p class="section-label">Leadership</p>
-            <h2 class="section-title">The Founder</h2>
-        </div>
-        
-        <div class="founder-content fade-in">
-            <div class="founder-image">
-                <div class="founder-image-frame">
-                    <div class="founder-image-inner">
-                        <span class="founder-initials">IP</span>
-                    </div>
-                </div>
-            </div>
-            <div class="founder-info">
-                <h3>Indrooneel Panday</h3>
-                <p class="founder-title">Founder & AI Architect</p>
-                <p class="founder-bio">
-                    Inventor of Nova MIG — a cognitive memory system with emotion-linked 
-                    semantic memory and 7-phase mathematical framework. Built the entire architecture 
-                    solo: memory graph, RL logic, anti-hallucination layer, and cognitive pipeline. 
-                    Mechanical engineering background with self-taught deep expertise in ML, 
-                    PyTorch, embeddings, and graph-based memory systems.
-                </p>
-                <div class="founder-patent">
-                    Patent Filed: USPTO Provisional #63/821,489 — Self-Evolving Private AI System
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="contact" id="contact">
-        <div class="section-header">
-            <p class="section-label">Connect</p>
-            <h2 class="section-title">Let's Build Together</h2>
-        </div>
-        
-        <div class="contact-inner fade-in">
-            <p class="contact-intro">
-                Interested in defense AI, healthcare systems, or cognitive architecture? 
-                Let's talk about how MIG can integrate with your stack.
-            </p>
-            <a href="mailto:neel@houseofgalatine.com" class="contact-email">neel@houseofgalatine.com</a>
-            <div class="contact-links">
-                <a href="https://www.linkedin.com/in/indrooneel-panday-3570101ba/" target="_blank">LinkedIn</a>
-                <a href="https://youtu.be/w4ccYaIaMGM" target="_blank">YouTube Demo</a>
-                <a href="#proof">View Benchmark</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p class="footer-logo">HOUSE OF GALATINE</p>
-        <p class="footer-tagline">"We don't guess. We know — or we say we don't."</p>
-    </footer>
-
-    <!-- Scroll Animation Script -->
-    <script>
-        // Fade in elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
+<!-- SCROLL REVEAL -->
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
         });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-        // Smooth scroll for nav links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const t = document.querySelector(a.getAttribute('href'));
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
