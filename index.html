@@ -604,4 +604,372 @@
         .footer-right { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
 
         /* ANIMATIONS */
-        @keyframes fade
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .nav-links { display: none; }
+            .hero { padding: 120px 20px 80px; }
+            .about-co, .problem, .how, .compared, .cta { padding: 80px 20px; }
+            .what-we-do, .proof, .founder { padding: 80px 20px; }
+            .about-grid, .two-arms, .founder-grid { grid-template-columns: 1fr; gap: 32px; }
+            .problem-grid, .outcomes-grid { grid-template-columns: 1fr; }
+            .compare-table { font-size: 12px; }
+            .compare-table th, .compare-table td { padding: 10px 12px; }
+            .proof-row { grid-template-columns: 1fr; gap: 8px; }
+            .proof-score { text-align: left; }
+            .cta-links { flex-direction: column; align-items: center; }
+            footer { flex-direction: column; gap: 12px; text-align: center; }
+            .pipeline-visual { gap: 4px; }
+            .pipe-box { padding: 6px 10px; font-size: 9px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="#" class="nav-brand">House of <span>Galatine</span></a>
+    <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#product">Product</a></li>
+        <li><a href="#proof">Proof</a></li>
+        <li><a href="#founder">Founder</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="https://mig.houseofgalatine.com/dashboard" class="nav-cta" target="_blank">Live Dashboard</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <p class="hero-label">AI Cybersecurity for Critical Infrastructure</p>
+    <h1>We validate AI actions <em>before</em> they execute in critical systems.</h1>
+    <p class="hero-sub">AI agents are entering operational technology, financial systems, and enterprise workflows. House of Galatine builds the control layer that decides what they're allowed to do — before they do it.</p>
+    <div class="hero-actions">
+        <a href="https://mig.houseofgalatine.com/dashboard" class="btn-primary" target="_blank">See Live Dashboard</a>
+        <a href="#product" class="btn-ghost">How it works</a>
+    </div>
+</section>
+
+<!-- TAGLINE -->
+<div class="tagline-bar">
+    <p>AI agents do not decide their own permissions. <span>We decide.</span></p>
+</div>
+
+<!-- ABOUT COMPANY -->
+<section class="about-co" id="about">
+    <div class="section">
+        <p class="section-label">The company</p>
+        <h2 class="section-title">House of Galatine</h2>
+        <div class="about-grid reveal">
+            <div class="about-text">
+                <p>House of Galatine is an AI cybersecurity company focused on one problem: controlling what AI agents are allowed to execute in real-world systems.</p>
+                <p>We build infrastructure that sits between AI and action. Our core product, MIG (Memory Intelligence Graph), is a deterministic execution control layer that validates every AI-driven command against policy before it reaches any system — whether that's a PLC in an oil plant, a database in a financial institution, or a hiring workflow in an enterprise.</p>
+                <p>We don't monitor what happened. We control what's allowed to happen.</p>
+                <p>Founded in 2024. Patent pending. Validated on live industrial control systems.</p>
+            </div>
+            <div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <div class="stat-num">28</div>
+                        <div class="stat-label">Policies Enforced</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">2</div>
+                        <div class="stat-label">Verticals Live</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">0</div>
+                        <div class="stat-label">Unsafe Executions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">100%</div>
+                        <div class="stat-label">Fail-Closed Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="what-we-do" id="services">
+    <div class="section">
+        <p class="section-label">What we do</p>
+        <h2 class="section-title">Two arms. One mission.</h2>
+        <p class="section-desc">We build the product and help you deploy it. Whether you need the execution control layer or help building AI systems with governance built in.</p>
+
+        <div class="two-arms reveal">
+            <div class="arm-card">
+                <div class="arm-label">Product</div>
+                <h3>MIG — Memory Intelligence Graph</h3>
+                <p>The AI execution control layer. MIG sits between AI agents and the actions they take. Every command is validated against a policy graph before execution. Deterministic. Auditable. Fail-closed.</p>
+                <ul>
+                    <li>Pre-execution validation for AI agent actions</li>
+                    <li>Policy graph traversal (IEC 62443 aligned)</li>
+                    <li>Payload inspection — what data, where it's going</li>
+                    <li>Operator approval workflows</li>
+                    <li>Complete audit trail for every decision</li>
+                    <li>Domain-agnostic — OT, HR, finance, legal</li>
+                </ul>
+            </div>
+            <div class="arm-card services">
+                <div class="arm-label">Services</div>
+                <h3>Galatine Labs</h3>
+                <p>We help organizations deploy AI agents with governance built in from day one. Short-sprint engagements focused on safe, controlled AI implementation.</p>
+                <ul>
+                    <li>AI agent deployment with execution governance</li>
+                    <li>Claude API integration and automation</li>
+                    <li>Agentic workflow design and implementation</li>
+                    <li>MIG integration for existing AI systems</li>
+                    <li>Custom policy development for regulated environments</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+    <div class="section">
+        <p class="section-label">The problem</p>
+        <h2 class="section-title">AI agents are taking real actions.<br>Nobody is validating them.</h2>
+        <p class="section-desc">Last week, an AI coding agent wiped a startup's entire production database in 9 seconds. In OT environments, that's not a database — it's a turbine, a pipeline, a water treatment plant.</p>
+
+        <div class="problem-grid reveal">
+            <div class="problem-item">
+                <h3>No pre-execution check</h3>
+                <p>The agent decides what to do and does it. Policy compliance is a prompt instruction, not a structural enforcement. The agent can ignore it.</p>
+            </div>
+            <div class="problem-item">
+                <h3>No audit trail</h3>
+                <p>Actions happen. Nobody knows why they were allowed. There's no record of what was checked, what data was being carried, or what policy was applied.</p>
+            </div>
+            <div class="problem-item">
+                <h3>Fails open</h3>
+                <p>When the system is uncertain, it proceeds anyway. Unknown becomes implicit permission. In critical infrastructure, that can be catastrophic.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW MIG WORKS -->
+<section class="how" id="product">
+    <div class="section">
+        <p class="section-label">How MIG works</p>
+        <h2 class="section-title">One validation layer between intent and action.</h2>
+        <p class="section-desc">Before any AI agent action executes, MIG intercepts it and runs it through a deterministic validation pipeline. The agent never decides its own permissions.</p>
+
+        <div class="pipeline-visual reveal">
+            <div class="pipe-step"><span class="pipe-box">Agent Command</span><span class="pipe-arrow">→</span></div>
+            <div class="pipe-step"><span class="pipe-box">Payload Inspection</span><span class="pipe-arrow">→</span></div>
+            <div class="pipe-step"><span class="pipe-box">Policy Graph</span><span class="pipe-arrow">→</span></div>
+            <div class="pipe-step"><span class="pipe-box">Authorization</span><span class="pipe-arrow">→</span></div>
+            <div class="pipe-step"><span class="pipe-box">Decision</span><span class="pipe-arrow">→</span></div>
+            <div class="pipe-step"><span class="pipe-box">Audit</span></div>
+        </div>
+
+        <p class="section-desc">Every command receives one of three decisions:</p>
+
+        <div class="outcomes-grid reveal">
+            <div class="outcome-card allow">
+                <h3>ALLOW</h3>
+                <p>Action verified against policy. Safe to execute. Proceeds to the target system. Decision logged with full evidence trail.</p>
+            </div>
+            <div class="outcome-card approval">
+                <h3>APPROVAL</h3>
+                <p>Action requires operator confirmation. Held until a human approves. Only then does it execute. Operator stays in control.</p>
+            </div>
+            <div class="outcome-card deny">
+                <h3>DENY</h3>
+                <p>Action blocked. Command never reaches the target system. "I don't know" is always safer than guessing. Fail-closed by default.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LIVE PROOF -->
+<section class="proof" id="proof">
+    <div class="section">
+        <p class="section-label">Live proof — OT/ICS demo</p>
+        <h2 class="section-title">Validated on a live industrial control system.</h2>
+        <p class="section-desc">MIG was tested against a simulated oil processing facility running on LabShock's Oilsprings Air environment. Real OpenPLC. Real SCADA. Real Modbus protocol. These are actual MIG decisions.</p>
+
+        <div class="proof-examples reveal">
+            <div class="proof-row">
+                <span class="proof-input">"Read current pump 1 speed from PLC"</span>
+                <span class="proof-badge allow">ALLOW</span>
+                <span class="proof-score">Risk: 10</span>
+            </div>
+            <div class="proof-row">
+                <span class="proof-input">"Set pump speed to 52 RPM" (4% deviation)</span>
+                <span class="proof-badge approval">APPROVAL</span>
+                <span class="proof-score">Risk: 50</span>
+            </div>
+            <div class="proof-row">
+                <span class="proof-input">"Set pump speed to 5000 RPM" (9500% deviation)</span>
+                <span class="proof-badge deny">DENY</span>
+                <span class="proof-score">Risk: 100</span>
+            </div>
+            <div class="proof-row">
+                <span class="proof-input">"Upload firmware to PLC during production"</span>
+                <span class="proof-badge deny">DENY</span>
+                <span class="proof-score">Risk: 100</span>
+            </div>
+            <div class="proof-row">
+                <span class="proof-input">"Write to safety instrumented system register"</span>
+                <span class="proof-badge deny">DENY</span>
+                <span class="proof-score">Risk: 100</span>
+            </div>
+            <div class="proof-row">
+                <span class="proof-input">"Export PLC configuration to external network"</span>
+                <span class="proof-badge deny">DENY</span>
+                <span class="proof-score">Risk: 90</span>
+            </div>
+        </div>
+
+        <p class="proof-context">6 commands attempted. 0 unsafe executions. 2 operator-approved changes executed safely. Pump speed changed on SCADA dashboard only after operator confirmation. Oldsmar-style attack (9500% setpoint deviation) blocked instantly. Plant integrity maintained throughout.</p>
+
+        <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="https://mig.houseofgalatine.com/dashboard" class="btn-primary" target="_blank">View Live Dashboard</a>
+        </div>
+    </div>
+</section>
+
+<!-- COMPARED -->
+<section class="compared" id="compared">
+    <div class="section">
+        <p class="section-label">How MIG is different</p>
+        <h2 class="section-title">Existing tools watch. MIG prevents.</h2>
+        <p class="section-desc">Most OT security tools monitor network traffic and alert after something happens. MIG validates the action before it reaches the control system. Different category.</p>
+
+        <table class="compare-table reveal">
+            <thead>
+                <tr>
+                    <th>Capability</th>
+                    <th>Network Monitors (Claroty, Dragos, Nozomi)</th>
+                    <th>MIG</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>When it acts</td>
+                    <td>After execution — detects and alerts</td>
+                    <td>Before execution — validates and decides</td>
+                </tr>
+                <tr>
+                    <td>AI agent governance</td>
+                    <td>Not designed for agentic AI</td>
+                    <td>Built specifically for AI agent actions</td>
+                </tr>
+                <tr>
+                    <td>Payload inspection</td>
+                    <td>Network packet analysis</td>
+                    <td>Semantic intent + data type + destination analysis</td>
+                </tr>
+                <tr>
+                    <td>Default on unknown</td>
+                    <td>Alert (fails open)</td>
+                    <td>Deny (fails closed)</td>
+                </tr>
+                <tr>
+                    <td>Operator approval</td>
+                    <td>Manual investigation after alert</td>
+                    <td>Built-in approval workflow before execution</td>
+                </tr>
+                <tr>
+                    <td>Audit trail</td>
+                    <td>Network logs</td>
+                    <td>Full decision chain — command, policy, checks, flags, risk score</td>
+                </tr>
+                <tr>
+                    <td>Domain</td>
+                    <td>OT network security</td>
+                    <td>Any system where AI agents execute actions</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 24px; font-size: 14px; color: var(--text-dim); font-weight: 300;">MIG is not a replacement for network monitoring. It's a layer that doesn't exist yet — pre-execution AI governance. These tools are complementary, not competitive.</p>
+    </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder" id="founder">
+    <div class="section">
+        <p class="section-label">The founder</p>
+        <h2 class="section-title">Built solo. From first principles.</h2>
+
+        <div class="founder-grid reveal">
+            <div class="founder-info">
+                <h3>Indrooneel Panday</h3>
+                <div class="founder-role">Founder — House of Galatine</div>
+                <div class="founder-creds">
+                    <div class="cred-item"><span>→</span> USPTO Provisional Patent #63/821,489</div>
+                    <div class="cred-item"><span>→</span> Validated on live PLC via Modbus protocol</div>
+                    <div class="cred-item"><span>→</span> Active pilot partner in HR governance</div>
+                    <div class="cred-item"><span>→</span> OT demo on LabShock Oilsprings Air</div>
+                    <div class="cred-item"><span>→</span> Based in Kolkata, India</div>
+                </div>
+            </div>
+            <div class="founder-bio">
+                <p>I started building MIG because I saw a gap that nobody was addressing: AI agents are making real-world decisions, and there's no external system checking whether those decisions are safe before they execute.</p>
+                <p>Every AI safety tool I found was either monitoring after the fact, or trying to control what the model thinks. Neither approach solves the execution problem. An agent can be compromised, hallucinate, or simply misunderstand — and if nothing validates the action before it happens, the damage is done.</p>
+                <p>So I built MIG as the execution boundary. It doesn't care what the agent thinks. It inspects what the agent is actually trying to do — what data it's carrying, where it's sending it, whether the command matches policy — and decides ALLOW, DENY, or APPROVAL before anything touches the real world.</p>
+                <p>I've been building this solo for two years. No team, no funding. The product works — it's been validated on a live PLC controlling pump speeds in a simulated oil plant, and it's running HR governance policies for a pilot partner. The engine is the same for both. Different policies, same execution boundary.</p>
+                <p>I'm looking for the right partners — investors who understand infrastructure, and early customers who need AI governance that's structural, not optional.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+    <p class="section-label">Get in touch</p>
+    <h2>See MIG in action.</h2>
+    <p>We work with organizations deploying AI agents in critical and regulated environments. If your AI systems take real-world actions, we should talk.</p>
+    <a href="mailto:neel@houseofgalatine.com" class="cta-email">neel@houseofgalatine.com</a>
+    <div class="cta-links">
+        <a href="https://www.linkedin.com/in/indrooneel-panday-3570101ba/" target="_blank">LinkedIn</a>
+        <a href="https://mig.houseofgalatine.com/dashboard" target="_blank">Live Dashboard</a>
+        <a href="https://mig.houseofgalatine.com/health" target="_blank">API Status</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-brand">House of Galatine © 2026</div>
+    <div class="footer-right">Patent Pending — USPTO #63/821,489</div>
+</footer>
+
+<!-- SCROLL REVEAL -->
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const t = document.querySelector(a.getAttribute('href'));
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
+
+</body>
+</html>
