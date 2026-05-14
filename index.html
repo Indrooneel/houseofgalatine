@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House of Galatine — MIG: AI Execution Control Layer</title>
-    <meta name="description" content="MIG is an AI Execution Control Layer. It sits between AI agents and the actions they take. Nothing executes without MIG approval.">
-    <meta property="og:title" content="House of Galatine — MIG: AI Execution Control Layer">
-    <meta property="og:description" content="AI can think whatever it wants. Nothing executes without MIG approval.">
+    <title>House of Galatine — AI Execution Control for Critical Infrastructure</title>
+    <meta name="description" content="We validate AI actions before they execute in critical systems. MIG is the execution control layer between AI agents and the real world.">
+    <meta property="og:title" content="House of Galatine — AI Execution Control for Critical Infrastructure">
+    <meta property="og:description" content="We validate AI actions before they execute in critical systems. Nothing executes without approval.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://houseofgalatine.com">
 
@@ -41,7 +41,6 @@
             overflow-x: hidden;
         }
 
-        /* ═══ GRAIN OVERLAY ═══ */
         body::after {
             content: '';
             position: fixed;
@@ -51,7 +50,7 @@
             z-index: 9999;
         }
 
-        /* ═══ NAV ═══ */
+        /* NAV */
         nav {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -64,23 +63,14 @@
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
-
         .nav-brand {
             font-family: 'Instrument Serif', serif;
             font-size: 18px;
             color: var(--text);
             text-decoration: none;
-            letter-spacing: 0.02em;
         }
-
         .nav-brand span { color: var(--accent); }
-
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            list-style: none;
-        }
-
+        .nav-links { display: flex; gap: 32px; list-style: none; }
         .nav-links a {
             font-family: 'DM Mono', monospace;
             font-size: 11px;
@@ -90,9 +80,7 @@
             text-transform: uppercase;
             transition: color 0.3s;
         }
-
         .nav-links a:hover { color: var(--accent); }
-
         .nav-cta {
             font-family: 'DM Mono', monospace;
             font-size: 11px;
@@ -105,24 +93,47 @@
             text-transform: uppercase;
             transition: all 0.3s;
         }
-
         .nav-cta:hover {
             background: rgba(0,232,138,0.15);
             box-shadow: 0 0 20px rgba(0,232,138,0.1);
         }
 
-        /* ═══ HERO ═══ */
+        /* SECTIONS */
+        .section { max-width: 1100px; margin: 0 auto; }
+        .section-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 400;
+            color: #f0f0f4;
+            margin-bottom: 20px;
+        }
+        .section-desc {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-dim);
+            max-width: 620px;
+            margin-bottom: 48px;
+            line-height: 1.8;
+        }
+
+        /* HERO */
         .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 140px 40px 100px;
-            position: relative;
             max-width: 1100px;
             margin: 0 auto;
         }
-
         .hero-label {
             font-family: 'DM Mono', monospace;
             font-size: 11px;
@@ -133,35 +144,28 @@
             opacity: 0;
             animation: fadeUp 0.8s ease 0.2s forwards;
         }
-
         .hero h1 {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(42px, 7vw, 80px);
+            font-size: clamp(38px, 6vw, 72px);
             font-weight: 400;
             line-height: 1.1;
             color: #f0f0f4;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
             max-width: 900px;
             opacity: 0;
             animation: fadeUp 0.8s ease 0.4s forwards;
         }
-
-        .hero h1 em {
-            font-style: italic;
-            color: var(--accent);
-        }
-
+        .hero h1 em { font-style: italic; color: var(--accent); }
         .hero-sub {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 300;
             color: var(--text-dim);
-            max-width: 560px;
+            max-width: 580px;
             line-height: 1.8;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
             opacity: 0;
             animation: fadeUp 0.8s ease 0.6s forwards;
         }
-
         .hero-actions {
             display: flex;
             gap: 16px;
@@ -169,7 +173,6 @@
             opacity: 0;
             animation: fadeUp 0.8s ease 0.8s forwards;
         }
-
         .btn-primary {
             font-family: 'DM Mono', monospace;
             font-size: 12px;
@@ -184,12 +187,10 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .btn-primary:hover {
             box-shadow: 0 0 30px rgba(0,232,138,0.2);
             transform: translateY(-1px);
         }
-
         .btn-ghost {
             font-family: 'DM Mono', monospace;
             font-size: 12px;
@@ -203,13 +204,9 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+        .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
 
-        .btn-ghost:hover {
-            border-color: var(--text-dim);
-            color: var(--text);
-        }
-
-        /* ═══ TAGLINE BAR ═══ */
+        /* TAGLINE */
         .tagline-bar {
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
@@ -217,50 +214,124 @@
             text-align: center;
             background: var(--bg-surface);
         }
-
         .tagline-bar p {
             font-family: 'Instrument Serif', serif;
             font-size: 20px;
             font-style: italic;
             color: var(--text-dim);
-            letter-spacing: 0.02em;
         }
-
         .tagline-bar p span { color: var(--accent); }
 
-        /* ═══ PROBLEM ═══ */
-        .problem {
-            padding: 120px 40px;
-            max-width: 1100px;
-            margin: 0 auto;
+        /* ABOUT COMPANY */
+        .about-co { padding: 120px 40px; }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            margin-top: 48px;
         }
-
-        .section-label {
+        .about-text p {
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--text-dim);
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-top: 24px;
+        }
+        .stat-item {
+            background: var(--bg);
+            padding: 24px;
+        }
+        .stat-num {
+            font-family: 'Instrument Serif', serif;
+            font-size: 32px;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .stat-label {
             font-family: 'DM Mono', monospace;
             font-size: 10px;
             color: var(--text-muted);
-            letter-spacing: 0.2em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* WHAT WE DO */
+        .what-we-do {
+            padding: 120px 40px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .two-arms {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 48px;
+        }
+        .arm-card {
+            padding: 48px 36px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .arm-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--accent);
+        }
+        .arm-card.services::before { background: #60a5fa; }
+        .arm-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             margin-bottom: 16px;
         }
-
-        .section-title {
+        .arm-card .arm-label { color: var(--accent); }
+        .arm-card.services .arm-label { color: #60a5fa; }
+        .arm-card h3 {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 400;
+            font-size: 24px;
             color: #f0f0f4;
-            margin-bottom: 20px;
+            font-weight: 400;
+            margin-bottom: 16px;
         }
-
-        .section-desc {
-            font-size: 16px;
-            font-weight: 300;
+        .arm-card p {
+            font-size: 14px;
             color: var(--text-dim);
-            max-width: 600px;
-            margin-bottom: 56px;
+            font-weight: 300;
             line-height: 1.8;
+            margin-bottom: 12px;
         }
+        .arm-card ul {
+            list-style: none;
+            margin-top: 16px;
+        }
+        .arm-card ul li {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .arm-card ul li::before {
+            content: '→ ';
+            color: var(--accent);
+        }
+        .arm-card.services ul li::before { color: #60a5fa; }
 
+        /* PROBLEM */
+        .problem { padding: 120px 40px; }
         .problem-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -268,12 +339,7 @@
             background: var(--border);
             border: 1px solid var(--border);
         }
-
-        .problem-item {
-            background: var(--bg);
-            padding: 40px 32px;
-        }
-
+        .problem-item { background: var(--bg); padding: 40px 32px; }
         .problem-item h3 {
             font-family: 'DM Mono', monospace;
             font-size: 12px;
@@ -282,210 +348,92 @@
             text-transform: uppercase;
             margin-bottom: 12px;
         }
+        .problem-item p { font-size: 14px; color: var(--text-dim); font-weight: 300; line-height: 1.7; }
 
-        .problem-item p {
-            font-size: 14px;
-            color: var(--text-dim);
-            font-weight: 300;
-            line-height: 1.7;
+        /* HOW MIG WORKS */
+        .how { padding: 120px 40px; }
+        .pipeline-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 48px;
+            margin-bottom: 48px;
         }
-
-        /* ═══ HOW IT WORKS ═══ */
-        .how {
-            padding: 120px 40px;
-            max-width: 1100px;
-            margin: 0 auto;
+        .pipe-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .flow-visual {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0;
-            margin-top: 56px;
-            position: relative;
-        }
-
-        .flow-step {
-            padding: 32px 20px;
-            text-align: center;
-            border: 1px solid var(--border);
-            background: var(--bg-surface);
-            position: relative;
-        }
-
-        .flow-step:not(:last-child)::after {
-            content: '→';
-            position: absolute;
-            right: -12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 16px;
-            z-index: 2;
-        }
-
-        .flow-num {
-            font-family: 'Instrument Serif', serif;
-            font-size: 28px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        .flow-step h4 {
+        .pipe-box {
             font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--text);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .flow-step p {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 300;
-        }
-
-        .flow-step.highlight {
-            border-color: rgba(0,232,138,0.2);
-            background: rgba(0,232,138,0.03);
-        }
-
-        .flow-step.highlight .flow-num { color: var(--accent); }
-
-        /* ═══ THREE OUTCOMES ═══ */
-        .outcomes {
-            padding: 120px 40px;
+            font-size: 11px;
+            padding: 10px 18px;
             background: var(--bg-surface);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            letter-spacing: 0.05em;
         }
-
-        .outcomes-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .pipe-arrow { color: var(--text-muted); font-size: 14px; }
 
         .outcomes-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
-            margin-top: 56px;
+            margin-top: 36px;
         }
-
         .outcome-card {
-            padding: 40px 32px;
-            background: var(--bg);
+            padding: 36px 28px;
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             position: relative;
         }
-
         .outcome-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2px;
         }
-
         .outcome-card.allow::before { background: var(--allow); }
         .outcome-card.approval::before { background: var(--approval); }
         .outcome-card.deny::before { background: var(--deny); }
-
-        .outcome-icon {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
         .outcome-card h3 {
             font-family: 'DM Mono', monospace;
             font-size: 14px;
             letter-spacing: 0.12em;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-
         .outcome-card.allow h3 { color: var(--allow); }
         .outcome-card.approval h3 { color: var(--approval); }
         .outcome-card.deny h3 { color: var(--deny); }
+        .outcome-card p { font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.7; }
 
-        .outcome-card p {
-            font-size: 14px;
-            color: var(--text-dim);
-            font-weight: 300;
-            line-height: 1.7;
-        }
-
-        /* ═══ PROPERTIES ═══ */
-        .properties {
-            padding: 120px 40px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .props-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            margin-top: 56px;
-        }
-
-        .prop-item {
-            background: var(--bg);
-            padding: 36px 32px;
-        }
-
-        .prop-item h4 {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--accent);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .prop-item p {
-            font-size: 14px;
-            color: var(--text-dim);
-            font-weight: 300;
-        }
-
-        /* ═══ LIVE PROOF ═══ */
+        /* LIVE PROOF */
         .proof {
             padding: 120px 40px;
             background: var(--bg-surface);
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
-
-        .proof-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
         .proof-examples {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 56px;
+            gap: 8px;
+            margin-top: 48px;
         }
-
         .proof-row {
             display: grid;
-            grid-template-columns: 1fr 120px 80px;
+            grid-template-columns: 1fr 120px 100px;
             gap: 16px;
-            padding: 20px 24px;
+            padding: 18px 24px;
             background: var(--bg);
             border: 1px solid var(--border);
             align-items: center;
         }
-
         .proof-input {
             font-family: 'DM Mono', monospace;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text);
         }
-
         .proof-badge {
             font-family: 'DM Mono', monospace;
             font-size: 10px;
@@ -494,40 +442,112 @@
             padding: 4px 12px;
             text-align: center;
         }
-
-        .proof-badge.allow {
-            color: var(--allow);
-            background: rgba(0,232,138,0.08);
-            border: 1px solid rgba(0,232,138,0.15);
-        }
-
-        .proof-badge.deny {
-            color: var(--deny);
-            background: rgba(255,51,86,0.08);
-            border: 1px solid rgba(255,51,86,0.15);
-        }
-
-        .proof-badge.approval {
-            color: var(--approval);
-            background: rgba(240,176,0,0.08);
-            border: 1px solid rgba(240,176,0,0.15);
-        }
-
+        .proof-badge.allow { color: var(--allow); background: rgba(0,232,138,0.08); border: 1px solid rgba(0,232,138,0.15); }
+        .proof-badge.deny { color: var(--deny); background: rgba(255,51,86,0.08); border: 1px solid rgba(255,51,86,0.15); }
+        .proof-badge.approval { color: var(--approval); background: rgba(240,176,0,0.08); border: 1px solid rgba(240,176,0,0.15); }
         .proof-score {
             font-family: 'DM Mono', monospace;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             text-align: right;
         }
+        .proof-context {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-top: 8px;
+            max-width: 700px;
+        }
 
-        /* ═══ CTA ═══ */
+        /* COMPARED */
+        .compared { padding: 120px 40px; }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 48px;
+            font-size: 13px;
+        }
+        .compare-table th {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            text-align: left;
+            padding: 16px 20px;
+            border-bottom: 2px solid var(--accent);
+            background: var(--bg-surface);
+        }
+        .compare-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .compare-table tr:hover td { background: var(--bg-surface); }
+        .compare-table td:first-child {
+            font-family: 'DM Mono', monospace;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* FOUNDER */
+        .founder {
+            padding: 120px 40px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .founder-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 64px;
+            margin-top: 48px;
+        }
+        .founder-info h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 28px;
+            color: #f0f0f4;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+        .founder-role {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .founder-bio p {
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--text-dim);
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+        .founder-creds {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .cred-item {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .cred-item span { color: var(--accent); margin-right: 8px; }
+
+        /* CTA */
         .cta {
             padding: 140px 40px;
             text-align: center;
             max-width: 700px;
             margin: 0 auto;
         }
-
         .cta h2 {
             font-family: 'Instrument Serif', serif;
             font-size: clamp(32px, 5vw, 48px);
@@ -535,38 +555,30 @@
             color: #f0f0f4;
             margin-bottom: 20px;
         }
-
         .cta p {
             font-size: 16px;
             color: var(--text-dim);
             font-weight: 300;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
             line-height: 1.8;
         }
-
         .cta-email {
             font-family: 'DM Mono', monospace;
             font-size: 16px;
             color: var(--accent);
             text-decoration: none;
-            letter-spacing: 0.05em;
             padding-bottom: 2px;
             border-bottom: 1px solid rgba(0,232,138,0.3);
             transition: all 0.3s;
         }
-
-        .cta-email:hover {
-            border-bottom-color: var(--accent);
-            text-shadow: 0 0 20px rgba(0,232,138,0.2);
-        }
-
+        .cta-email:hover { border-bottom-color: var(--accent); }
         .cta-links {
             margin-top: 40px;
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
         }
-
         .cta-links a {
             font-family: 'DM Mono', monospace;
             font-size: 11px;
@@ -578,13 +590,9 @@
             border: 1px solid var(--border);
             transition: all 0.3s;
         }
+        .cta-links a:hover { color: var(--text-dim); border-color: var(--border-hover); }
 
-        .cta-links a:hover {
-            color: var(--text-dim);
-            border-color: var(--border-hover);
-        }
-
-        /* ═══ FOOTER ═══ */
+        /* FOOTER */
         footer {
             padding: 32px 40px;
             border-top: 1px solid var(--border);
@@ -592,296 +600,8 @@
             justify-content: space-between;
             align-items: center;
         }
+        .footer-brand { font-family: 'Instrument Serif', serif; font-size: 14px; color: var(--text-muted); }
+        .footer-right { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
 
-        .footer-brand {
-            font-family: 'Instrument Serif', serif;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .footer-right {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-        }
-
-        /* ═══ ANIMATIONS ═══ */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ═══ RESPONSIVE ═══ */
-        @media (max-width: 768px) {
-            nav { padding: 16px 20px; }
-            .nav-links { display: none; }
-
-            .hero { padding: 120px 20px 80px; }
-            .problem, .how, .properties, .cta { padding: 80px 20px; }
-            .outcomes { padding: 80px 20px; }
-            .proof { padding: 80px 20px; }
-
-            .problem-grid { grid-template-columns: 1fr; }
-            .flow-visual { grid-template-columns: 1fr; }
-            .flow-step:not(:last-child)::after { display: none; }
-            .outcomes-grid { grid-template-columns: 1fr; }
-            .props-grid { grid-template-columns: 1fr; }
-
-            .proof-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .proof-score { text-align: left; }
-
-            .cta-links { flex-direction: column; align-items: center; }
-
-            footer { flex-direction: column; gap: 12px; text-align: center; }
-
-            .tagline-bar { padding: 20px; }
-            .tagline-bar p { font-size: 16px; }
-        }
-
-        /* ═══ SCROLLBAR ═══ */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-    </style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-    <a href="#" class="nav-brand">House of <span>Galatine</span></a>
-    <ul class="nav-links">
-        <li><a href="#problem">Problem</a></li>
-        <li><a href="#how">How it works</a></li>
-        <li><a href="#proof">Live proof</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-    <a href="#contact" class="nav-cta">Request Demo</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-    <p class="hero-label">AI Execution Control Layer</p>
-    <h1>AI can think whatever it wants. Nothing <em>executes</em> without approval.</h1>
-    <p class="hero-sub">MIG sits between AI agents and the actions they take. Every action validated. Every unknown blocked. Every decision logged.</p>
-    <div class="hero-actions">
-        <a href="#contact" class="btn-primary">Request a Demo</a>
-        <a href="#how" class="btn-ghost">How it works</a>
-    </div>
-</section>
-
-<!-- TAGLINE -->
-<div class="tagline-bar">
-    <p>Agents do not decide their own permissions. <span>MIG decides.</span></p>
-</div>
-
-<!-- PROBLEM -->
-<section class="problem" id="problem">
-    <p class="section-label">The problem</p>
-    <h2 class="section-title">AI agents are taking real actions.<br>Nobody is checking.</h2>
-    <p class="section-desc">They send emails, access files, execute payments, and query databases — all decided by the same model that hallucinates facts.</p>
-
-    <div class="problem-grid reveal">
-        <div class="problem-item">
-            <h3>No external check</h3>
-            <p>The agent decides its own permissions. Policy compliance is a prompt instruction, not a structural enforcement.</p>
-        </div>
-        <div class="problem-item">
-            <h3>No audit trail</h3>
-            <p>Actions happen. Nobody knows why they were allowed. There's no record of what was checked or what was missed.</p>
-        </div>
-        <div class="problem-item">
-            <h3>Fails open</h3>
-            <p>When the system is uncertain, it proceeds anyway. Unknown becomes implicit permission. Guessing becomes policy.</p>
-        </div>
-    </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-    <p class="section-label">How it works</p>
-    <h2 class="section-title">One API call between intent and action.</h2>
-    <p class="section-desc">Before any agent action executes, MIG validates it against verified knowledge. The agent never decides its own permissions.</p>
-
-    <div class="flow-visual reveal">
-        <div class="flow-step">
-            <div class="flow-num">01</div>
-            <h4>Agent Request</h4>
-            <p>Raw action intent</p>
-        </div>
-        <div class="flow-step">
-            <div class="flow-num">02</div>
-            <h4>Entity Extraction</h4>
-            <p>Verifiable data points</p>
-        </div>
-        <div class="flow-step highlight">
-            <div class="flow-num">03</div>
-            <h4>Graph Lookup</h4>
-            <p>Verified knowledge check</p>
-        </div>
-        <div class="flow-step highlight">
-            <div class="flow-num">04</div>
-            <h4>Confidence Score</h4>
-            <p>Math, not estimation</p>
-        </div>
-        <div class="flow-step">
-            <div class="flow-num">05</div>
-            <h4>Decision</h4>
-            <p>Allow · Deny · Approve</p>
-        </div>
-    </div>
-</section>
-
-<!-- THREE OUTCOMES -->
-<section class="outcomes">
-    <div class="outcomes-inner">
-        <p class="section-label">Three outcomes</p>
-        <h2 class="section-title">Deterministic. Auditable. Non-bypassable.</h2>
-
-        <div class="outcomes-grid reveal">
-            <div class="outcome-card allow">
-                <div class="outcome-icon">✓</div>
-                <h3>ALLOW</h3>
-                <p>Entity verified. Confidence above threshold. Action proceeds immediately. Decision logged with full evidence trail.</p>
-            </div>
-            <div class="outcome-card approval">
-                <div class="outcome-icon">⏳</div>
-                <h3>APPROVAL</h3>
-                <p>Medium confidence or sensitive action. Execution paused. Escalated to a human operator via Slack. Blocked until approved.</p>
-            </div>
-            <div class="outcome-card deny">
-                <div class="outcome-icon">✕</div>
-                <h3>DENY</h3>
-                <p>Unknown entity or low confidence. Action hard-blocked. "I don't know" is always safer than guessing. Logged and reported.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- PROPERTIES -->
-<section class="properties">
-    <p class="section-label">Key properties</p>
-    <h2 class="section-title">Why MIG is different.</h2>
-
-    <div class="props-grid reveal">
-        <div class="prop-item">
-            <h4>Pre-execution</h4>
-            <p>Actions are validated before they happen. Not monitored after the damage is done.</p>
-        </div>
-        <div class="prop-item">
-            <h4>External to the agent</h4>
-            <p>MIG is a separate system. The agent cannot self-authorise around it.</p>
-        </div>
-        <div class="prop-item">
-            <h4>Entity-based verification</h4>
-            <p>Checks whether it knows an entity, not whether the request "seems" safe. Data, not vibes.</p>
-        </div>
-        <div class="prop-item">
-            <h4>Fails closed</h4>
-            <p>Unknown entities are blocked. Unreachable system means deny. The default is never "allow."</p>
-        </div>
-        <div class="prop-item">
-            <h4>Real-time teachable</h4>
-            <p>Add new knowledge and policies instantly. No retraining. No redeployment. Just teach.</p>
-        </div>
-        <div class="prop-item">
-            <h4>Full audit trail</h4>
-            <p>Every decision stored with timestamp, entities checked, confidence score, and reasoning.</p>
-        </div>
-        <div class="prop-item">
-            <h4>Framework agnostic</h4>
-            <p>Works with any agent — LangChain, CrewAI, Relevance AI, or custom. One API call.</p>
-        </div>
-        <div class="prop-item">
-            <h4>Patent pending</h4>
-            <p>Core architecture protected under USPTO Provisional Patent #63/821,489.</p>
-        </div>
-    </div>
-</section>
-
-<!-- LIVE PROOF -->
-<section class="proof" id="proof">
-    <div class="proof-inner">
-        <p class="section-label">Live proof</p>
-        <h2 class="section-title">Real decisions from a production system.</h2>
-        <p class="section-desc">These are actual MIG responses. Not simulated. Not mocked. Running on our infrastructure right now.</p>
-
-        <div class="proof-examples reveal">
-            <div class="proof-row">
-                <span class="proof-input">"send report to john@company.com"</span>
-                <span class="proof-badge allow">✓ ALLOW</span>
-                <span class="proof-score">90%</span>
-            </div>
-            <div class="proof-row">
-                <span class="proof-input">"send confidential data to random@gmail.com"</span>
-                <span class="proof-badge deny">✕ DENY</span>
-                <span class="proof-score">entity not found</span>
-            </div>
-            <div class="proof-row">
-                <span class="proof-input">"send pricing docs to client@gmail.com"</span>
-                <span class="proof-badge deny">✕ DENY</span>
-                <span class="proof-score">entity not found</span>
-            </div>
-            <div class="proof-row">
-                <span class="proof-input">"send email to random@gmail.com"</span>
-                <span class="proof-badge deny">✕ DENY</span>
-                <span class="proof-score">33%</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA -->
-<section class="cta" id="contact">
-    <p class="section-label">Get started</p>
-    <h2>See MIG in action.</h2>
-    <p>We're working with pilot customers in legal, compliance, and enterprise verticals. If your AI agents take real-world actions, we should talk.</p>
-    <a href="mailto:neel@houseofgalatine.com" class="cta-email">neel@houseofgalatine.com</a>
-    <div class="cta-links">
-        <a href="https://www.linkedin.com/in/indrooneel-panday-3570101ba/" target="_blank">LinkedIn</a>
-        <a href="https://mig.houseofgalatine.com/dashboard" target="_blank">Live Dashboard</a>
-    </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-    <div class="footer-brand">House of Galatine</div>
-    <div class="footer-right">Patent Pending · USPTO #63/821,489</div>
-</footer>
-
-<!-- SCROLL REVEAL -->
-<script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) e.target.classList.add('visible');
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-        a.addEventListener('click', e => {
-            e.preventDefault();
-            const t = document.querySelector(a.getAttribute('href'));
-            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-</script>
-
-</body>
-</html>
+        /* ANIMATIONS */
+        @keyframes fade
