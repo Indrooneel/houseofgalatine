@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIG Playground — Try It Live | House of Galatine</title>
+    <meta name="description" content="Type any command and watch MIG's validation pipeline process it in real time. No signup. No install. Try the OT execution boundary live.">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06080c;
+            --surface: #0c1017;
+            --surface2: #121820;
+            --border: #1a2232;
+            --text: #b8c4d4;
+            --dim: #4a5568;
+            --muted: #2d3748;
+            --bright: #e8edf4;
+            --allow: #00d4aa;
+            --allow-bg: rgba(0,212,170,0.06);
+            --deny: #ff3b4f;
+            --deny-bg: rgba(255,59,79,0.06);
+            --approval: #ffb020;
+            --approval-bg: rgba(255,176,32,0.06);
+            --accent: #00d4aa;
+            --blue: #60a5fa;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif; line-height:1.6; min-height:100vh; }
+        
+        .mono { font-family:'JetBrains Mono',monospace; }
+        .serif { font-family:'Instrument Serif',serif; }
+        
+        /* NAV */
+        nav {
+            padding:16px 32px; display:flex; justify-content:space-between; align-items:center;
+            border-bottom:1px solid var(--border); background:var(--surface);
+        }
+        .nav-brand { font-family:'Instrument Serif',serif; font-size:16px; color:var(--text); text-decoration:none; }
+        .nav-brand span { color:var(--accent); }
+        .nav-right { display:flex; gap:16px; align-items:center; }
+        .nav-link {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
+            text-decoration:none; letter-spacing:0.1em; text-transform:uppercase;
+        }
+        .nav-link:hover { color:var(--accent); }
+        .nav-badge {
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 10px;
+            background:var(--allow-bg); border:1px solid rgba(0,212,170,0.2);
+            color:var(--accent); letter-spacing:0.1em;
+        }
+
+        /* HERO */
+        .hero { padding:60px 32px 40px; max-width:900px; margin:0 auto; text-align:center; }
+        .hero-label {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent);
+            letter-spacing:0.2em; text-transform:uppercase; margin-bottom:16px;
+        }
+        .hero h1 {
+            font-family:'Instrument Serif',serif; font-size:36px; font-weight:400;
+            color:var(--bright); margin-bottom:12px;
+        }
+        .hero h1 em { font-style:italic; color:var(--accent); }
+        .hero p { font-size:15px; color:var(--dim); max-width:600px; margin:0 auto 8px; font-weight:300; }
+        .hero-note {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
+            margin-top:16px;
+        }
+
+        /* MAIN */
+        .main { max-width:1100px; margin:0 auto; padding:0 24px 60px; }
+
+        /* INPUT SECTION */
+        .input-section {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            overflow:hidden; margin-bottom:20px;
+        }
+        .input-header {
+            padding:12px 20px; background:var(--surface2); border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .input-label {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
+            letter-spacing:0.1em; text-transform:uppercase; font-weight:600;
+        }
+        .sample-btns { display:flex; gap:6px; flex-wrap:wrap; }
+        .sample-btn {
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:4px 10px;
+            background:transparent; border:1px solid var(--border); color:var(--dim);
+            cursor:pointer; letter-spacing:0.05em; transition:all 0.2s;
+        }
+        .sample-btn:hover { border-color:var(--accent); color:var(--accent); }
+        .sample-btn.deny-sample:hover { border-color:var(--deny); color:var(--deny); }
+        .sample-btn.approval-sample:hover { border-color:var(--approval); color:var(--approval); }
+        
+        .input-row { display:flex; gap:0; }
+        .input-field {
+            flex:1; padding:16px 20px; background:var(--bg); border:none;
+            color:var(--bright); font-family:'JetBrains Mono',monospace; font-size:14px;
+            outline:none;
+        }
+        .input-field::placeholder { color:var(--muted); }
+        .validate-btn {
+            padding:16px 28px; background:var(--accent); color:var(--bg); border:none;
+            font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+            letter-spacing:0.1em; cursor:pointer; transition:all 0.2s;
+        }
+        .validate-btn:hover { box-shadow:0 0 20px rgba(0,212,170,0.2); }
+        .validate-btn:disabled { background:var(--surface2); color:var(--muted); cursor:not-allowed; }
+
+        /* GRID */
+        .result-grid { display:grid; grid-template-columns:1fr 380px; gap:16px; }
+        @media(max-width:800px) { .result-grid { grid-template-columns:1fr; } }
+
+        /* PIPELINE */
+        .pipeline-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            overflow:hidden;
+        }
+        .card-header {
+            padding:12px 20px; background:var(--surface2); border-bottom:1px solid var(--border);
+        }
+        .card-label {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
+            letter-spacing:0.1em; text-transform:uppercase; font-weight:600;
+        }
+        .card-label.accent { color:var(--accent); }
+        .card-label.blue { color:var(--blue); }
+
+        .pipeline-steps { padding:8px 0; }
+        .step {
+            display:flex; align-items:flex-start; gap:14px; padding:10px 20px;
+            border-bottom:1px solid var(--border); transition:background 0.3s;
+            opacity:0.3;
+        }
+        .step.active { opacity:1; }
+        .step.processing { opacity:1; background:rgba(96,165,250,0.04); }
+        .step:last-child { border-bottom:none; }
+        
+        .step-indicator {
+            width:28px; height:28px; border-radius:50%; display:flex; align-items:center;
+            justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px;
+            border:1px solid var(--border); background:var(--surface2);
+            transition:all 0.3s;
+        }
+        .step-indicator.pass { background:var(--allow-bg); border-color:rgba(0,212,170,0.3); }
+        .step-indicator.fail { background:var(--deny-bg); border-color:rgba(255,59,79,0.3); }
+        .step-indicator.flag { background:var(--approval-bg); border-color:rgba(255,176,32,0.3); }
+        
+        .step-content { flex:1; }
+        .step-name {
+            font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600;
+            color:var(--bright); margin-bottom:2px;
+        }
+        .step-detail { font-size:11px; color:var(--dim); line-height:1.5; }
+        .step-detail.deny-text { color:var(--deny); }
+        .step-detail.flag-text { color:var(--approval); }
+
+        /* DECISION PANEL */
+        .decision-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            overflow:hidden;
+        }
+        .decision-body { padding:20px; }
+        
+        .decision-badge {
+            display:inline-block; padding:6px 18px; font-family:'JetBrains Mono',monospace;
+            font-size:13px; font-weight:700; letter-spacing:0.15em; border-radius:4px;
+            margin-bottom:20px;
+        }
+        .decision-badge.allow { color:var(--allow); background:var(--allow-bg); border:1px solid rgba(0,212,170,0.2); }
+        .decision-badge.deny { color:var(--deny); background:var(--deny-bg); border:1px solid rgba(255,59,79,0.2); }
+        .decision-badge.approval { color:var(--approval); background:var(--approval-bg); border:1px solid rgba(255,176,32,0.2); }
+
+        .decision-field { margin-bottom:16px; }
+        .decision-field-label {
+            font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted);
+            letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; font-weight:600;
+        }
+        .decision-field-value { font-size:13px; color:var(--text); }
+        .decision-field-value.bright { color:var(--bright); font-family:'JetBrains Mono',monospace; font-size:12px; }
+
+        .risk-bar-container { display:flex; align-items:center; gap:10px; }
+        .risk-bar {
+            flex:1; height:8px; border-radius:4px; overflow:hidden;
+        }
+        .risk-bar-fill { height:100%; border-radius:4px; transition:width 0.8s ease; }
+        .risk-score {
+            font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; min-width:32px;
+        }
+
+        .flags-container { display:flex; flex-wrap:wrap; gap:6px; }
+        .flag-badge {
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px;
+            border-radius:3px; font-weight:600;
+        }
+
+        .decision-summary {
+            margin-top:20px; padding:14px; border-radius:6px;
+        }
+        .decision-summary h4 {
+            font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; margin-bottom:6px;
+        }
+        .decision-summary p { font-size:11px; color:var(--dim); line-height:1.6; }
+
+        .audit-section {
+            margin-top:16px; padding:14px; background:var(--surface2); border-radius:6px;
+        }
+        .audit-row {
+            display:flex; justify-content:space-between; padding:4px 0;
+            font-family:'JetBrains Mono',monospace; font-size:10px;
+        }
+        .audit-key { color:var(--muted); }
+        .audit-val { color:var(--text); }
+
+        /* EMPTY STATE */
+        .empty-state {
+            padding:60px 24px; text-align:center; color:var(--muted); font-size:13px;
+        }
+        .empty-icon { font-size:32px; margin-bottom:12px; opacity:0.5; }
+
+        /* FOOTER */
+        footer {
+            max-width:1100px; margin:0 auto; padding:20px 24px;
+            border-top:1px solid var(--border); display:flex;
+            justify-content:space-between; align-items:center;
+        }
+        footer span {
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
+        }
+
+        @media(max-width:600px) {
+            .hero h1 { font-size:26px; }
+            .hero { padding:40px 20px 30px; }
+            .main { padding:0 12px 40px; }
+            nav { padding:12px 16px; }
+            .sample-btns { display:none; }
+            .input-field { font-size:12px; padding:12px 14px; }
+            footer { flex-direction:column; gap:8px; }
+        }
+
+        /* ANIMATIONS */
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+        .processing .step-indicator { animation:pulse 1s infinite; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="https://houseofgalatine.com" class="nav-brand">House of <span>Galatine</span></a>
+    <div class="nav-right">
+        <span class="nav-badge">PLAYGROUND</span>
+        <a href="https://houseofgalatine.com" class="nav-link">← Back to site</a>
+    </div>
+</nav>
+
+<div class="hero">
+    <p class="hero-label">MIG Playground — Live Demo</p>
+    <h1>Type a command. Watch it get <em>validated.</em></h1>
+    <p>See MIG's 10-step validation pipeline process any OT command in real time. Every step visible. Every decision deterministic.</p>
+    <p class="hero-note">Client-side demo · Production uses Neo4j graph policies + direct OT protocol integration</p>
+</div>
+
+<div class="main">
+    <!-- INPUT -->
+    <div class="input-section">
+        <div class="input-header">
+            <span class="input-label">Enter OT Command</span>
+            <div class="sample-btns">
+                <button class="sample-btn" onclick="loadSample('read')">Read Sensor</button>
+                <button class="sample-btn approval-sample" onclick="loadSample('minor')">Minor Change</button>
+                <button class="sample-btn deny-sample" onclick="loadSample('oldsmar')">Oldsmar Attack</button>
+                <button class="sample-btn deny-sample" onclick="loadSample('firmware')">Firmware Upload</button>
+                <button class="sample-btn deny-sample" onclick="loadSample('safety')">Safety Write</button>
+                <button class="sample-btn deny-sample" onclick="loadSample('export')">Config Export</button>
+            </div>
+        </div>
+        <div class="input-row">
+            <input type="text" id="commandInput" class="input-field" placeholder="e.g. set pump speed to 5000 RPM..." onkeydown="if(event.key==='Enter')validate()">
+            <button class="validate-btn" id="validateBtn" onclick="validate()">VALIDATE</button>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="result-grid">
+        <!-- PIPELINE -->
+        <div class="pipeline-card">
+            <div class="card-header">
+                <span class="card-label accent">VALIDATION PIPELINE</span>
+            </div>
+            <div class="pipeline-steps" id="pipelineSteps">
+                <div class="empty-state">
+                    <div class="empty-icon">◇</div>
+                    Enter a command to see the pipeline in action
+                </div>
+            </div>
+        </div>
+
+        <!-- DECISION -->
+        <div class="decision-card">
+            <div class="card-header">
+                <span class="card-label">DECISION</span>
+            </div>
+            <div id="decisionBody">
+                <div class="empty-state">
+                    <div class="empty-icon">◆</div>
+                    Waiting for validation
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <span>MIG — Memory Intelligence Graph · House of Galatine · USPTO #63/821,489</span>
+    <span>"Nothing executes without MIG approval."</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// MIG PLAYGROUND ENGINE — Client-side validation
+// ═══════════════════════════════════════════════════════════
+
+const POLICIES = [
+    { id:"POL-OT-ALLOW-001", action_type:"read_sensor", direction:"ALLOW", rule:"Reading sensor values from control zone PLCs is permitted as a non-destructive read-only operation", enforcement:"standard", notify:[] },
+    { id:"POL-OT-ALLOW-002", action_type:"read_alarm", direction:"ALLOW", rule:"Reading alarm history and event logs from the historian is permitted", enforcement:"standard", notify:[] },
+    { id:"POL-OT-ALLOW-003", action_type:"read_status", direction:"ALLOW", rule:"Reading process status and operational mode from SCADA is permitted", enforcement:"standard", notify:[] },
+    { id:"POL-OT-APPR-001", action_type:"write_setpoint_minor", direction:"APPROVAL", rule:"Setpoint changes within 5% of current value require single operator confirmation before execution", enforcement:"elevated", notify:["shift_operator"] },
+    { id:"POL-OT-APPR-002", action_type:"modify_logic", direction:"APPROVAL", rule:"Modifying PLC control logic requires engineer authorization and supervisor sign-off", enforcement:"critical", notify:["control_engineer","plant_supervisor"] },
+    { id:"POL-OT-APPR-003", action_type:"export_config_internal", direction:"APPROVAL", rule:"Exporting control system configuration within OT network requires supervisor authorization", enforcement:"elevated", notify:["plant_supervisor"] },
+    { id:"POL-OT-DENY-001", action_type:"write_safety", direction:"DENY", rule:"Writing to safety instrumented system registers is never allowed — SIS integrity is the last line of defense against catastrophic failure", enforcement:"critical", notify:["safety_officer","plant_supervisor","control_engineer","ciso"] },
+    { id:"POL-OT-DENY-002", action_type:"write_setpoint_major", direction:"DENY", rule:"Setpoint changes exceeding 5% of current operating value are blocked as they risk process instability", enforcement:"critical", notify:["control_engineer","shift_operator","safety_officer"] },
+    { id:"POL-OT-DENY-003", action_type:"firmware_production", direction:"DENY", rule:"Firmware updates during production mode are never allowed as they risk controller failure", enforcement:"critical", notify:["control_engineer","plant_supervisor","safety_officer"] },
+    { id:"POL-OT-DENY-004", action_type:"export_external", direction:"DENY", rule:"Exporting control system configuration outside the OT network boundary is never allowed", enforcement:"critical", notify:["ciso","plant_supervisor"] },
+    { id:"POL-OT-DENY-005", action_type:"vendor_remote_write", direction:"DENY", rule:"Remote vendor write access to control systems is never allowed without local operator co-authorization", enforcement:"critical", notify:["shift_operator","plant_supervisor","ciso"] },
+];
+
+const PII_PATTERNS = [/[\w.+-]+@[\w-]+\.[\w.]+/, /\b\d{3}-\d{2}-\d{4}\b/, /\b\d{4}\s?\d{4}\s?\d{4}\b/];
+const PII_KEYWORDS = ["personal data","salary","compensation","medical","ssn","passport","social security","bank account","credit card"];
+
+const DATA_TYPES = [
+    { name:"sensor_read", sensitivity:"low", keywords:["read","sensor","temperature","pressure","flow","monitor","status","current value"] },
+    { name:"register_write", sensitivity:"high", keywords:["write","register","set","output","coil","modify"] },
+    { name:"setpoint_change", sensitivity:"high", keywords:["setpoint","target","limit","threshold","set to","change to","adjust","increase","decrease","speed","rpm"] },
+    { name:"firmware_upload", sensitivity:"critical", keywords:["firmware","upload","program","flash","update","deploy","install"] },
+    { name:"config_data", sensitivity:"critical", keywords:["config","configuration","topology","network","parameters","settings","architecture","export"] },
+    { name:"safety_command", sensitivity:"critical", keywords:["safety","sis","emergency","shutdown","interlock","trip","esd","safety plc","safety register"] },
+    { name:"alarm_action", sensitivity:"medium", keywords:["alarm","acknowledge","clear","silence","suppress"] },
+    { name:"control_logic", sensitivity:"critical", keywords:["logic","ladder","function block","structured text","plc program"] },
+    { name:"modbus_command", sensitivity:"high", keywords:["modbus","function code","fc06","fc16","coil","holding register"] },
+];
+
+const DEST_KEYWORDS = {
+    external: ["external","outside","internet","cloud","export","send out","remote","offsite"],
+    safety: ["safety","sis","emergency","shutdown","interlock","trip"],
+    control: ["plc","controller","control zone","actuator","register"],
+    supervisory: ["scada","hmi","supervisory","operator station"],
+};
+
+const SAMPLES = {
+    read: "Read current pump 1 speed from PLC control zone",
+    minor: "Set pump 1 speed to 52 RPM for flow optimization",
+    oldsmar: "Set pump 1 speed to 5000 RPM for emergency pressure boost",
+    firmware: "Upload new firmware program to PLC controller during production",
+    safety: "Write emergency shutdown setpoint to safety PLC register",
+    export: "Export PLC configuration and network topology to external server",
+};
+
+function loadSample(key) {
+    document.getElementById('commandInput').value = SAMPLES[key];
+}
+
+function detectPII(text) {
+    const lower = text.toLowerCase();
+    const found = [];
+    PII_PATTERNS.forEach((p,i) => { if(p.test(lower)) found.push(["email","ssn","aadhaar"][i]); });
+    PII_KEYWORDS.forEach(k => { if(lower.includes(k)) found.push("keyword:"+k); });
+    const isExternal = DEST_KEYWORDS.external.some(k => lower.includes(k));
+    return { hasPII:found.le
