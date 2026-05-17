@@ -376,4 +376,331 @@ function detectPII(text) {
     PII_PATTERNS.forEach((p,i) => { if(p.test(lower)) found.push(["email","ssn","aadhaar"][i]); });
     PII_KEYWORDS.forEach(k => { if(lower.includes(k)) found.push("keyword:"+k); });
     const isExternal = DEST_KEYWORDS.external.some(k => lower.includes(k));
-    return { hasPII:found.le
+    return { hasPII:found.length>0, types:[...new Set(found)], isExternal, risk:found.length>0?(isExternal?"high":"medium"):"low" };
+}
+
+function inferAction(text) {
+    const lower = text.toLowerCase();
+    if(lower.match(/read|monitor|check|status|current|sensor|measure/)) return { type:"read_sensor", label:"Read Operation" };
+    if(lower.match(/safety|sis|emergency|shutdown|interlock|trip/)) return { type:"write_safety", label:"Safety System Write" };
+    if(lower.match(/firmware|upload|flash|deploy|install/) && lower.match(/program|update|controller/)) return { type:"firmware_production", label:"Firmware Upload" };
+    if(lower.match(/export|send/) && lower.match(/external|outside|internet|remote|offsite/)) return { type:"export_external", label:"External Export" };
+    if(lower.match(/export|config/)) return { type:"export_config_internal", label:"Config Export" };
+    if(lower.match(/logic|ladder|function block/)) return { type:"modify_logic", label:"Logic Modification" };
+    if(lower.match(/vendor|remote/) && lower.match(/write|set|modify|command/)) return { type:"vendor_remote_write", label:"Remote Vendor Write" };
+    
+    // Setpoint analysis
+    const numMatch = lower.match(/(\d+)\s*(rpm|kpa|degrees|percent|%|psi)/i);
+    if(numMatch && lower.match(/set|change|adjust|write|modify|increase|decrease/)) {
+        const val = parseInt(numMatch[1]);
+        const currentVal = 50; // simulated current
+        const deviation = Math.abs(val - currentVal) / currentVal * 100;
+        if(deviation > 5) return { type:"write_setpoint_major", label:`Major Setpoint Change (${deviation.toFixed(0)}% deviation)`, deviation };
+        return { type:"write_setpoint_minor", label:`Minor Setpoint Change (${deviation.toFixed(0)}% deviation)`, deviation };
+    }
+    if(lower.match(/set|write|change|modify|adjust/) && lower.match(/speed|pressure|temperature|flow|level|rate/)) {
+        return { type:"write_setpoint_minor", label:"Setpoint Change" };
+    }
+    return { type:"unknown", label:"Unknown Action" };
+}
+
+function analyzePayload(text) {
+    const lower = text.toLowerCase();
+    const detected = [];
+    DATA_TYPES.forEach(dt => {
+        dt.keywords.forEach(kw => {
+            if(lower.includes(kw) && !detected.find(d=>d.name===dt.name)) {
+                detected.push({ name:dt.name, sensitivity:dt.sensitivity, keyword:kw });
+            }
+        });
+    });
+    
+    let dest = "internal";
+    let destRisk = "low";
+    if(DEST_KEYWORDS.external.some(k=>lower.includes(k))) { dest="external"; destRisk="critical"; }
+    else if(DEST_KEYWORDS.safety.some(k=>lower.includes(k))) { dest="safety_zone"; destRisk="critical"; }
+    else if(DEST_KEYWORDS.control.some(k=>lower.includes(k))) { dest="control_zone"; destRisk="high"; }
+    else if(DEST_KEYWORDS.supervisory.some(k=>lower.includes(k))) { dest="supervisory_zone"; destRisk="medium"; }
+    
+    let riskScore = 10;
+    detected.forEach(d => {
+        if(d.sensitivity==="critical") riskScore += 30;
+        else if(d.sensitivity==="high") riskScore += 15;
+        else if(d.sensitivity==="medium") riskScore += 5;
+    });
+    if(destRisk==="critical") riskScore += 30;
+    else if(destRisk==="high") riskScore += 15;
+    riskScore = Math.min(riskScore, 100);
+    
+    return { dataTypes:detected, destination:dest, destRisk, riskScore };
+}
+
+function matchPolicy(actionType) {
+    return POLICIES.find(p => p.action_type === actionType) || null;
+}
+
+function checkStage(actionType) {
+    const blocked = ["write_safety","firmware_production"];
+    if(blocked.includes(actionType)) return { valid:true, reason:"Action blocked by policy regardless of mode" };
+    return { valid:true, reason:"Valid for current operational mode (running)" };
+}
+
+async function validate() {
+    const input = document.getElementById('commandInput').value.trim();
+    if(!input) return;
+    
+    document.getElementById('validateBtn').disabled = true;
+    document.getElementById('validateBtn').textContent = "PROCESSING...";
+    
+    const steps = [];
+    const flags = [];
+    let decision = "ALLOW";
+    let matchedPolicy = null;
+    let riskScore = 0;
+    
+    // STEP 1: PII Detection
+    const pii = detectPII(input);
+    steps.push({
+        name:"PII / Sensitivity Detection",
+        status: pii.hasPII ? (pii.isExternal ? "fail" : "flag") : "pass",
+        detail: pii.hasPII ? `Detected: ${pii.types.join(", ")}${pii.isExternal?" + external sharing intent":""}` : "No sensitive data patterns detected"
+    });
+    if(pii.hasPII && pii.isExternal) flags.push("PII_EXTERNAL_RISK");
+    else if(pii.hasPII) flags.push("PII_PRESENT");
+    
+    // STEP 2: Action Inference
+    const action = inferAction(input);
+    steps.push({
+        name:"Action Type Inference",
+        status:"pass",
+        detail:`Inferred: ${action.label} (${action.type})${action.deviation?` — ${action.deviation.toFixed(0)}% deviation from safe value`:""}`
+    });
+    
+    // STEP 3: Payload Analysis
+    const payload = analyzePayload(input);
+    riskScore = payload.riskScore;
+    const dtNames = payload.dataTypes.map(d=>`${d.name} (${d.sensitivity})`).join(", ") || "none detected";
+    steps.push({
+        name:"Payload Inspection",
+        status: riskScore >= 70 ? "fail" : riskScore >= 40 ? "flag" : "pass",
+        detail:`Data: ${dtNames} → Destination: ${payload.destination} | Risk: ${riskScore}/100`
+    });
+    if(riskScore >= 70) flags.push("PAYLOAD_HIGH_RISK");
+    else if(riskScore >= 40) flags.push("PAYLOAD_MEDIUM_RISK");
+    
+    // STEP 4: Policy Graph Traversal
+    matchedPolicy = matchPolicy(action.type);
+    if(matchedPolicy) {
+        decision = matchedPolicy.direction;
+        steps.push({
+            name:"Policy Graph Traversal",
+            status: decision==="ALLOW"?"pass":decision==="DENY"?"fail":"flag",
+            detail:`Matched: ${matchedPolicy.id} → ${decision} | "${matchedPolicy.rule.substring(0,80)}..."`
+        });
+    } else {
+        decision = "DENY";
+        steps.push({
+            name:"Policy Graph Traversal",
+            status:"fail",
+            detail:"No matching policy found — fail-closed → DENY"
+        });
+        flags.push("NO_POLICY_MATCH");
+    }
+    
+    // STEP 5: Stage Awareness
+    const stage = checkStage(action.type);
+    steps.push({
+        name:"Operational Mode Check",
+        status:"pass",
+        detail:`Mode: running | ${stage.reason}`
+    });
+    
+    // STEP 6: Drift Detection
+    steps.push({
+        name:"Behavioral Drift Detection",
+        status: action.type.includes("major") || action.type.includes("safety") ? "flag" : "pass",
+        detail: action.type.includes("major") ? "Anomalous setpoint deviation detected" :
+                action.type.includes("safety") ? "Safety system access attempt flagged" :
+                "No anomalous command patterns detected"
+    });
+    if(action.type.includes("major")) flags.push("DRIFT_ANOMALY");
+    
+    // STEP 7: PII Override
+    if(pii.hasPII && pii.isExternal && decision==="ALLOW") {
+        decision = "DENY";
+        flags.push("PII_OVERRIDE");
+        steps.push({ name:"PII Override", status:"fail", detail:"PII + external sharing → DENY override applied" });
+    } else {
+        steps.push({ name:"PII Override", status:"pass", detail:"No PII override needed" });
+    }
+    
+    // STEP 8: Payload Override
+    if(riskScore >= 70 && decision==="ALLOW") {
+        decision = "APPROVAL";
+        flags.push("PAYLOAD_ESCALATION");
+        steps.push({ name:"Payload Override", status:"flag", detail:`High risk score (${riskScore}) → escalated to APPROVAL` });
+    } else if(riskScore >= 90 && decision==="APPROVAL") {
+        decision = "DENY";
+        flags.push("PAYLOAD_OVERRIDE_DENY");
+        steps.push({ name:"Payload Override", status:"fail", detail:`Critical risk score (${riskScore}) → overridden to DENY` });
+    } else {
+        steps.push({ name:"Payload Override", status:"pass", detail:"No payload override needed" });
+    }
+    
+    // STEP 9: Final Decision
+    steps.push({
+        name:"Final Decision",
+        status: decision==="ALLOW"?"pass":decision==="DENY"?"fail":"flag",
+        detail: decision==="ALLOW" ? "Command approved for execution. Safe to proceed." :
+                decision==="DENY" ? "Command BLOCKED. Will not reach the controller. OT network isolated." :
+                "Command held for operator approval. Execution paused until authorized."
+    });
+    
+    // STEP 10: Audit
+    steps.push({
+        name:"Audit Trail",
+        status:"pass",
+        detail:`Decision logged: dec_${Date.now()} | Full pipeline trace recorded`
+    });
+    
+    // ANIMATE
+    await animatePipeline(steps, decision, matchedPolicy, riskScore, flags, input);
+    
+    document.getElementById('validateBtn').disabled = false;
+    document.getElementById('validateBtn').textContent = "VALIDATE";
+}
+
+async function animatePipeline(steps, decision, policy, riskScore, flags, command) {
+    const container = document.getElementById('pipelineSteps');
+    container.innerHTML = '';
+    
+    // Create all steps faded
+    steps.forEach((s,i) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'step';
+        stepEl.id = `step-${i}`;
+        stepEl.innerHTML = `
+            <div class="step-indicator" id="ind-${i}">
+                <span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px">${i+1}</span>
+            </div>
+            <div class="step-content">
+                <div class="step-name">${s.name}</div>
+                <div class="step-detail" id="detail-${i}">Waiting...</div>
+            </div>
+        `;
+        container.appendChild(stepEl);
+    });
+    
+    // Animate each step
+    for(let i = 0; i < steps.length; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        const indEl = document.getElementById(`ind-${i}`);
+        const detailEl = document.getElementById(`detail-${i}`);
+        
+        stepEl.className = 'step processing';
+        detailEl.textContent = 'Processing...';
+        
+        await sleep(300);
+        
+        stepEl.className = 'step active';
+        indEl.className = `step-indicator ${steps[i].status}`;
+        
+        const icon = steps[i].status==='pass' ? '✓' : steps[i].status==='fail' ? '✕' : '⚠';
+        const iconColor = steps[i].status==='pass' ? 'var(--allow)' : steps[i].status==='fail' ? 'var(--deny)' : 'var(--approval)';
+        indEl.innerHTML = `<span style="color:${iconColor};font-size:13px">${icon}</span>`;
+        
+        detailEl.textContent = steps[i].detail;
+        detailEl.className = `step-detail${steps[i].status==='fail'?' deny-text':steps[i].status==='flag'?' flag-text':''}`;
+        
+        await sleep(200);
+    }
+    
+    // Show decision
+    renderDecision(decision, policy, riskScore, flags, command);
+}
+
+function renderDecision(decision, policy, riskScore, flags, command) {
+    const body = document.getElementById('decisionBody');
+    const riskColor = riskScore >= 70 ? 'var(--deny)' : riskScore >= 40 ? 'var(--approval)' : 'var(--allow)';
+    const decClass = decision.toLowerCase();
+    
+    let summaryBg, summaryColor, summaryTitle, summaryText;
+    if(decision==="ALLOW") {
+        summaryBg = 'var(--allow-bg)'; summaryColor = 'var(--allow)';
+        summaryTitle = 'Command approved for execution.';
+        summaryText = 'All checks passed. Command would proceed to the target control system.';
+    } else if(decision==="DENY") {
+        summaryBg = 'var(--deny-bg)'; summaryColor = 'var(--deny)';
+        summaryTitle = 'Command BLOCKED. OT network isolated.';
+        summaryText = 'Command terminated at execution boundary. The controller never received this command. Physical process unaffected.';
+    } else {
+        summaryBg = 'var(--approval-bg)'; summaryColor = 'var(--approval)';
+        summaryTitle = 'Command held for operator approval.';
+        summaryText = 'Execution paused. An operator must review and confirm before this command reaches the controller.';
+    }
+    
+    body.innerHTML = `
+        <div class="decision-body">
+            <div class="decision-badge ${decClass}">${decision}</div>
+            
+            <div class="decision-field">
+                <div class="decision-field-label">Command</div>
+                <div class="decision-field-value bright">${command}</div>
+            </div>
+            
+            ${policy ? `<div class="decision-field">
+                <div class="decision-field-label">Matched Policy</div>
+                <div class="decision-field-value bright">${policy.id}</div>
+                <div class="decision-field-value" style="margin-top:4px;font-size:12px">${policy.rule}</div>
+            </div>` : `<div class="decision-field">
+                <div class="decision-field-label">Policy</div>
+                <div class="decision-field-value" style="color:var(--deny)">No matching policy — fail-closed</div>
+            </div>`}
+            
+            <div class="decision-field">
+                <div class="decision-field-label">Risk Score</div>
+                <div class="risk-bar-container">
+                    <div class="risk-bar" style="background:${riskColor}15">
+                        <div class="risk-bar-fill" style="width:${riskScore}%;background:${riskColor}"></div>
+                    </div>
+                    <span class="risk-score" style="color:${riskColor}">${riskScore}</span>
+                </div>
+            </div>
+            
+            ${flags.length > 0 ? `<div class="decision-field">
+                <div class="decision-field-label">Flags</div>
+                <div class="flags-container">
+                    ${flags.map(f => `<span class="flag-badge" style="color:${f.includes('DENY')||f.includes('HIGH')?'var(--deny)':'var(--approval)'};background:${f.includes('DENY')||f.includes('HIGH')?'var(--deny-bg)':'var(--approval-bg)'};border:1px solid ${f.includes('DENY')||f.includes('HIGH')?'rgba(255,59,79,0.2)':'rgba(255,176,32,0.2)'}">${f}</span>`).join('')}
+                </div>
+            </div>` : ''}
+            
+            ${policy && policy.notify.length > 0 ? `<div class="decision-field">
+                <div class="decision-field-label">Notify</div>
+                <div class="decision-field-value" style="color:var(--approval);font-family:'JetBrains Mono',monospace;font-size:11px">${policy.notify.join(', ')}</div>
+            </div>` : ''}
+            
+            <div class="decision-summary" style="background:${summaryBg};border:1px solid ${summaryColor}20">
+                <h4 style="color:${summaryColor}">${summaryTitle}</h4>
+                <p>${summaryText}</p>
+            </div>
+            
+            <div class="audit-section">
+                <div class="decision-field-label" style="margin-bottom:8px">AUDIT TRAIL</div>
+                <div class="audit-row"><span class="audit-key">Decision</span><span class="audit-val">${decision}</span></div>
+                <div class="audit-row"><span class="audit-key">Policy</span><span class="audit-val">${policy?policy.id:'FAIL_CLOSED'}</span></div>
+                <div class="audit-row"><span class="audit-key">Risk</span><span class="audit-val">${riskScore}/100</span></div>
+                <div class="audit-row"><span class="audit-key">Flags</span><span class="audit-val">${flags.length>0?flags.join(', '):'none'}</span></div>
+                <div class="audit-row"><span class="audit-key">Enforcement</span><span class="audit-val">${policy?policy.enforcement:'critical'}</span></div>
+                <div class="audit-row"><span class="audit-key">Mode</span><span class="audit-val">fail-closed</span></div>
+                <div class="audit-row"><span class="audit-key">Timestamp</span><span class="audit-val">${new Date().toISOString()}</span></div>
+                <div class="audit-row"><span class="audit-key">ID</span><span class="audit-val">dec_${Date.now()}</span></div>
+            </div>
+        </div>
+    `;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+
+</body>
+</html>
