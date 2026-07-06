@@ -1,253 +1,312 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIG Playground — Try It Live | House of Galatine</title>
-    <meta name="description" content="Type any command and watch MIG's validation pipeline process it in real time. No signup. No install. Try the OT execution boundary live.">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Type any command and watch MIG's 8-step validation pipeline process it in real time. No signup. No install. Try the OT execution boundary live.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #06080c;
-            --surface: #0c1017;
-            --surface2: #121820;
-            --border: #1a2232;
-            --text: #b8c4d4;
-            --dim: #4a5568;
-            --muted: #2d3748;
-            --bright: #e8edf4;
-            --allow: #00d4aa;
-            --allow-bg: rgba(0,212,170,0.06);
-            --deny: #ff3b4f;
-            --deny-bg: rgba(255,59,79,0.06);
-            --approval: #ffb020;
-            --approval-bg: rgba(255,176,32,0.06);
-            --accent: #00d4aa;
-            --blue: #60a5fa;
+            --bg: #08060d;
+            --bg-deep: #050409;
+            --panel: #0e0a18;
+            --panel2: #120d20;
+            --border: #241b3d;
+            --border-bright: #3b2d63;
+            --violet: #8b5cf6;
+            --violet-bright: #a78bfa;
+            --violet-deep: #6d28d9;
+            --magenta: #d946ef;
+            --allow: #34d399;
+            --allow-bg: rgba(52,211,153,0.08);
+            --deny: #fb7185;
+            --deny-bg: rgba(251,113,133,0.08);
+            --approval: #fbbf24;
+            --approval-bg: rgba(251,191,36,0.08);
+            --text: #e7e3f4;
+            --dim: #8b84a8;
+            --muted: #4d4569;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif; line-height:1.6; min-height:100vh; }
-        
-        .mono { font-family:'JetBrains Mono',monospace; }
-        .serif { font-family:'Instrument Serif',serif; }
-        
+        html { scroll-behavior:smooth; }
+        ::selection { background:rgba(139,92,246,0.35); color:#fff; }
+        body {
+            background:var(--bg); color:var(--text);
+            font-family:'Inter',sans-serif; line-height:1.6; min-height:100vh;
+            overflow-x:hidden;
+        }
+        .ambient {
+            position:fixed; inset:0; pointer-events:none; z-index:0;
+            background:
+                radial-gradient(ellipse 55% 40% at 80% -5%, rgba(109,40,217,0.2), transparent 60%),
+                radial-gradient(ellipse 45% 35% at 5% 110%, rgba(217,70,239,0.09), transparent 60%);
+        }
+        .grid-overlay {
+            position:fixed; inset:0; pointer-events:none; z-index:0;
+            background-image:
+                linear-gradient(rgba(139,92,246,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139,92,246,0.035) 1px, transparent 1px);
+            background-size:56px 56px;
+            mask-image:radial-gradient(ellipse 80% 55% at 50% 0%, black 20%, transparent 75%);
+            -webkit-mask-image:radial-gradient(ellipse 80% 55% at 50% 0%, black 20%, transparent 75%);
+        }
+        nav, .hero, .main, footer { position:relative; z-index:1; }
+
         /* NAV */
         nav {
             padding:16px 32px; display:flex; justify-content:space-between; align-items:center;
-            border-bottom:1px solid var(--border); background:var(--surface);
+            border-bottom:1px solid var(--border); background:rgba(8,6,13,0.85);
+            backdrop-filter:blur(16px); position:sticky; top:0; z-index:100;
         }
-        .nav-brand { font-family:'Instrument Serif',serif; font-size:16px; color:var(--text); text-decoration:none; }
-        .nav-brand span { color:var(--accent); }
+        .nav-brand {
+            font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+            letter-spacing:0.02em; color:var(--text); text-decoration:none;
+        }
+        .nav-brand span { color:var(--violet-bright); }
         .nav-right { display:flex; gap:16px; align-items:center; }
         .nav-link {
             font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
             text-decoration:none; letter-spacing:0.1em; text-transform:uppercase;
+            transition:color 0.25s;
         }
-        .nav-link:hover { color:var(--accent); }
+        .nav-link:hover { color:var(--violet-bright); }
         .nav-badge {
-            font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 10px;
-            background:var(--allow-bg); border:1px solid rgba(0,212,170,0.2);
-            color:var(--accent); letter-spacing:0.1em;
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:4px 12px;
+            border-radius:5px;
+            background:linear-gradient(135deg, rgba(109,40,217,0.3), rgba(217,70,239,0.15));
+            border:1px solid rgba(167,139,250,0.3);
+            color:var(--violet-bright); letter-spacing:0.12em;
         }
 
         /* HERO */
-        .hero { padding:60px 32px 40px; max-width:900px; margin:0 auto; text-align:center; }
+        .hero { padding:64px 32px 44px; max-width:900px; margin:0 auto; text-align:center; }
         .hero-label {
-            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent);
-            letter-spacing:0.2em; text-transform:uppercase; margin-bottom:16px;
+            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--violet-bright);
+            letter-spacing:0.25em; text-transform:uppercase; margin-bottom:18px;
+            animation:rise 0.7s ease 0.05s both;
         }
         .hero h1 {
-            font-family:'Instrument Serif',serif; font-size:36px; font-weight:400;
-            color:var(--bright); margin-bottom:12px;
+            font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(28px,4.5vw,42px);
+            letter-spacing:-0.02em; line-height:1.15; color:#f4f1fd; margin-bottom:14px;
+            animation:rise 0.7s ease 0.15s both;
         }
-        .hero h1 em { font-style:italic; color:var(--accent); }
-        .hero p { font-size:15px; color:var(--dim); max-width:600px; margin:0 auto 8px; font-weight:300; }
+        .hero h1 .glow {
+            background:linear-gradient(100deg, var(--violet-bright), var(--magenta));
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+        }
+        .hero p {
+            font-size:15px; color:var(--dim); max-width:600px; margin:0 auto 8px; font-weight:300;
+            animation:rise 0.7s ease 0.25s both;
+        }
         .hero-note {
             font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
-            margin-top:16px;
+            margin-top:18px; letter-spacing:0.05em;
+            animation:rise 0.7s ease 0.35s both;
         }
+        .plant-state {
+            display:inline-flex; gap:18px; flex-wrap:wrap; justify-content:center;
+            margin-top:22px; padding:10px 22px;
+            border:1px solid var(--border); border-radius:8px; background:var(--panel);
+            font-family:'JetBrains Mono',monospace; font-size:10px;
+            letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);
+            animation:rise 0.7s ease 0.45s both;
+        }
+        .plant-state b { color:var(--violet-bright); font-weight:500; }
 
         /* MAIN */
-        .main { max-width:1100px; margin:0 auto; padding:0 24px 60px; }
+        .main { max-width:1120px; margin:0 auto; padding:0 24px 70px; }
 
-        /* INPUT SECTION */
+        /* INPUT */
         .input-section {
-            background:var(--surface); border:1px solid var(--border); border-radius:8px;
-            overflow:hidden; margin-bottom:20px;
+            background:var(--panel); border:1px solid var(--border-bright); border-radius:14px;
+            overflow:hidden; margin-bottom:18px;
+            box-shadow:0 0 0 1px rgba(139,92,246,0.06), 0 18px 60px rgba(0,0,0,0.5), 0 0 90px rgba(109,40,217,0.12);
+            animation:rise 0.7s ease 0.5s both;
         }
         .input-header {
-            padding:12px 20px; background:var(--surface2); border-bottom:1px solid var(--border);
-            display:flex; justify-content:space-between; align-items:center;
+            padding:13px 20px; background:var(--panel2); border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
         }
         .input-label {
             font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
-            letter-spacing:0.1em; text-transform:uppercase; font-weight:600;
+            letter-spacing:0.14em; text-transform:uppercase; font-weight:600;
         }
         .sample-btns { display:flex; gap:6px; flex-wrap:wrap; }
         .sample-btn {
-            font-family:'JetBrains Mono',monospace; font-size:9px; padding:4px 10px;
-            background:transparent; border:1px solid var(--border); color:var(--dim);
-            cursor:pointer; letter-spacing:0.05em; transition:all 0.2s;
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:5px 11px;
+            background:transparent; border:1px solid var(--border); border-radius:5px;
+            color:var(--dim); cursor:pointer; letter-spacing:0.05em; transition:all 0.22s;
         }
-        .sample-btn:hover { border-color:var(--accent); color:var(--accent); }
+        .sample-btn:hover { border-color:var(--violet); color:var(--violet-bright); transform:translateY(-1px); }
         .sample-btn.deny-sample:hover { border-color:var(--deny); color:var(--deny); }
         .sample-btn.approval-sample:hover { border-color:var(--approval); color:var(--approval); }
-        
-        .input-row { display:flex; gap:0; }
+        .input-row { display:flex; }
         .input-field {
-            flex:1; padding:16px 20px; background:var(--bg); border:none;
-            color:var(--bright); font-family:'JetBrains Mono',monospace; font-size:14px;
-            outline:none;
+            flex:1; padding:17px 20px; background:var(--bg-deep); border:none;
+            color:#f4f1fd; font-family:'JetBrains Mono',monospace; font-size:14px; outline:none;
+            caret-color:var(--violet-bright);
         }
         .input-field::placeholder { color:var(--muted); }
+        .input-field:focus { box-shadow:inset 0 -2px 0 var(--violet); }
         .validate-btn {
-            padding:16px 28px; background:var(--accent); color:var(--bg); border:none;
-            font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
-            letter-spacing:0.1em; cursor:pointer; transition:all 0.2s;
+            padding:17px 30px; border:none; cursor:pointer;
+            background:linear-gradient(135deg, var(--violet-deep), var(--violet));
+            color:#fff; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+            letter-spacing:0.12em; transition:all 0.25s;
         }
-        .validate-btn:hover { box-shadow:0 0 20px rgba(0,212,170,0.2); }
-        .validate-btn:disabled { background:var(--surface2); color:var(--muted); cursor:not-allowed; }
+        .validate-btn:hover { box-shadow:0 0 28px rgba(139,92,246,0.45); }
+        .validate-btn:disabled { background:var(--panel2); color:var(--muted); cursor:not-allowed; box-shadow:none; }
 
         /* GRID */
-        .result-grid { display:grid; grid-template-columns:1fr 380px; gap:16px; }
-        @media(max-width:800px) { .result-grid { grid-template-columns:1fr; } }
+        .result-grid { display:grid; grid-template-columns:1fr 390px; gap:16px; }
+        @media(max-width:860px){ .result-grid { grid-template-columns:1fr; } }
 
-        /* PIPELINE */
-        .pipeline-card {
-            background:var(--surface); border:1px solid var(--border); border-radius:8px;
-            overflow:hidden;
+        .card {
+            background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden;
         }
         .card-header {
-            padding:12px 20px; background:var(--surface2); border-bottom:1px solid var(--border);
+            padding:13px 20px; background:var(--panel2); border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center;
         }
         .card-label {
             font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
-            letter-spacing:0.1em; text-transform:uppercase; font-weight:600;
+            letter-spacing:0.14em; text-transform:uppercase; font-weight:600;
         }
-        .card-label.accent { color:var(--accent); }
-        .card-label.blue { color:var(--blue); }
+        .card-label.accent { color:var(--violet-bright); }
+        .pipe-count {
+            font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted);
+            letter-spacing:0.1em;
+        }
 
-        .pipeline-steps { padding:8px 0; }
+        /* PIPELINE */
+        .pipeline-steps { padding:6px 0; }
         .step {
-            display:flex; align-items:flex-start; gap:14px; padding:10px 20px;
-            border-bottom:1px solid var(--border); transition:background 0.3s;
-            opacity:0.3;
+            display:flex; align-items:flex-start; gap:14px; padding:12px 20px;
+            border-bottom:1px solid var(--border);
+            opacity:0.25; transform:translateX(-6px);
+            transition:opacity 0.35s ease, transform 0.35s ease, background 0.35s ease;
         }
-        .step.active { opacity:1; }
-        .step.processing { opacity:1; background:rgba(96,165,250,0.04); }
         .step:last-child { border-bottom:none; }
-        
+        .step.active { opacity:1; transform:translateX(0); }
+        .step.processing { opacity:1; transform:translateX(0); background:rgba(139,92,246,0.05); }
         .step-indicator {
-            width:28px; height:28px; border-radius:50%; display:flex; align-items:center;
+            width:28px; height:28px; border-radius:8px; display:flex; align-items:center;
             justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px;
-            border:1px solid var(--border); background:var(--surface2);
-            transition:all 0.3s;
+            border:1px solid var(--border); background:var(--panel2);
+            font-family:'JetBrains Mono',monospace; color:var(--muted);
+            transition:all 0.35s;
         }
-        .step-indicator.pass { background:var(--allow-bg); border-color:rgba(0,212,170,0.3); }
-        .step-indicator.fail { background:var(--deny-bg); border-color:rgba(255,59,79,0.3); }
-        .step-indicator.flag { background:var(--approval-bg); border-color:rgba(255,176,32,0.3); }
-        
-        .step-content { flex:1; }
+        .step.processing .step-indicator { border-color:var(--violet); color:var(--violet-bright); animation:pulse 0.9s infinite; }
+        .step-indicator.pass { background:var(--allow-bg); border-color:rgba(52,211,153,0.35); color:var(--allow); }
+        .step-indicator.fail { background:var(--deny-bg); border-color:rgba(251,113,133,0.4); color:var(--deny); }
+        .step-indicator.flag { background:var(--approval-bg); border-color:rgba(251,191,36,0.35); color:var(--approval); }
+        .step-content { flex:1; min-width:0; }
         .step-name {
-            font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600;
-            color:var(--bright); margin-bottom:2px;
+            font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:600;
+            color:#f4f1fd; margin-bottom:2px; letter-spacing:0.03em;
         }
-        .step-detail { font-size:11px; color:var(--dim); line-height:1.5; }
+        .step-detail { font-size:11.5px; color:var(--dim); line-height:1.55; }
         .step-detail.deny-text { color:var(--deny); }
         .step-detail.flag-text { color:var(--approval); }
+        .step-detail.pass-text { color:var(--allow); }
 
-        /* DECISION PANEL */
-        .decision-card {
-            background:var(--surface); border:1px solid var(--border); border-radius:8px;
-            overflow:hidden;
-        }
-        .decision-body { padding:20px; }
-        
+        /* DECISION */
+        .decision-body { padding:22px; }
         .decision-badge {
-            display:inline-block; padding:6px 18px; font-family:'JetBrains Mono',monospace;
-            font-size:13px; font-weight:700; letter-spacing:0.15em; border-radius:4px;
-            margin-bottom:20px;
+            display:inline-block; padding:8px 22px; font-family:'JetBrains Mono',monospace;
+            font-size:14px; font-weight:700; letter-spacing:0.16em; border-radius:7px;
+            margin-bottom:22px; animation:popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
         }
-        .decision-badge.allow { color:var(--allow); background:var(--allow-bg); border:1px solid rgba(0,212,170,0.2); }
-        .decision-badge.deny { color:var(--deny); background:var(--deny-bg); border:1px solid rgba(255,59,79,0.2); }
-        .decision-badge.approval { color:var(--approval); background:var(--approval-bg); border:1px solid rgba(255,176,32,0.2); }
-
+        .decision-badge.allow { color:var(--allow); background:var(--allow-bg); border:1px solid rgba(52,211,153,0.3); box-shadow:0 0 30px rgba(52,211,153,0.12); }
+        .decision-badge.deny { color:var(--deny); background:var(--deny-bg); border:1px solid rgba(251,113,133,0.35); box-shadow:0 0 30px rgba(251,113,133,0.15); }
+        .decision-badge.approval { color:var(--approval); background:var(--approval-bg); border:1px solid rgba(251,191,36,0.3); box-shadow:0 0 30px rgba(251,191,36,0.12); }
         .decision-field { margin-bottom:16px; }
         .decision-field-label {
             font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted);
-            letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; font-weight:600;
+            letter-spacing:0.14em; text-transform:uppercase; margin-bottom:5px; font-weight:600;
         }
-        .decision-field-value { font-size:13px; color:var(--text); }
-        .decision-field-value.bright { color:var(--bright); font-family:'JetBrains Mono',monospace; font-size:12px; }
-
-        .risk-bar-container { display:flex; align-items:center; gap:10px; }
-        .risk-bar {
-            flex:1; height:8px; border-radius:4px; overflow:hidden;
-        }
-        .risk-bar-fill { height:100%; border-radius:4px; transition:width 0.8s ease; }
-        .risk-score {
-            font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; min-width:32px;
-        }
-
+        .decision-field-value { font-size:13px; color:var(--text); line-height:1.6; }
+        .decision-field-value.mono { font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#f4f1fd; }
+        .risk-bar-container { display:flex; align-items:center; gap:12px; }
+        .risk-bar { flex:1; height:8px; border-radius:4px; background:var(--panel2); overflow:hidden; border:1px solid var(--border); }
+        .risk-bar-fill { height:100%; border-radius:4px; width:0; transition:width 0.9s cubic-bezier(0.22,1,0.36,1); }
+        .risk-score { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; min-width:36px; text-align:right; }
         .flags-container { display:flex; flex-wrap:wrap; gap:6px; }
         .flag-badge {
-            font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px;
-            border-radius:3px; font-weight:600;
+            font-family:'JetBrains Mono',monospace; font-size:9px; padding:4px 9px;
+            border-radius:4px; font-weight:600; letter-spacing:0.04em;
+            background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.25); color:var(--violet-bright);
         }
-
-        .decision-summary {
-            margin-top:20px; padding:14px; border-radius:6px;
-        }
-        .decision-summary h4 {
-            font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; margin-bottom:6px;
-        }
-        .decision-summary p { font-size:11px; color:var(--dim); line-height:1.6; }
-
-        .audit-section {
-            margin-top:16px; padding:14px; background:var(--surface2); border-radius:6px;
+        .flag-badge.warn { background:var(--approval-bg); border-color:rgba(251,191,36,0.3); color:var(--approval); }
+        .flag-badge.crit { background:var(--deny-bg); border-color:rgba(251,113,133,0.35); color:var(--deny); }
+        .decision-summary { margin-top:20px; padding:15px 16px; border-radius:9px; }
+        .decision-summary.allow { background:var(--allow-bg); border:1px solid rgba(52,211,153,0.2); }
+        .decision-summary.deny { background:var(--deny-bg); border:1px solid rgba(251,113,133,0.25); }
+        .decision-summary.approval { background:var(--approval-bg); border:1px solid rgba(251,191,36,0.2); }
+        .decision-summary h4 { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; margin-bottom:6px; letter-spacing:0.06em; }
+        .decision-summary.allow h4 { color:var(--allow); }
+        .decision-summary.deny h4 { color:var(--deny); }
+        .decision-summary.approval h4 { color:var(--approval); }
+        .decision-summary p { font-size:11.5px; color:var(--dim); line-height:1.65; }
+        .audit-section { margin-top:16px; padding:15px 16px; background:var(--bg-deep); border:1px solid var(--border); border-radius:9px; }
+        .audit-title {
+            font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted);
+            letter-spacing:0.14em; text-transform:uppercase; margin-bottom:8px; font-weight:600;
         }
         .audit-row {
-            display:flex; justify-content:space-between; padding:4px 0;
+            display:flex; justify-content:space-between; gap:12px; padding:4px 0;
             font-family:'JetBrains Mono',monospace; font-size:10px;
         }
         .audit-key { color:var(--muted); }
-        .audit-val { color:var(--text); }
+        .audit-val { color:var(--text); text-align:right; word-break:break-all; }
 
         /* EMPTY STATE */
-        .empty-state {
-            padding:60px 24px; text-align:center; color:var(--muted); font-size:13px;
+        .empty-state { padding:64px 24px; text-align:center; color:var(--muted); font-size:13px; }
+        .empty-icon {
+            width:44px; height:44px; margin:0 auto 14px; border-radius:12px;
+            border:1px solid var(--border-bright);
+            display:flex; align-items:center; justify-content:center;
+            font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--violet-bright);
+            background:linear-gradient(135deg, rgba(109,40,217,0.15), transparent);
         }
-        .empty-icon { font-size:32px; margin-bottom:12px; opacity:0.5; }
 
-        /* FOOTER */
         footer {
-            max-width:1100px; margin:0 auto; padding:20px 24px;
+            max-width:1120px; margin:0 auto; padding:22px 24px;
             border-top:1px solid var(--border); display:flex;
-            justify-content:space-between; align-items:center;
+            justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
         }
-        footer span {
-            font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
-        }
+        footer span { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:0.05em; }
+        footer span b { color:var(--violet-bright); font-weight:500; }
 
-        @media(max-width:600px) {
-            .hero h1 { font-size:26px; }
-            .hero { padding:40px 20px 30px; }
-            .main { padding:0 12px 40px; }
+        @media(max-width:640px){
+            .hero { padding:44px 20px 32px; }
+            .main { padding:0 12px 44px; }
             nav { padding:12px 16px; }
-            .sample-btns { display:none; }
-            .input-field { font-size:12px; padding:12px 14px; }
-            footer { flex-direction:column; gap:8px; }
+            .sample-btns { width:100%; }
+            .input-field { font-size:12px; padding:14px 14px; }
+            .validate-btn { padding:14px 18px; font-size:11px; }
+            footer { flex-direction:column; text-align:center; }
         }
 
-        /* ANIMATIONS */
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
-        .processing .step-indicator { animation:pulse 1s infinite; }
+        @keyframes rise { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes popIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+        @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.45; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation:none !important; transition:none !important; }
+            .hero-label,.hero h1,.hero p,.hero-note,.plant-state,.input-section { opacity:1 !important; transform:none !important; }
+        }
     </style>
 </head>
 <body>
+<div class="ambient"></div>
+<div class="grid-overlay"></div>
 
 <nav>
-    <a href="https://houseofgalatine.com" class="nav-brand">House of <span>Galatine</span></a>
+    <a href="https://houseofgalatine.com" class="nav-brand">HOUSE OF <span>GALATINE</span></a>
     <div class="nav-right">
         <span class="nav-badge">PLAYGROUND</span>
         <a href="https://houseofgalatine.com" class="nav-link">← Back to site</a>
@@ -255,14 +314,19 @@
 </nav>
 
 <div class="hero">
-    <p class="hero-label">MIG Playground — Live Demo</p>
-    <h1>Type a command. Watch it get <em>validated.</em></h1>
-    <p>See MIG's 10-step validation pipeline process any OT command in real time. Every step visible. Every decision deterministic.</p>
-    <p class="hero-note">Client-side demo · Production uses Neo4j graph policies + direct OT protocol integration</p>
+    <p class="hero-label">MIG Playground · Interactive Demo</p>
+    <h1>Type a command. Watch it get <span class="glow">validated.</span></h1>
+    <p>See MIG's 8-step validation pipeline process any OT command in real time. Every step visible. Every decision deterministic.</p>
+    <p class="hero-note">Client-side demo with simplified policies · Production MIG uses Neo4j graph policies + direct OT protocol integration</p>
+    <div class="plant-state">
+        <span>SIMULATED PLANT STATE</span>
+        <span>PUMP-1: <b>50 RPM</b></span>
+        <span>MODE: <b>PRODUCTION</b></span>
+        <span>ZONE: <b>CONTROL (IEC 62443 L1)</b></span>
+    </div>
 </div>
 
 <div class="main">
-    <!-- INPUT -->
     <div class="input-section">
         <div class="input-header">
             <span class="input-label">Enter OT Command</span>
@@ -276,28 +340,26 @@
             </div>
         </div>
         <div class="input-row">
-            <input type="text" id="commandInput" class="input-field" placeholder="e.g. set pump speed to 5000 RPM..." onkeydown="if(event.key==='Enter')validate()">
+            <input type="text" id="commandInput" class="input-field" placeholder="e.g. set pump speed to 5000 RPM..." onkeydown="if(event.key==='Enter')validate()" aria-label="OT command to validate">
             <button class="validate-btn" id="validateBtn" onclick="validate()">VALIDATE</button>
         </div>
     </div>
 
-    <!-- RESULTS -->
     <div class="result-grid">
-        <!-- PIPELINE -->
-        <div class="pipeline-card">
+        <div class="card">
             <div class="card-header">
                 <span class="card-label accent">VALIDATION PIPELINE</span>
+                <span class="pipe-count" id="pipeCount">8 STEPS</span>
             </div>
             <div class="pipeline-steps" id="pipelineSteps">
                 <div class="empty-state">
-                    <div class="empty-icon">◇</div>
-                    Enter a command to see the pipeline in action
+                    <div class="empty-icon">◈</div>
+                    Enter a command — or hit a sample above — to watch the pipeline fire
                 </div>
             </div>
         </div>
 
-        <!-- DECISION -->
-        <div class="decision-card">
+        <div class="card">
             <div class="card-header">
                 <span class="card-label">DECISION</span>
             </div>
@@ -312,395 +374,299 @@
 </div>
 
 <footer>
-    <span>MIG — Memory Intelligence Graph · House of Galatine · USPTO #63/821,489</span>
+    <span><b>MIG</b> — Execution Control Engine · House of Galatine · USPTO Provisional #63/821,489</span>
     <span>"Nothing executes without MIG approval."</span>
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// MIG PLAYGROUND ENGINE — Client-side validation
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// MIG PLAYGROUND ENGINE — client-side, simplified, deterministic
+// Production MIG: Neo4j graph policies + semantic embeddings
+// ════════════════════════════════════════════════════════════════
+
+const PLANT = { pumpRPM: 50, mode: 'PRODUCTION', zone: 'CONTROL' };
 
 const POLICIES = [
-    { id:"POL-OT-ALLOW-001", action_type:"read_sensor", direction:"ALLOW", rule:"Reading sensor values from control zone PLCs is permitted as a non-destructive read-only operation", enforcement:"standard", notify:[] },
-    { id:"POL-OT-ALLOW-002", action_type:"read_alarm", direction:"ALLOW", rule:"Reading alarm history and event logs from the historian is permitted", enforcement:"standard", notify:[] },
-    { id:"POL-OT-ALLOW-003", action_type:"read_status", direction:"ALLOW", rule:"Reading process status and operational mode from SCADA is permitted", enforcement:"standard", notify:[] },
-    { id:"POL-OT-APPR-001", action_type:"write_setpoint_minor", direction:"APPROVAL", rule:"Setpoint changes within 5% of current value require single operator confirmation before execution", enforcement:"elevated", notify:["shift_operator"] },
-    { id:"POL-OT-APPR-002", action_type:"modify_logic", direction:"APPROVAL", rule:"Modifying PLC control logic requires engineer authorization and supervisor sign-off", enforcement:"critical", notify:["control_engineer","plant_supervisor"] },
-    { id:"POL-OT-APPR-003", action_type:"export_config_internal", direction:"APPROVAL", rule:"Exporting control system configuration within OT network requires supervisor authorization", enforcement:"elevated", notify:["plant_supervisor"] },
-    { id:"POL-OT-DENY-001", action_type:"write_safety", direction:"DENY", rule:"Writing to safety instrumented system registers is never allowed — SIS integrity is the last line of defense against catastrophic failure", enforcement:"critical", notify:["safety_officer","plant_supervisor","control_engineer","ciso"] },
-    { id:"POL-OT-DENY-002", action_type:"write_setpoint_major", direction:"DENY", rule:"Setpoint changes exceeding 5% of current operating value are blocked as they risk process instability", enforcement:"critical", notify:["control_engineer","shift_operator","safety_officer"] },
-    { id:"POL-OT-DENY-003", action_type:"firmware_production", direction:"DENY", rule:"Firmware updates during production mode are never allowed as they risk controller failure", enforcement:"critical", notify:["control_engineer","plant_supervisor","safety_officer"] },
-    { id:"POL-OT-DENY-004", action_type:"export_external", direction:"DENY", rule:"Exporting control system configuration outside the OT network boundary is never allowed", enforcement:"critical", notify:["ciso","plant_supervisor"] },
-    { id:"POL-OT-DENY-005", action_type:"vendor_remote_write", direction:"DENY", rule:"Remote vendor write access to control systems is never allowed without local operator co-authorization", enforcement:"critical", notify:["shift_operator","plant_supervisor","ciso"] },
+    { id:"POL-OT-ALLOW-001", direction:"ALLOW",    rule:"Reading sensor values from control zone PLCs is permitted as a non-destructive read-only operation", enforcement:"standard", notify:[] },
+    { id:"POL-OT-APPR-001",  direction:"APPROVAL", rule:"Setpoint changes within 5% of current value require single operator confirmation before execution", enforcement:"elevated", notify:["shift_operator"] },
+    { id:"POL-OT-APPR-002",  direction:"APPROVAL", rule:"Modifying PLC control logic requires engineer authorization and supervisor sign-off", enforcement:"critical", notify:["control_engineer","plant_supervisor"] },
+    { id:"POL-OT-APPR-003",  direction:"APPROVAL", rule:"Exporting control system configuration within the OT network requires supervisor authorization", enforcement:"elevated", notify:["plant_supervisor"] },
+    { id:"POL-OT-DENY-001",  direction:"DENY",     rule:"Writing to safety instrumented system registers is never allowed — SIS integrity is the last line of defense", enforcement:"critical", notify:["safety_officer","plant_supervisor","control_engineer","ciso"] },
+    { id:"POL-OT-DENY-002",  direction:"DENY",     rule:"Setpoint changes exceeding 5% of current operating value are blocked as they risk process instability", enforcement:"critical", notify:["control_engineer","shift_operator","safety_officer"] },
+    { id:"POL-OT-DENY-003",  direction:"DENY",     rule:"Firmware updates during production mode are never allowed as they risk controller failure", enforcement:"critical", notify:["control_engineer","plant_supervisor","safety_officer"] },
+    { id:"POL-OT-DENY-004",  direction:"DENY",     rule:"Exporting control system configuration outside the OT network boundary is never allowed", enforcement:"critical", notify:["ciso","plant_supervisor"] },
+    { id:"POL-FAILCLOSED",   direction:"DENY",     rule:"No matching policy found. MIG is fail-closed: the default is never ALLOW", enforcement:"critical", notify:["plant_supervisor"] },
 ];
 
-const PII_PATTERNS = [/[\w.+-]+@[\w-]+\.[\w.]+/, /\b\d{3}-\d{2}-\d{4}\b/, /\b\d{4}\s?\d{4}\s?\d{4}\b/];
-const PII_KEYWORDS = ["personal data","salary","compensation","medical","ssn","passport","social security","bank account","credit card"];
-
-const DATA_TYPES = [
-    { name:"sensor_read", sensitivity:"low", keywords:["read","sensor","temperature","pressure","flow","monitor","status","current value"] },
-    { name:"register_write", sensitivity:"high", keywords:["write","register","set","output","coil","modify"] },
-    { name:"setpoint_change", sensitivity:"high", keywords:["setpoint","target","limit","threshold","set to","change to","adjust","increase","decrease","speed","rpm"] },
-    { name:"firmware_upload", sensitivity:"critical", keywords:["firmware","upload","program","flash","update","deploy","install"] },
-    { name:"config_data", sensitivity:"critical", keywords:["config","configuration","topology","network","parameters","settings","architecture","export"] },
-    { name:"safety_command", sensitivity:"critical", keywords:["safety","sis","emergency","shutdown","interlock","trip","esd","safety plc","safety register"] },
-    { name:"alarm_action", sensitivity:"medium", keywords:["alarm","acknowledge","clear","silence","suppress"] },
-    { name:"control_logic", sensitivity:"critical", keywords:["logic","ladder","function block","structured text","plc program"] },
-    { name:"modbus_command", sensitivity:"high", keywords:["modbus","function code","fc06","fc16","coil","holding register"] },
+const PII_PATTERNS = [
+    { re:/[\w.+-]+@[\w-]+\.[\w.]+/, label:"email" },
+    { re:/\b\d{3}-\d{2}-\d{4}\b/,   label:"ssn" },
+    { re:/\b\d{4}\s?\d{4}\s?\d{4}\b/, label:"card/id number" },
 ];
+const PII_KEYWORDS = ["personal data","salary","compensation","medical","ssn","passport","social security","bank account","credit card","employee record"];
 
-const DEST_KEYWORDS = {
-    external: ["external","outside","internet","cloud","export","send out","remote","offsite"],
-    safety: ["safety","sis","emergency","shutdown","interlock","trip"],
-    control: ["plc","controller","control zone","actuator","register"],
-    supervisory: ["scada","hmi","supervisory","operator station"],
+const KW = {
+    read:     ["read","get","fetch","monitor","status","current value","check","view","poll"],
+    write:    ["write","set","change","adjust","increase","decrease","modify","output","update value"],
+    setpoint: ["setpoint","target","limit","threshold","speed","rpm","pressure","flow","dosing","temperature to","level to"],
+    firmware: ["firmware","flash","program upload","reprogram","deploy firmware","install firmware","upload"],
+    safety:   ["safety","sis","emergency shutdown","interlock","trip","esd","safety plc","safety register"],
+    config:   ["config","configuration","topology","network map","parameters","architecture","export","backup"],
+    logic:    ["logic","ladder","function block","structured text","plc program","control logic"],
+    external: ["external","outside","internet","cloud","offsite","remote server","send out","exfiltrate","third-party"],
+    sensor:   ["sensor","temperature","pressure","flow","level","alarm","tag","register 4","holding register"],
 };
 
 const SAMPLES = {
-    read: "Read current pump 1 speed from PLC control zone",
-    minor: "Set pump 1 speed to 52 RPM for flow optimization",
-    oldsmar: "Set pump 1 speed to 5000 RPM for emergency pressure boost",
+    read:     "Read current pump 1 speed from PLC control zone",
+    minor:    "Set pump 1 speed to 52 RPM for flow optimization",
+    oldsmar:  "Set pump 1 speed to 5000 RPM for emergency pressure boost",
     firmware: "Upload new firmware program to PLC controller during production",
-    safety: "Write emergency shutdown setpoint to safety PLC register",
-    export: "Export PLC configuration and network topology to external server",
+    safety:   "Write emergency shutdown setpoint to safety PLC register",
+    export:   "Export PLC configuration and network topology to external server",
 };
 
-function loadSample(key) {
-    document.getElementById('commandInput').value = SAMPLES[key];
+function loadSample(key){
+    const el = document.getElementById('commandInput');
+    el.value = SAMPLES[key];
+    el.focus();
 }
 
-function detectPII(text) {
-    const lower = text.toLowerCase();
-    const found = [];
-    PII_PATTERNS.forEach((p,i) => { if(p.test(lower)) found.push(["email","ssn","aadhaar"][i]); });
-    PII_KEYWORDS.forEach(k => { if(lower.includes(k)) found.push("keyword:"+k); });
-    const isExternal = DEST_KEYWORDS.external.some(k => lower.includes(k));
-    return { hasPII:found.length>0, types:[...new Set(found)], isExternal, risk:found.length>0?(isExternal?"high":"medium"):"low" };
+function has(text, list){ return list.some(k => text.includes(k)); }
+
+function extractNumber(text){
+    const m = text.match(/(\d+(?:\.\d+)?)\s*(rpm|%|psi|bar|°?c|l\/min)?/i);
+    return m ? parseFloat(m[1]) : null;
 }
 
-function inferAction(text) {
-    const lower = text.toLowerCase();
-    if(lower.match(/read|monitor|check|status|current|sensor|measure/)) return { type:"read_sensor", label:"Read Operation" };
-    if(lower.match(/safety|sis|emergency|shutdown|interlock|trip/)) return { type:"write_safety", label:"Safety System Write" };
-    if(lower.match(/firmware|upload|flash|deploy|install/) && lower.match(/program|update|controller/)) return { type:"firmware_production", label:"Firmware Upload" };
-    if(lower.match(/export|send/) && lower.match(/external|outside|internet|remote|offsite/)) return { type:"export_external", label:"External Export" };
-    if(lower.match(/export|config/)) return { type:"export_config_internal", label:"Config Export" };
-    if(lower.match(/logic|ladder|function block/)) return { type:"modify_logic", label:"Logic Modification" };
-    if(lower.match(/vendor|remote/) && lower.match(/write|set|modify|command/)) return { type:"vendor_remote_write", label:"Remote Vendor Write" };
-    
-    // Setpoint analysis
-    const numMatch = lower.match(/(\d+)\s*(rpm|kpa|degrees|percent|%|psi)/i);
-    if(numMatch && lower.match(/set|change|adjust|write|modify|increase|decrease/)) {
-        const val = parseInt(numMatch[1]);
-        const currentVal = 50; // simulated current
-        const deviation = Math.abs(val - currentVal) / currentVal * 100;
-        if(deviation > 5) return { type:"write_setpoint_major", label:`Major Setpoint Change (${deviation.toFixed(0)}% deviation)`, deviation };
-        return { type:"write_setpoint_minor", label:`Minor Setpoint Change (${deviation.toFixed(0)}% deviation)`, deviation };
-    }
-    if(lower.match(/set|write|change|modify|adjust/) && lower.match(/speed|pressure|temperature|flow|level|rate/)) {
-        return { type:"write_setpoint_minor", label:"Setpoint Change" };
-    }
-    return { type:"unknown", label:"Unknown Action" };
-}
-
-function analyzePayload(text) {
-    const lower = text.toLowerCase();
-    const detected = [];
-    DATA_TYPES.forEach(dt => {
-        dt.keywords.forEach(kw => {
-            if(lower.includes(kw) && !detected.find(d=>d.name===dt.name)) {
-                detected.push({ name:dt.name, sensitivity:dt.sensitivity, keyword:kw });
-            }
-        });
-    });
-    
-    let dest = "internal";
-    let destRisk = "low";
-    if(DEST_KEYWORDS.external.some(k=>lower.includes(k))) { dest="external"; destRisk="critical"; }
-    else if(DEST_KEYWORDS.safety.some(k=>lower.includes(k))) { dest="safety_zone"; destRisk="critical"; }
-    else if(DEST_KEYWORDS.control.some(k=>lower.includes(k))) { dest="control_zone"; destRisk="high"; }
-    else if(DEST_KEYWORDS.supervisory.some(k=>lower.includes(k))) { dest="supervisory_zone"; destRisk="medium"; }
-    
-    let riskScore = 10;
-    detected.forEach(d => {
-        if(d.sensitivity==="critical") riskScore += 30;
-        else if(d.sensitivity==="high") riskScore += 15;
-        else if(d.sensitivity==="medium") riskScore += 5;
-    });
-    if(destRisk==="critical") riskScore += 30;
-    else if(destRisk==="high") riskScore += 15;
-    riskScore = Math.min(riskScore, 100);
-    
-    return { dataTypes:detected, destination:dest, destRisk, riskScore };
-}
-
-function matchPolicy(actionType) {
-    return POLICIES.find(p => p.action_type === actionType) || null;
-}
-
-function checkStage(actionType) {
-    const blocked = ["write_safety","firmware_production"];
-    if(blocked.includes(actionType)) return { valid:true, reason:"Action blocked by policy regardless of mode" };
-    return { valid:true, reason:"Valid for current operational mode (running)" };
-}
-
-async function validate() {
-    const input = document.getElementById('commandInput').value.trim();
-    if(!input) return;
-    
-    document.getElementById('validateBtn').disabled = true;
-    document.getElementById('validateBtn').textContent = "PROCESSING...";
-    
+// ---- The 8 steps, mirroring production MIG ----
+function analyze(cmdRaw){
+    const cmd = cmdRaw.toLowerCase();
     const steps = [];
     const flags = [];
-    let decision = "ALLOW";
-    let matchedPolicy = null;
-    let riskScore = 0;
-    
-    // STEP 1: PII Detection
-    const pii = detectPII(input);
+    let risk = 0;
+
+    // 1. PII SCAN
+    const piiFound = [];
+    PII_PATTERNS.forEach(p => { if(p.re.test(cmd)) piiFound.push(p.label); });
+    PII_KEYWORDS.forEach(k => { if(cmd.includes(k)) piiFound.push(k); });
+    if(piiFound.length){ risk += 20; flags.push({t:"PII DETECTED", c:"crit"}); }
     steps.push({
-        name:"PII / Sensitivity Detection",
-        status: pii.hasPII ? (pii.isExternal ? "fail" : "flag") : "pass",
-        detail: pii.hasPII ? `Detected: ${pii.types.join(", ")}${pii.isExternal?" + external sharing intent":""}` : "No sensitive data patterns detected"
+        name:"PII Scan",
+        status: piiFound.length ? "flag" : "pass",
+        detail: piiFound.length ? `Sensitive data detected: ${piiFound.slice(0,3).join(", ")}` : "No personal or sensitive data patterns in payload",
     });
-    if(pii.hasPII && pii.isExternal) flags.push("PII_EXTERNAL_RISK");
-    else if(pii.hasPII) flags.push("PII_PRESENT");
-    
-    // STEP 2: Action Inference
-    const action = inferAction(input);
+
+    // 2. ACTION CLASSIFICATION
+    const isRead = has(cmd, KW.read) && !has(cmd, KW.write);
+    const isWrite = has(cmd, KW.write);
+    const isFirmware = has(cmd, KW.firmware);
+    const isSafety = has(cmd, KW.safety);
+    const isConfig = has(cmd, KW.config);
+    const isLogic = has(cmd, KW.logic);
+    const isSetpoint = has(cmd, KW.setpoint) && isWrite;
+    let action = isRead ? "READ" : isFirmware ? "FIRMWARE" : isSafety && isWrite ? "SAFETY-WRITE" : isSetpoint ? "SETPOINT-WRITE" : isLogic ? "LOGIC-MODIFY" : isConfig ? "CONFIG-EXPORT" : isWrite ? "WRITE" : "UNCLASSIFIED";
+    if(action === "READ") risk += 5;
+    if(action === "WRITE" || action === "SETPOINT-WRITE") risk += 30;
+    if(action === "FIRMWARE") { risk += 45; flags.push({t:"FIRMWARE", c:"crit"}); }
+    if(action === "SAFETY-WRITE") { risk += 55; flags.push({t:"SIS TARGET", c:"crit"}); }
+    if(action === "LOGIC-MODIFY") { risk += 35; flags.push({t:"LOGIC CHANGE", c:"warn"}); }
+    if(action === "CONFIG-EXPORT") { risk += 30; flags.push({t:"CONFIG DATA", c:"warn"}); }
     steps.push({
-        name:"Action Type Inference",
-        status:"pass",
-        detail:`Inferred: ${action.label} (${action.type})${action.deviation?` — ${action.deviation.toFixed(0)}% deviation from safe value`:""}`
+        name:"Action Classification",
+        status: action === "READ" ? "pass" : action === "UNCLASSIFIED" ? "flag" : (isSafety||isFirmware) ? "fail" : "flag",
+        detail: `Intent classified: ${action}`,
     });
-    
-    // STEP 3: Payload Analysis
-    const payload = analyzePayload(input);
-    riskScore = payload.riskScore;
-    const dtNames = payload.dataTypes.map(d=>`${d.name} (${d.sensitivity})`).join(", ") || "none detected";
+
+    // 3. PAYLOAD INSPECTION — setpoint deviation math
+    let deviation = null;
+    const num = extractNumber(cmd);
+    if(isSetpoint && num !== null && (cmd.includes("rpm") || cmd.includes("speed"))){
+        deviation = Math.round(Math.abs(num - PLANT.pumpRPM) / PLANT.pumpRPM * 100);
+        if(deviation > 5){ risk += Math.min(35, 15 + deviation/300); flags.push({t:`+${deviation}% DEVIATION`, c: deviation > 100 ? "crit" : "warn"}); }
+    }
     steps.push({
         name:"Payload Inspection",
-        status: riskScore >= 70 ? "fail" : riskScore >= 40 ? "flag" : "pass",
-        detail:`Data: ${dtNames} → Destination: ${payload.destination} | Risk: ${riskScore}/100`
+        status: deviation !== null && deviation > 5 ? "fail" : "pass",
+        detail: deviation !== null
+            ? `Requested ${num} RPM vs current ${PLANT.pumpRPM} RPM → ${deviation}% deviation ${deviation > 5 ? "(exceeds 5% threshold)" : "(within 5% threshold)"}`
+            : "Content and destination analyzed. Sensitivity graded.",
     });
-    if(riskScore >= 70) flags.push("PAYLOAD_HIGH_RISK");
-    else if(riskScore >= 40) flags.push("PAYLOAD_MEDIUM_RISK");
-    
-    // STEP 4: Policy Graph Traversal
-    matchedPolicy = matchPolicy(action.type);
-    if(matchedPolicy) {
-        decision = matchedPolicy.direction;
-        steps.push({
-            name:"Policy Graph Traversal",
-            status: decision==="ALLOW"?"pass":decision==="DENY"?"fail":"flag",
-            detail:`Matched: ${matchedPolicy.id} → ${decision} | "${matchedPolicy.rule.substring(0,80)}..."`
-        });
-    } else {
-        decision = "DENY";
-        steps.push({
-            name:"Policy Graph Traversal",
-            status:"fail",
-            detail:"No matching policy found — fail-closed → DENY"
-        });
-        flags.push("NO_POLICY_MATCH");
-    }
-    
-    // STEP 5: Stage Awareness
-    const stage = checkStage(action.type);
+
+    // 4. POLICY MATCHING
+    let policy;
+    if(action === "SAFETY-WRITE") policy = POLICIES.find(p=>p.id==="POL-OT-DENY-001");
+    else if(action === "FIRMWARE" && PLANT.mode === "PRODUCTION") policy = POLICIES.find(p=>p.id==="POL-OT-DENY-003");
+    else if(action === "CONFIG-EXPORT" && has(cmd, KW.external)) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-004");
+    else if(action === "CONFIG-EXPORT") policy = POLICIES.find(p=>p.id==="POL-OT-APPR-003");
+    else if(action === "SETPOINT-WRITE" && deviation !== null && deviation > 5) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-002");
+    else if(action === "SETPOINT-WRITE") policy = POLICIES.find(p=>p.id==="POL-OT-APPR-001");
+    else if(action === "LOGIC-MODIFY") policy = POLICIES.find(p=>p.id==="POL-OT-APPR-002");
+    else if(action === "READ") policy = POLICIES.find(p=>p.id==="POL-OT-ALLOW-001");
+    else policy = POLICIES.find(p=>p.id==="POL-FAILCLOSED"); // fail-closed default
     steps.push({
-        name:"Operational Mode Check",
-        status:"pass",
-        detail:`Mode: running | ${stage.reason}`
+        name:"Policy Matching",
+        status: policy.direction === "ALLOW" ? "pass" : policy.direction === "APPROVAL" ? "flag" : "fail",
+        detail: `Matched ${policy.id} → ${policy.direction}`,
     });
-    
-    // STEP 6: Drift Detection
+
+    // 5. MODE CHECK
+    const modeConflict = isFirmware && PLANT.mode === "PRODUCTION";
+    if(modeConflict) risk += 10;
     steps.push({
-        name:"Behavioral Drift Detection",
-        status: action.type.includes("major") || action.type.includes("safety") ? "flag" : "pass",
-        detail: action.type.includes("major") ? "Anomalous setpoint deviation detected" :
-                action.type.includes("safety") ? "Safety system access attempt flagged" :
-                "No anomalous command patterns detected"
+        name:"Mode Check",
+        status: modeConflict ? "fail" : "pass",
+        detail: modeConflict
+            ? `Plant mode is ${PLANT.mode} — firmware operations prohibited in this state`
+            : `Operational state ${PLANT.mode} — no mode conflict for this action`,
     });
-    if(action.type.includes("major")) flags.push("DRIFT_ANOMALY");
-    
-    // STEP 7: PII Override
-    if(pii.hasPII && pii.isExternal && decision==="ALLOW") {
-        decision = "DENY";
-        flags.push("PII_OVERRIDE");
-        steps.push({ name:"PII Override", status:"fail", detail:"PII + external sharing → DENY override applied" });
-    } else {
-        steps.push({ name:"PII Override", status:"pass", detail:"No PII override needed" });
-    }
-    
-    // STEP 8: Payload Override
-    if(riskScore >= 70 && decision==="ALLOW") {
-        decision = "APPROVAL";
-        flags.push("PAYLOAD_ESCALATION");
-        steps.push({ name:"Payload Override", status:"flag", detail:`High risk score (${riskScore}) → escalated to APPROVAL` });
-    } else if(riskScore >= 90 && decision==="APPROVAL") {
-        decision = "DENY";
-        flags.push("PAYLOAD_OVERRIDE_DENY");
-        steps.push({ name:"Payload Override", status:"fail", detail:`Critical risk score (${riskScore}) → overridden to DENY` });
-    } else {
-        steps.push({ name:"Payload Override", status:"pass", detail:"No payload override needed" });
-    }
-    
-    // STEP 9: Final Decision
+
+    // 6. ZONE ENFORCEMENT
+    const crossesBoundary = has(cmd, KW.external);
+    if(crossesBoundary){ risk += 15; flags.push({t:"BOUNDARY CROSS", c:"crit"}); }
     steps.push({
-        name:"Final Decision",
-        status: decision==="ALLOW"?"pass":decision==="DENY"?"fail":"flag",
-        detail: decision==="ALLOW" ? "Command approved for execution. Safe to proceed." :
-                decision==="DENY" ? "Command BLOCKED. Will not reach the controller. OT network isolated." :
-                "Command held for operator approval. Execution paused until authorized."
+        name:"Zone Enforcement",
+        status: crossesBoundary ? "fail" : "pass",
+        detail: crossesBoundary
+            ? "Destination crosses the OT network boundary — IEC 62443 zone-conduit violation"
+            : "Source and destination within permitted zone-conduit paths (IEC 62443)",
     });
-    
-    // STEP 10: Audit
+
+    // 7. OVERRIDE LOGIC
+    let verdict = policy.direction;
+    let overridden = false;
+    if(verdict !== "DENY" && (crossesBoundary && isConfig)){ verdict = "DENY"; overridden = true; }
+    if(verdict === "ALLOW" && piiFound.length){ verdict = "APPROVAL"; overridden = true; }
+    steps.push({
+        name:"Override Logic",
+        status: overridden ? "flag" : "pass",
+        detail: overridden
+            ? `Higher-risk check superseded base verdict → escalated to ${verdict}`
+            : "No higher-risk check supersedes the matched policy",
+    });
+
+    risk = Math.max(2, Math.min(99, Math.round(risk)));
+    if(verdict === "DENY" && risk < 70) risk = 70 + (risk % 25);
+    if(verdict === "ALLOW" && risk > 25) risk = Math.min(risk, 20);
+
+    // 8. AUDIT TRAIL
+    const decisionId = "MIG-" + Date.now().toString(36).toUpperCase();
     steps.push({
         name:"Audit Trail",
         status:"pass",
-        detail:`Decision logged: dec_${Date.now()} | Full pipeline trace recorded`
+        detail:`Decision ${decisionId} logged with full trace — deterministic and reproducible`,
     });
-    
-    // ANIMATE
-    await animatePipeline(steps, decision, matchedPolicy, riskScore, flags, input);
-    
-    document.getElementById('validateBtn').disabled = false;
-    document.getElementById('validateBtn').textContent = "VALIDATE";
+
+    return { steps, verdict, risk, policy, flags, decisionId, action, deviation };
 }
 
-async function animatePipeline(steps, decision, policy, riskScore, flags, command) {
-    const container = document.getElementById('pipelineSteps');
-    container.innerHTML = '';
-    
-    // Create all steps faded
-    steps.forEach((s,i) => {
-        const stepEl = document.createElement('div');
-        stepEl.className = 'step';
-        stepEl.id = `step-${i}`;
-        stepEl.innerHTML = `
-            <div class="step-indicator" id="ind-${i}">
-                <span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px">${i+1}</span>
-            </div>
+// ---- Rendering with staggered animation ----
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ICONS = { pass:"✓", fail:"✕", flag:"!" };
+let running = false;
+
+async function validate(){
+    if(running) return;
+    const input = document.getElementById('commandInput');
+    const cmd = input.value.trim();
+    if(!cmd) { input.focus(); return; }
+
+    running = true;
+    const btn = document.getElementById('validateBtn');
+    btn.disabled = true; btn.textContent = "RUNNING…";
+
+    const result = analyze(cmd);
+    const stepsEl = document.getElementById('pipelineSteps');
+    const decisionEl = document.getElementById('decisionBody');
+
+    decisionEl.innerHTML = '<div class="empty-state"><div class="empty-icon">◆</div>Pipeline running…</div>';
+    stepsEl.innerHTML = result.steps.map((s,i) => `
+        <div class="step" id="step-${i}">
+            <div class="step-indicator" id="ind-${i}">${i+1}</div>
             <div class="step-content">
-                <div class="step-name">${s.name}</div>
-                <div class="step-detail" id="detail-${i}">Waiting...</div>
+                <div class="step-name">${i+1} · ${s.name}</div>
+                <div class="step-detail" id="det-${i}"></div>
             </div>
-        `;
-        container.appendChild(stepEl);
-    });
-    
-    // Animate each step
-    for(let i = 0; i < steps.length; i++) {
-        const stepEl = document.getElementById(`step-${i}`);
-        const indEl = document.getElementById(`ind-${i}`);
-        const detailEl = document.getElementById(`detail-${i}`);
-        
-        stepEl.className = 'step processing';
-        detailEl.textContent = 'Processing...';
-        
-        await sleep(300);
-        
-        stepEl.className = 'step active';
-        indEl.className = `step-indicator ${steps[i].status}`;
-        
-        const icon = steps[i].status==='pass' ? '✓' : steps[i].status==='fail' ? '✕' : '⚠';
-        const iconColor = steps[i].status==='pass' ? 'var(--allow)' : steps[i].status==='fail' ? 'var(--deny)' : 'var(--approval)';
-        indEl.innerHTML = `<span style="color:${iconColor};font-size:13px">${icon}</span>`;
-        
-        detailEl.textContent = steps[i].detail;
-        detailEl.className = `step-detail${steps[i].status==='fail'?' deny-text':steps[i].status==='flag'?' flag-text':''}`;
-        
-        await sleep(200);
+        </div>`).join("");
+
+    const stepDelay = reduced ? 0 : 340;
+    for(let i = 0; i < result.steps.length; i++){
+        const s = result.steps[i];
+        const row = document.getElementById(`step-${i}`);
+        const ind = document.getElementById(`ind-${i}`);
+        const det = document.getElementById(`det-${i}`);
+        row.classList.add('processing');
+        await wait(stepDelay);
+        row.classList.remove('processing');
+        row.classList.add('active');
+        ind.classList.add(s.status);
+        ind.textContent = ICONS[s.status];
+        det.textContent = s.detail;
+        det.className = 'step-detail ' + (s.status === 'fail' ? 'deny-text' : s.status === 'flag' ? 'flag-text' : '');
     }
-    
-    // Show decision
-    renderDecision(decision, policy, riskScore, flags, command);
+
+    renderDecision(result, cmd);
+    btn.disabled = false; btn.textContent = "VALIDATE";
+    running = false;
 }
 
-function renderDecision(decision, policy, riskScore, flags, command) {
-    const body = document.getElementById('decisionBody');
-    const riskColor = riskScore >= 70 ? 'var(--deny)' : riskScore >= 40 ? 'var(--approval)' : 'var(--allow)';
-    const decClass = decision.toLowerCase();
-    
-    let summaryBg, summaryColor, summaryTitle, summaryText;
-    if(decision==="ALLOW") {
-        summaryBg = 'var(--allow-bg)'; summaryColor = 'var(--allow)';
-        summaryTitle = 'Command approved for execution.';
-        summaryText = 'All checks passed. Command would proceed to the target control system.';
-    } else if(decision==="DENY") {
-        summaryBg = 'var(--deny-bg)'; summaryColor = 'var(--deny)';
-        summaryTitle = 'Command BLOCKED. OT network isolated.';
-        summaryText = 'Command terminated at execution boundary. The controller never received this command. Physical process unaffected.';
-    } else {
-        summaryBg = 'var(--approval-bg)'; summaryColor = 'var(--approval)';
-        summaryTitle = 'Command held for operator approval.';
-        summaryText = 'Execution paused. An operator must review and confirm before this command reaches the controller.';
-    }
-    
-    body.innerHTML = `
+function renderDecision(r, cmd){
+    const v = r.verdict.toLowerCase();
+    const color = v === 'allow' ? 'var(--allow)' : v === 'deny' ? 'var(--deny)' : 'var(--approval)';
+    const summaries = {
+        ALLOW: { h:"COMMAND FORWARDED", p:"This command matches policy and carries acceptable risk. In production, MIG forwards it to the PLC and logs the full decision trace." },
+        DENY: { h:"PLC NEVER SEES IT", p:"This command violates policy or exceeds risk thresholds. In production, MIG blocks it before it reaches the controller. The stakeholders below are notified." },
+        APPROVAL: { h:"HELD FOR HUMAN CONFIRMATION", p:"This command is legitimate but sensitive. In production, MIG queues it until the listed operator explicitly confirms — nothing executes in the meantime." },
+    };
+    const s = summaries[r.verdict];
+    const flagsHtml = r.flags.length
+        ? r.flags.map(f=>`<span class="flag-badge ${f.c||''}">${f.t}</span>`).join("")
+        : `<span class="flag-badge">NONE</span>`;
+    const notify = r.policy.notify.length ? r.policy.notify.join(", ") : "—";
+
+    document.getElementById('decisionBody').innerHTML = `
         <div class="decision-body">
-            <div class="decision-badge ${decClass}">${decision}</div>
-            
-            <div class="decision-field">
-                <div class="decision-field-label">Command</div>
-                <div class="decision-field-value bright">${command}</div>
-            </div>
-            
-            ${policy ? `<div class="decision-field">
-                <div class="decision-field-label">Matched Policy</div>
-                <div class="decision-field-value bright">${policy.id}</div>
-                <div class="decision-field-value" style="margin-top:4px;font-size:12px">${policy.rule}</div>
-            </div>` : `<div class="decision-field">
-                <div class="decision-field-label">Policy</div>
-                <div class="decision-field-value" style="color:var(--deny)">No matching policy — fail-closed</div>
-            </div>`}
-            
+            <div class="decision-badge ${v}">${r.verdict}</div>
             <div class="decision-field">
                 <div class="decision-field-label">Risk Score</div>
                 <div class="risk-bar-container">
-                    <div class="risk-bar" style="background:${riskColor}15">
-                        <div class="risk-bar-fill" style="width:${riskScore}%;background:${riskColor}"></div>
-                    </div>
-                    <span class="risk-score" style="color:${riskColor}">${riskScore}</span>
+                    <div class="risk-bar"><div class="risk-bar-fill" id="riskFill" style="background:${color}"></div></div>
+                    <div class="risk-score" style="color:${color}">${r.risk}</div>
                 </div>
             </div>
-            
-            ${flags.length > 0 ? `<div class="decision-field">
-                <div class="decision-field-label">Flags</div>
-                <div class="flags-container">
-                    ${flags.map(f => `<span class="flag-badge" style="color:${f.includes('DENY')||f.includes('HIGH')?'var(--deny)':'var(--approval)'};background:${f.includes('DENY')||f.includes('HIGH')?'var(--deny-bg)':'var(--approval-bg)'};border:1px solid ${f.includes('DENY')||f.includes('HIGH')?'rgba(255,59,79,0.2)':'rgba(255,176,32,0.2)'}">${f}</span>`).join('')}
-                </div>
-            </div>` : ''}
-            
-            ${policy && policy.notify.length > 0 ? `<div class="decision-field">
+            <div class="decision-field">
+                <div class="decision-field-label">Matched Policy</div>
+                <div class="decision-field-value mono">${r.policy.id}</div>
+                <div class="decision-field-value" style="font-size:11.5px; color:var(--dim); margin-top:4px;">${r.policy.rule}</div>
+            </div>
+            <div class="decision-field">
+                <div class="decision-field-label">Risk Flags</div>
+                <div class="flags-container">${flagsHtml}</div>
+            </div>
+            <div class="decision-field">
                 <div class="decision-field-label">Notify</div>
-                <div class="decision-field-value" style="color:var(--approval);font-family:'JetBrains Mono',monospace;font-size:11px">${policy.notify.join(', ')}</div>
-            </div>` : ''}
-            
-            <div class="decision-summary" style="background:${summaryBg};border:1px solid ${summaryColor}20">
-                <h4 style="color:${summaryColor}">${summaryTitle}</h4>
-                <p>${summaryText}</p>
+                <div class="decision-field-value mono">${notify}</div>
             </div>
-            
+            <div class="decision-summary ${v}">
+                <h4>${s.h}</h4>
+                <p>${s.p}</p>
+            </div>
             <div class="audit-section">
-                <div class="decision-field-label" style="margin-bottom:8px">AUDIT TRAIL</div>
-                <div class="audit-row"><span class="audit-key">Decision</span><span class="audit-val">${decision}</span></div>
-                <div class="audit-row"><span class="audit-key">Policy</span><span class="audit-val">${policy?policy.id:'FAIL_CLOSED'}</span></div>
-                <div class="audit-row"><span class="audit-key">Risk</span><span class="audit-val">${riskScore}/100</span></div>
-                <div class="audit-row"><span class="audit-key">Flags</span><span class="audit-val">${flags.length>0?flags.join(', '):'none'}</span></div>
-                <div class="audit-row"><span class="audit-key">Enforcement</span><span class="audit-val">${policy?policy.enforcement:'critical'}</span></div>
-                <div class="audit-row"><span class="audit-key">Mode</span><span class="audit-val">fail-closed</span></div>
-                <div class="audit-row"><span class="audit-key">Timestamp</span><span class="audit-val">${new Date().toISOString()}</span></div>
-                <div class="audit-row"><span class="audit-key">ID</span><span class="audit-val">dec_${Date.now()}</span></div>
+                <div class="audit-title">Audit Entry</div>
+                <div class="audit-row"><span class="audit-key">decision_id</span><span class="audit-val">${r.decisionId}</span></div>
+                <div class="audit-row"><span class="audit-key">timestamp</span><span class="audit-val">${new Date().toISOString()}</span></div>
+                <div class="audit-row"><span class="audit-key">action_class</span><span class="audit-val">${r.action}</span></div>
+                <div class="audit-row"><span class="audit-key">enforcement</span><span class="audit-val">${r.policy.enforcement.toUpperCase()}</span></div>
+                <div class="audit-row"><span class="audit-key">deterministic</span><span class="audit-val">TRUE — same input, same output</span></div>
             </div>
-        </div>
-    `;
+        </div>`;
+    requestAnimationFrame(()=>{ 
+        const fill = document.getElementById('riskFill');
+        if(fill) fill.style.width = r.risk + "%";
+    });
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
 </script>
-
 </body>
 </html>
