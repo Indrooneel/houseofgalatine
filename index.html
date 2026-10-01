@@ -1,1115 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House of Galatine — AI Execution Control for Critical Infrastructure</title>
-    <meta name="description" content="MIG validates every AI and operator action before it executes in critical systems. Fail-closed by default. No LLM in the decision loop.">
-    <meta property="og:title" content="House of Galatine — AI Execution Control for Critical Infrastructure">
-    <meta property="og:description" content="Nothing executes without MIG approval. Fail-closed by default. No LLM in the decision loop.">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#131313">
+    <title>House of Galatine — Control What AI Can Execute</title>
+    <meta name="description" content="MIG is the deterministic execution-control layer between AI agents and critical systems. Every action is validated before it runs.">
+    <meta property="og:title" content="House of Galatine — Control What AI Can Execute">
+    <meta property="og:description" content="AI can propose anything. MIG decides what gets to execute.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://houseofgalatine.com">
-
+    <meta property="og:image" content="https://houseofgalatine.com/assets/galatine-mark.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://houseofgalatine.com/assets/galatine-mark.png">
+    <link rel="canonical" href="https://houseofgalatine.com/">
+    <link rel="icon" href="assets/galatine-mark.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --bg: #08060d;
-            --bg-deep: #050409;
-            --bg-panel: #0e0a18;
-            --bg-card: #120d20;
-            --border: #241b3d;
-            --border-bright: #3b2d63;
-            --violet: #8b5cf6;
-            --violet-bright: #a78bfa;
-            --violet-deep: #6d28d9;
-            --magenta: #d946ef;
-            --allow: #34d399;
-            --deny: #fb7185;
-            --approval: #fbbf24;
-            --text: #e7e3f4;
-            --text-dim: #8b84a8;
-            --text-muted: #4d4569;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        ::selection { background: rgba(139,92,246,0.35); color: #fff; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
-
-        /* ambient purple field */
-        .ambient {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            background:
-                radial-gradient(ellipse 60% 45% at 75% -5%, rgba(109,40,217,0.22), transparent 60%),
-                radial-gradient(ellipse 50% 40% at 10% 110%, rgba(217,70,239,0.10), transparent 60%);
-        }
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(139,92,246,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(139,92,246,0.035) 1px, transparent 1px);
-            background-size: 56px 56px;
-            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
-            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
-        }
-
-        main, nav, footer { position: relative; z-index: 1; }
-
-        /* ===== TYPE ===== */
-        .display {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #f4f1fd;
-        }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .eyebrow {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--violet-bright);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .eyebrow::before {
-            content: '';
-            width: 24px;
-            height: 1px;
-            background: var(--violet);
-        }
-        .section-title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: clamp(26px, 3.8vw, 42px);
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            color: #f4f1fd;
-            margin-bottom: 18px;
-            max-width: 720px;
-        }
-        .section-desc {
-            font-size: 15.5px;
-            font-weight: 300;
-            color: var(--text-dim);
-            max-width: 620px;
-            line-height: 1.85;
-            margin-bottom: 52px;
-        }
-        .section { max-width: 1120px; margin: 0 auto; padding: 110px 40px; }
-
-        /* ===== NAV ===== */
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            padding: 18px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            background: rgba(8,6,13,0.8);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-brand {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 15px;
-            letter-spacing: 0.02em;
-            color: var(--text);
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        .nav-brand span { color: var(--violet-bright); }
-        .nav-links { display: flex; gap: 26px; list-style: none; align-items: center; }
-        .nav-links a {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-dim);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            transition: color 0.25s;
-        }
-        .nav-links a:hover { color: var(--violet-bright); }
-        .nav-links a.nav-nova { color: var(--magenta); }
-        .nav-cta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            padding: 9px 20px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, var(--violet-deep), var(--violet));
-            color: #fff;
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            transition: all 0.25s;
-            white-space: nowrap;
-            box-shadow: 0 0 0 1px rgba(167,139,250,0.25), 0 4px 24px rgba(109,40,217,0.35);
-        }
-        .nav-cta:hover { box-shadow: 0 0 0 1px rgba(167,139,250,0.5), 0 4px 32px rgba(139,92,246,0.55); transform: translateY(-1px); }
-
-        /* ===== HERO ===== */
-        .hero {
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 160px 40px 90px;
-            display: grid;
-            grid-template-columns: 1.05fr 0.95fr;
-            gap: 56px;
-            align-items: center;
-            min-height: 92vh;
-        }
-        .hero-left .eyebrow { animation: rise 0.7s ease 0.1s both; }
-        .hero h1 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: clamp(34px, 4.6vw, 58px);
-            line-height: 1.08;
-            letter-spacing: -0.025em;
-            color: #f4f1fd;
-            margin-bottom: 24px;
-            animation: rise 0.7s ease 0.2s both;
-        }
-        .hero h1 .glow {
-            background: linear-gradient(100deg, var(--violet-bright), var(--magenta));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .hero-sub {
-            font-size: 16px;
-            font-weight: 300;
-            color: var(--text-dim);
-            max-width: 480px;
-            line-height: 1.85;
-            margin-bottom: 36px;
-            animation: rise 0.7s ease 0.32s both;
-        }
-        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; animation: rise 0.7s ease 0.44s both; }
-        .btn {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            padding: 14px 28px;
-            border-radius: 8px;
-            text-decoration: none;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.25s;
-            border: 1px solid transparent;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--violet-deep), var(--violet));
-            color: #fff;
-            box-shadow: 0 0 0 1px rgba(167,139,250,0.25), 0 8px 32px rgba(109,40,217,0.4);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(167,139,250,0.5), 0 12px 44px rgba(139,92,246,0.55); }
-        .btn-nova {
-            background: rgba(217,70,239,0.08);
-            color: var(--magenta);
-            border-color: rgba(217,70,239,0.3);
-        }
-        .btn-nova:hover { background: rgba(217,70,239,0.16); box-shadow: 0 6px 28px rgba(217,70,239,0.25); }
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-dim);
-            border-color: var(--border-bright);
-        }
-        .btn-ghost:hover { color: var(--text); border-color: var(--violet); }
-
-        .hero-meta {
-            margin-top: 40px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            animation: rise 0.7s ease 0.56s both;
-        }
-        .hero-meta b { color: var(--violet-bright); font-weight: 500; }
-
-        /* ===== LIVE CONSOLE (signature) ===== */
-        .console {
-            border: 1px solid var(--border-bright);
-            border-radius: 14px;
-            background: linear-gradient(180deg, rgba(18,13,32,0.9), rgba(10,7,18,0.95));
-            box-shadow:
-                0 0 0 1px rgba(139,92,246,0.08),
-                0 24px 80px rgba(0,0,0,0.6),
-                0 0 120px rgba(109,40,217,0.18);
-            overflow: hidden;
-            animation: rise 0.8s ease 0.5s both;
-        }
-        .console-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 18px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(14,10,24,0.9);
-        }
-        .console-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
-        .console-live {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            letter-spacing: 0.12em;
-            color: var(--allow);
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-        .console-live::before {
-            content: '';
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--allow);
-            box-shadow: 0 0 10px var(--allow);
-            animation: pulse 1.6s ease infinite;
-        }
-        .console-body {
-            padding: 18px;
-            min-height: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .feed-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            align-items: start;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: rgba(8,6,13,0.55);
-            opacity: 0;
-            transform: translateY(8px);
-            animation: feedIn 0.4s ease forwards;
-        }
-        .feed-cmd { font-size: 11.5px; color: var(--text); line-height: 1.6; }
-        .feed-src { font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
-        .feed-verdict {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            padding: 5px 12px;
-            border-radius: 5px;
-            white-space: nowrap;
-        }
-        .feed-verdict.allow { color: var(--allow); background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); }
-        .feed-verdict.deny { color: var(--deny); background: rgba(251,113,133,0.1); border: 1px solid rgba(251,113,133,0.3); text-shadow: 0 0 12px rgba(251,113,133,0.4); }
-        .feed-verdict.approval { color: var(--approval); background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
-        .feed-risk { font-size: 9.5px; color: var(--text-muted); text-align: right; margin-top: 4px; }
-        .console-foot {
-            padding: 12px 18px;
-            border-top: 1px solid var(--border);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-        }
-        .console-foot b { color: var(--violet-bright); font-weight: 500; }
-
-        /* ===== MARQUEE TAGLINE ===== */
-        .tagline {
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            background: var(--bg-deep);
-            padding: 22px 0;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .tagline-track {
-            display: inline-block;
-            animation: scroll 32s linear infinite;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-        .tagline-track span { color: var(--violet-bright); }
-        .tagline-track i { font-style: normal; margin: 0 32px; color: var(--border-bright); }
-
-        /* ===== PROBLEM ===== */
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-        .problem-card {
-            padding: 34px 28px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-panel);
-            transition: border-color 0.3s, transform 0.3s;
-        }
-        .problem-card:hover { border-color: rgba(251,113,133,0.35); transform: translateY(-3px); }
-        .problem-num {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 15px;
-            color: var(--deny);
-            margin-bottom: 14px;
-        }
-        .problem-card h3 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            color: #f4f1fd;
-            margin-bottom: 10px;
-            letter-spacing: -0.01em;
-        }
-        .problem-card p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; line-height: 1.75; }
-        .incident {
-            margin-top: 20px;
-            padding: 24px 28px;
-            border: 1px solid rgba(251,113,133,0.25);
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(251,113,133,0.05), transparent 60%);
-        }
-        .incident p { font-size: 14px; color: var(--text-dim); font-weight: 300; line-height: 1.85; }
-        .incident b { color: var(--deny); font-weight: 500; }
-
-        /* ===== PRODUCTS ===== */
-        .products-wrap { background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-        .p-card {
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--bg-panel);
-            padding: 38px 30px 30px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        }
-        .p-card::before {
-            content: '';
-            position: absolute;
-            top: -60px; right: -60px;
-            width: 180px; height: 180px;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.35;
-        }
-        .p-card.mig::before { background: var(--violet); }
-        .p-card.nova::before { background: var(--magenta); }
-        .p-card.labs::before { background: #38bdf8; }
-        .p-card:hover { transform: translateY(-4px); border-color: var(--border-bright); box-shadow: 0 20px 60px rgba(0,0,0,0.45); }
-        .p-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-        .p-card.mig .p-tag { color: var(--violet-bright); }
-        .p-card.nova .p-tag { color: var(--magenta); }
-        .p-card.labs .p-tag { color: #38bdf8; }
-        .p-card h3 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 26px;
-            color: #f4f1fd;
-            margin-bottom: 14px;
-            letter-spacing: -0.01em;
-        }
-        .soon {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--magenta);
-            border: 1px solid rgba(217,70,239,0.35);
-            background: rgba(217,70,239,0.08);
-            border-radius: 4px;
-            padding: 3px 8px;
-            vertical-align: middle;
-            margin-left: 8px;
-        }
-        .p-card p { font-size: 13.5px; color: var(--text-dim); font-weight: 300; line-height: 1.8; margin-bottom: 18px; }
-        .p-card ul { list-style: none; margin-bottom: 28px; }
-        .p-card ul li {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-muted);
-            padding: 7px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .p-card.mig ul li::before { content: '▸ '; color: var(--violet-bright); }
-        .p-card.nova ul li::before { content: '▸ '; color: var(--magenta); }
-        .p-card.labs ul li::before { content: '▸ '; color: #38bdf8; }
-        .p-cta {
-            margin-top: auto;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            text-decoration: none;
-            text-align: center;
-            padding: 11px 20px;
-            border-radius: 7px;
-            border: 1px solid var(--border-bright);
-            color: var(--text-dim);
-            transition: all 0.25s;
-        }
-        .p-card.mig .p-cta:hover { color: var(--violet-bright); border-color: var(--violet); }
-        .p-card.nova .p-cta:hover { color: var(--magenta); border-color: var(--magenta); }
-        .p-card.labs .p-cta:hover { color: #38bdf8; border-color: #38bdf8; }
-
-        /* ===== PIPELINE ===== */
-        .pipeline {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 44px;
-        }
-        .pipe {
-            padding: 20px 18px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg-panel);
-        }
-        .pipe-n {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            color: var(--violet-bright);
-            margin-bottom: 8px;
-        }
-        .pipe h4 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            color: var(--text);
-            margin-bottom: 5px;
-        }
-        .pipe p { font-size: 11.5px; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
-        .fail-note {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            line-height: 2;
-            letter-spacing: 0.03em;
-            color: var(--violet-bright);
-            padding: 22px 26px;
-            border: 1px solid rgba(139,92,246,0.25);
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(139,92,246,0.06), transparent 70%);
-            margin-bottom: 44px;
-        }
-        .fail-note span { color: var(--text-muted); }
-        .verdicts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-        .verdict {
-            padding: 30px 26px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--bg-panel);
-            border-top: 2px solid;
-        }
-        .verdict.allow { border-top-color: var(--allow); }
-        .verdict.approval { border-top-color: var(--approval); }
-        .verdict.deny { border-top-color: var(--deny); }
-        .verdict h3 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13.5px;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            margin-bottom: 10px;
-        }
-        .verdict.allow h3 { color: var(--allow); }
-        .verdict.approval h3 { color: var(--approval); }
-        .verdict.deny h3 { color: var(--deny); }
-        .verdict p { font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.75; }
-
-        /* ===== VALIDATION ===== */
-        .val-wrap { background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .val-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            margin-bottom: 44px;
-        }
-        .val-stat {
-            padding: 26px 24px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-panel);
-        }
-        .val-num {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 34px;
-            letter-spacing: -0.02em;
-            background: linear-gradient(120deg, var(--violet-bright), var(--magenta));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 6px;
-        }
-        .val-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-        .val-rows { display: flex; flex-direction: column; gap: 9px; }
-        .val-row {
-            display: grid;
-            grid-template-columns: 1fr 110px 80px;
-            gap: 16px;
-            align-items: center;
-            padding: 16px 22px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg-panel);
-        }
-        .val-cmd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
-        .val-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.09em;
-            padding: 5px 12px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .val-badge.allow { color: var(--allow); background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); }
-        .val-badge.deny { color: var(--deny); background: rgba(251,113,133,0.1); border: 1px solid rgba(251,113,133,0.3); }
-        .val-badge.approval { color: var(--approval); background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
-        .val-risk { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-align: right; }
-        .val-note {
-            margin-top: 26px;
-            font-size: 13.5px;
-            color: var(--text-dim);
-            font-weight: 300;
-            max-width: 720px;
-            line-height: 1.85;
-        }
-        .val-note em { color: var(--text); font-style: normal; font-weight: 500; }
-
-        /* ===== COMPARE ===== */
-        .compare-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-        .compare-table { width: 100%; min-width: 660px; border-collapse: collapse; font-size: 13px; }
-        .compare-table th {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--violet-bright);
-            text-align: left;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-bright);
-            background: var(--bg-panel);
-        }
-        .compare-table th:last-child { color: #fff; background: linear-gradient(135deg, rgba(109,40,217,0.35), rgba(139,92,246,0.2)); }
-        .compare-table td { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 300; }
-        .compare-table tr:last-child td { border-bottom: none; }
-        .compare-table td:first-child { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--text); font-size: 12px; }
-        .compare-table td:last-child { background: rgba(139,92,246,0.05); }
-        .compare-table td.yes { color: var(--allow); }
-        .compare-table td.no { color: var(--deny); }
-        .compare-note { margin-top: 26px; font-size: 14px; font-weight: 300; color: var(--text-dim); max-width: 720px; line-height: 1.85; }
-        .compare-note b { color: var(--text); font-weight: 500; }
-
-        /* ===== FOUNDER ===== */
-        .founder-wrap { background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .founder-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 60px; }
-        .founder-name {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 27px;
-            color: #f4f1fd;
-            letter-spacing: -0.01em;
-            margin-bottom: 6px;
-        }
-        .founder-role {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--violet-bright);
-            margin-bottom: 26px;
-        }
-        .creds { display: flex; flex-direction: column; }
-        .cred {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-muted);
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .cred span { color: var(--violet-bright); margin-right: 8px; }
-        .founder-bio p { font-size: 14.5px; font-weight: 300; color: var(--text-dim); line-height: 1.9; margin-bottom: 16px; }
-        .ask {
-            margin-top: 26px;
-            padding: 20px 24px;
-            border: 1px solid rgba(251,191,36,0.25);
-            border-radius: 10px;
-            background: rgba(251,191,36,0.04);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            color: var(--approval);
-            letter-spacing: 0.03em;
-            line-height: 2;
-        }
-
-        /* ===== CTA ===== */
-        .cta {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 140px 40px;
-            text-align: center;
-        }
-        .cta h2 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: clamp(30px, 4.5vw, 50px);
-            letter-spacing: -0.02em;
-            line-height: 1.12;
-            color: #f4f1fd;
-            margin-bottom: 20px;
-        }
-        .cta h2 .glow {
-            background: linear-gradient(100deg, var(--violet-bright), var(--magenta));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .cta > p { font-size: 15.5px; color: var(--text-dim); font-weight: 300; margin-bottom: 38px; line-height: 1.85; }
-        .cta-email {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
-            color: var(--violet-bright);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(139,92,246,0.35);
-            padding-bottom: 2px;
-            transition: all 0.25s;
-        }
-        .cta-email:hover { color: #fff; border-bottom-color: var(--magenta); }
-        .cta-links { margin-top: 40px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
-        .cta-links a {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-muted);
-            text-decoration: none;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            transition: all 0.25s;
-        }
-        .cta-links a:hover { color: var(--violet-bright); border-color: var(--border-bright); }
-
-        footer {
-            padding: 30px 40px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .foot-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-muted); }
-        .foot-right { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
-
-        /* ===== ANIMATION ===== */
-        @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes feedIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal.visible { opacity: 1; transform: none; }
-
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            * { animation: none !important; transition: none !important; }
-            .hero-left > *, .console, .reveal, .feed-row { opacity: 1 !important; transform: none !important; }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 960px) {
-            .hero { grid-template-columns: 1fr; padding-top: 130px; gap: 44px; min-height: 0; }
-            .product-grid, .problem-grid, .verdicts { grid-template-columns: 1fr; }
-            .pipeline { grid-template-columns: 1fr 1fr; }
-            .val-stats { grid-template-columns: 1fr 1fr; }
-            .founder-grid { grid-template-columns: 1fr; gap: 40px; }
-        }
-        @media (max-width: 640px) {
-            nav { padding: 14px 20px; }
-            .nav-links { display: none; }
-            .hero { padding: 120px 20px 70px; }
-            .section { padding: 80px 20px; }
-            .cta { padding: 100px 20px; }
-            .pipeline { grid-template-columns: 1fr; }
-            .val-row { grid-template-columns: 1fr; gap: 8px; }
-            .val-risk { text-align: left; }
-            footer { flex-direction: column; text-align: center; padding: 24px 20px; }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="site.js" defer></script>
 </head>
 <body>
-    <div class="ambient"></div>
-    <div class="grid-overlay"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="site-grid" aria-hidden="true"></div>
 
-    <nav>
-        <a href="#" class="nav-brand">HOUSE OF <span>GALATINE</span></a>
-        <ul class="nav-links">
-            <li><a href="#problem">Problem</a></li>
-            <li><a href="#products">Products</a></li>
-            <li><a href="#how">How It Works</a></li>
-            <li><a href="#proof">Validation</a></li>
-            <li><a href="#" class="nav-nova" onclick="return false;" title="Launching soon">Nova ↗</a></li>
-            <li><a href="#founder">Founder</a></li>
-        </ul>
-        <a href="mailto:neel@houseofgalatine.com" class="nav-cta">Request Demo</a>
-    </nav>
+    <header class="site-header" id="top">
+        <a class="brand" href="#top" aria-label="House of Galatine home">
+            <img class="brand-mark" src="assets/galatine.png" alt="" width="40" height="42">
+            <span class="brand-name">House of Galatine</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+            <span class="sr-only">Open navigation</span><span></span><span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+            <a href="#products">Products</a><a href="#how">How it works</a><a href="#proof">Proof</a><a href="#founder">Founder</a>
+            <a class="mobile-demo" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a demo ↗</a>
+        </nav>
+        <a class="header-cta" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a demo <span aria-hidden="true">↗</span></a>
+    </header>
 
-    <main>
-        <!-- HERO -->
-        <header class="hero">
-            <div class="hero-left">
-                <div class="eyebrow">AI Execution Control · Est. 2024</div>
-                <h1>AI can think whatever it wants. Nothing executes without <span class="glow">approval.</span></h1>
-                <p class="hero-sub">MIG is the execution control layer between AI agents and real-world systems — industrial controllers, enterprise software, critical infrastructure. Every action validated before it runs. Fail-closed by default. No LLM in the decision loop.</p>
-                <div class="hero-actions">
-                    <a href="/playground" class="btn btn-primary">Try the Playground</a>
-                    <a href="#nova" class="btn btn-nova">Nova Platform · Soon</a>
-                    <a href="mailto:neel@houseofgalatine.com" class="btn btn-ghost">Private Demo</a>
+    <main id="main">
+        <section class="hero section-shell" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <div class="signal-label reveal"><span class="signal-dot"></span>AI execution control / live</div>
+                <h1 id="hero-title" class="reveal">AI can propose anything.<br><em>MIG decides what runs.</em></h1>
+                <p class="hero-lede reveal">The deterministic control layer between AI agents and the real world. Every action is inspected, scored, and governed <strong>before</strong> it reaches critical infrastructure.</p>
+                <div class="hero-actions reveal">
+                    <a class="button button-primary" href="playground.html">Run a command <span aria-hidden="true">→</span></a>
+                    <a class="button button-secondary" href="#how">See how MIG works</a>
                 </div>
-                <div class="hero-meta">Deterministic · <b>Same input → same output</b> · Full forensic audit trail</div>
-            </div>
-            <div class="console" aria-label="Simulated MIG decision feed">
-                <div class="console-bar">
-                    <div class="console-title">MIG · Decision Feed</div>
-                    <div class="console-live">SIMULATED FEED</div>
-                </div>
-                <div class="console-body" id="feed"></div>
-                <div class="console-foot">
-                    <div>PIPELINE: <b>8/8 CHECKS</b></div>
-                    <div>MODE: <b>FAIL-CLOSED</b></div>
+                <div class="hero-qualifiers reveal" aria-label="Product qualities">
+                    <span>No LLM in the decision loop</span><span>Fail-closed by default</span><span>Full forensic trace</span>
                 </div>
             </div>
-        </header>
 
-        <!-- MARQUEE -->
-        <div class="tagline" aria-hidden="true">
-            <div class="tagline-track" id="marquee">
-                NOTHING EXECUTES WITHOUT <span>MIG APPROVAL</span><i>//</i>FAIL-CLOSED BY DEFAULT<i>//</i>NO LLM IN THE DECISION LOOP<i>//</i>VALIDATE BEFORE EXECUTION, NOT AFTER<i>//</i>
-            </div>
-        </div>
-
-        <!-- PROBLEM -->
-        <section class="section" id="problem">
-            <div class="reveal">
-                <div class="eyebrow">The Problem</div>
-                <h2 class="section-title">Execution is the last unguarded boundary.</h2>
-                <p class="section-desc">We've built guardrails around what AI can say. Almost nothing guards what AI — or anyone else on the network — can actually do.</p>
-            </div>
-            <div class="problem-grid reveal">
-                <div class="problem-card">
-                    <div class="problem-num">01</div>
-                    <h3>Zero authentication</h3>
-                    <p>Modbus TCP — the protocol running much of the world's industrial equipment — dates to 1979 and has no security model. Any device on the network can command any controller.</p>
+            <div class="gate-shell reveal" aria-label="Simulated MIG execution gate">
+                <div class="gate-topline">
+                    <div><span class="gate-kicker">MIG / Execution boundary</span><strong>Policy engine online</strong></div>
+                    <div class="live-pill"><span></span> Simulated live feed</div>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-num">02</div>
-                    <h3>Execution without validation</h3>
-                    <p>PLCs execute every command unconditionally. No authentication, no authorization, no content inspection. The controller can't tell an operator from an attacker — or from a confused AI agent.</p>
+                <div class="gate-flow" aria-hidden="true">
+                    <div class="flow-node"><span>01</span><strong>Agent</strong><small>Command source</small></div>
+                    <div class="flow-line"><i></i></div>
+                    <div class="flow-node flow-node-core"><span>02</span><strong>MIG</strong><small>Execution gate</small></div>
+                    <div class="flow-line flow-line-locked"><i></i></div>
+                    <div class="flow-node"><span>03</span><strong>System</strong><small>Protected target</small></div>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-num">03</div>
-                    <h3>Detection after damage</h3>
-                    <p>Today's security tools monitor and alert after execution. By the time the alert fires, the pump has oversped and the valve is open. Detection is not prevention.</p>
+                <div class="decision-window">
+                    <div class="decision-window-head"><span>Recent decisions</span><span id="decision-count">003 events</span></div>
+                    <div id="hero-feed" class="hero-feed" aria-live="off"></div>
                 </div>
-            </div>
-            <div class="incident reveal">
-                <p><b>Oldsmar, Florida (2021):</b> a single remote command set sodium hydroxide dosing to 100x safe levels at a water treatment plant. The PLC executed it instantly. <b>July 2025:</b> an AI coding agent deleted a company's production database during an active code freeze. Different domains — same missing layer: nothing validated the action before it ran.</p>
+                <div class="gate-footer"><span>Pipeline <b>8/8</b></span><span>Outcome <b>Reproducible</b></span><span>Mode <b>Fail-closed</b></span></div>
             </div>
         </section>
 
-        <!-- PRODUCTS -->
-        <div class="products-wrap" id="products">
-            <section class="section">
-                <div class="reveal">
-                    <div class="eyebrow">What We Build</div>
-                    <h2 class="section-title">One governance engine. Two products. One services arm.</h2>
-                    <p class="section-desc">MIG is the core. Everything else we build sits on top of it — including our own automation platform.</p>
-                </div>
-                <div class="product-grid reveal">
-                    <div class="p-card mig">
-                        <div class="p-tag">Core Engine</div>
-                        <h3>MIG</h3>
-                        <p>The execution control engine. Sits between any command source and any target system, validating every action before it executes.</p>
-                        <ul>
-                            <li>8-step validation pipeline</li>
-                            <li>Graph-based policy matching</li>
-                            <li>0–100 continuous risk scoring</li>
-                            <li>ALLOW / DENY / APPROVAL verdicts</li>
-                            <li>Full forensic audit trail</li>
-                        </ul>
-                        <a href="/playground" class="p-cta">Try the Playground</a>
-                    </div>
-                    <div class="p-card nova" id="nova">
-                        <div class="p-tag">Platform</div>
-                        <h3>Nova <span class="soon">Launching Soon</span></h3>
-                        <p>A governed automation platform. AI agents plan and execute real tasks — and MIG validates every single action before it runs. Safety built in, not bolted on.</p>
-                        <ul>
-                            <li>Natural-language task automation</li>
-                            <li>Skill library, extensible via JSON</li>
-                            <li>MIG governance on every action</li>
-                            <li>Fail-closed on any error</li>
-                            <li>Complete audit log per task</li>
-                        </ul>
-                        <a href="#" class="p-cta" onclick="return false;" title="Launching soon">Get Notified — Coming Soon</a>
-                    </div>
-                    <div class="p-card labs">
-                        <div class="p-tag">Services</div>
-                        <h3>Galatine Labs</h3>
-                        <p>Governed AI automation sprints for businesses. We build your automation on Nova, governed by MIG — the speed of AI agents without handing them the keys.</p>
-                        <ul>
-                            <li>Scoped 2–4 week engagements</li>
-                            <li>Policy design for your workflows</li>
-                            <li>Audit-ready from day one</li>
-                        </ul>
-                        <a href="mailto:neel@houseofgalatine.com" class="p-cta">Book an Engagement</a>
-                    </div>
-                </div>
-            </section>
+        <div class="principle-rail" aria-label="MIG operating principles">
+            <div class="rail-track">
+                <span>Validate before execution</span><i>◆</i><span>Same policy input → same verdict</span><i>◆</i><span>The default is never allow</span><i>◆</i><span>Every decision leaves evidence</span><i>◆</i>
+                <span>Validate before execution</span><i>◆</i><span>Same policy input → same verdict</span><i>◆</i><span>The default is never allow</span><i>◆</i><span>Every decision leaves evidence</span><i>◆</i>
+            </div>
         </div>
 
-        <!-- HOW -->
-        <section class="section" id="how">
-            <div class="reveal">
-                <div class="eyebrow">How MIG Works</div>
-                <h2 class="section-title">Eight independent checks. Three possible verdicts.</h2>
-                <p class="section-desc">Every command passes through the full pipeline. Every step is independent and traceable. Every decision is logged with its complete rationale.</p>
+        <section class="credibility section-shell reveal" aria-label="Validation snapshot">
+            <div class="credibility-copy"><span>Validation snapshot / LabShock</span><strong>Real PLC hardware. Real Modbus traffic. Simulated plant.</strong></div>
+            <div class="credibility-stat"><strong>06</strong><span>Attack scenarios</span></div>
+            <div class="credibility-stat"><strong>00</strong><span>Unsafe executions</span></div>
+            <a href="#proof">Review the record <span aria-hidden="true">↓</span></a>
+        </section>
+
+        <section class="problem section-shell" id="problem" aria-labelledby="problem-title">
+            <div class="section-intro reveal">
+                <div class="section-index">01 / The gap</div>
+                <div><p class="overline">The last unguarded boundary</p><h2 id="problem-title">Security watches what happens.<br>MIG controls <em>whether it happens.</em></h2></div>
             </div>
-            <div class="pipeline reveal">
-                <div class="pipe"><div class="pipe-n">01</div><h4>PII Scan</h4><p>Detect sensitive data in the payload</p></div>
-                <div class="pipe"><div class="pipe-n">02</div><h4>Action Classification</h4><p>Infer intent: read, write, firmware, safety</p></div>
-                <div class="pipe"><div class="pipe-n">03</div><h4>Payload Inspection</h4><p>Analyze content, sensitivity, destination</p></div>
-                <div class="pipe"><div class="pipe-n">04</div><h4>Policy Matching</h4><p>Graph traversal with semantic embeddings</p></div>
-                <div class="pipe"><div class="pipe-n">05</div><h4>Mode Check</h4><p>Validate against operational state</p></div>
-                <div class="pipe"><div class="pipe-n">06</div><h4>Zone Enforcement</h4><p>IEC 62443 zone-conduit rules</p></div>
-                <div class="pipe"><div class="pipe-n">07</div><h4>Override Logic</h4><p>Higher-risk checks supersede lower</p></div>
-                <div class="pipe"><div class="pipe-n">08</div><h4>Audit Trail</h4><p>Full decision trace logged</p></div>
+            <div class="problem-ledger">
+                <article class="ledger-row reveal"><span class="ledger-number">01</span><h3>Protocols trust the network.</h3><p>Industrial protocols like Modbus TCP were designed for availability, not adversarial environments. If a command reaches the controller, it is usually accepted.</p><span class="ledger-tag">No identity</span></article>
+                <article class="ledger-row reveal"><span class="ledger-number">02</span><h3>Controllers trust the command.</h3><p>A PLC cannot tell an operator from an attacker — or a capable AI agent from a confused one. It executes the instruction it receives.</p><span class="ledger-tag">No intent</span></article>
+                <article class="ledger-row reveal"><span class="ledger-number">03</span><h3>Detection arrives after execution.</h3><p>Alerts are essential, but they do not close the valve or reject the unsafe setpoint. For high-consequence actions, observation alone is too late.</p><span class="ledger-tag">No veto</span></article>
             </div>
-            <div class="fail-note reveal">
-                FAIL-CLOSED BY DESIGN <span>—</span> No policy match → DENY <span>·</span> MIG unreachable → DENY <span>·</span> Any pipeline error → DENY <span>·</span> The default is never ALLOW <span>·</span> No LLM in the decision loop: same input, same output, every time.
-            </div>
-            <div class="verdicts reveal">
-                <div class="verdict allow">
-                    <h3>ALLOW</h3>
-                    <p>The command matches policy and carries acceptable risk. It's forwarded to the target system and logged.</p>
+            <aside class="incident-note reveal"><div class="incident-mark" aria-hidden="true">!</div><p><strong>The common failure mode:</strong> a system received a syntactically valid command that should never have been allowed to execute. MIG creates the missing veto point.</p><a href="#proof">See the validation record <span aria-hidden="true">↓</span></a></aside>
+        </section>
+
+        <section class="products" id="products" aria-labelledby="products-title">
+            <div class="section-shell">
+                <div class="section-intro section-intro-light reveal">
+                    <div class="section-index">02 / The system</div>
+                    <div><p class="overline">One governance layer</p><h2 id="products-title">A control plane for machines,<br>software, and AI agents.</h2></div>
                 </div>
-                <div class="verdict approval">
-                    <h3>APPROVAL</h3>
-                    <p>The command is legitimate but sensitive. It's held in a queue until a human operator explicitly confirms it.</p>
+                <div class="architecture reveal">
+                    <div class="architecture-sources"><span>AI agents</span><span>Operators</span><span>Applications</span></div>
+                    <div class="architecture-arrow" aria-hidden="true"><span></span></div>
+                    <article class="mig-core"><div class="core-orbit orbit-one"></div><div class="core-orbit orbit-two"></div><span class="core-label">Execution control engine</span><h3>MIG</h3><p>Policy matching, content inspection, continuous risk scoring, and a complete decision trace — in one deterministic boundary.</p><a href="playground.html">Open the playground <span aria-hidden="true">↗</span></a></article>
+                    <div class="architecture-arrow" aria-hidden="true"><span></span></div>
+                    <div class="architecture-targets"><span>Industrial control</span><span>Enterprise tools</span><span>Critical data</span></div>
                 </div>
-                <div class="verdict deny">
-                    <h3>DENY</h3>
-                    <p>The command violates policy or exceeds risk thresholds. The target system never sees it. Full rationale logged.</p>
+                <div class="product-grid">
+                    <article class="product-card product-card-featured reveal"><div class="product-meta"><span>01 / Core engine</span><span>Available now</span></div><h3>MIG</h3><p>The enforcement boundary. Deploy it between any command source and target system to validate each action before execution.</p><ul><li>Deterministic 8-step pipeline</li><li>Graph-based policy matching</li><li>ALLOW / APPROVAL / DENY</li><li>Immutable audit context</li></ul></article>
+                    <article class="product-card reveal" id="nova"><div class="product-meta"><span>02 / Agent platform</span><span>Launching soon</span></div><h3>Nova</h3><p>AI agents that plan and complete real work with MIG governing every external action. Autonomy with an enforceable boundary.</p><ul><li>Natural-language automation</li><li>Extensible skill library</li><li>Governance on every tool call</li><li>Complete task-level audit</li></ul></article>
+                    <article class="product-card reveal"><div class="product-meta"><span>03 / Services</span><span>Limited engagements</span></div><h3>Galatine Labs</h3><p>Focused automation sprints for teams that need the speed of agents without handing them unrestricted access.</p><ul><li>2–4 week scoped delivery</li><li>Workflow and policy design</li><li>Audit-ready from day one</li></ul></article>
                 </div>
             </div>
         </section>
 
-        <!-- VALIDATION -->
-        <div class="val-wrap" id="proof">
-            <section class="section">
-                <div class="reveal">
-                    <div class="eyebrow">Validation</div>
-                    <h2 class="section-title">Tested against a real PLC. Reported honestly.</h2>
-                    <p class="section-desc">MIG was validated against a live PLC and real Modbus TCP traffic in a simulated oil-processing plant environment (LabShock). Real controller, real protocol, simulated plant — here is exactly what happened.</p>
-                </div>
-                <div class="val-stats reveal">
-                    <div class="val-stat"><div class="val-num">6</div><div class="val-label">Attack scenarios tested</div></div>
-                    <div class="val-stat"><div class="val-num">0</div><div class="val-label">Unsafe executions reached the PLC</div></div>
-                    <div class="val-stat"><div class="val-num">9500%</div><div class="val-label">Setpoint deviation blocked (Oldsmar-class)</div></div>
-                    <div class="val-stat"><div class="val-num">100%</div><div class="val-label">Fail-closed under induced faults</div></div>
-                </div>
-                <div class="val-rows reveal">
-                    <div class="val-row"><div class="val-cmd">Read temperature sensor register</div><div class="val-badge allow">ALLOW</div><div class="val-risk">risk 08</div></div>
-                    <div class="val-row"><div class="val-cmd">Write dosing pump setpoint to 9,500% of safe range</div><div class="val-badge deny">DENY</div><div class="val-risk">risk 94</div></div>
-                    <div class="val-row"><div class="val-cmd">Firmware update outside maintenance window</div><div class="val-badge approval">APPROVAL</div><div class="val-risk">risk 67</div></div>
-                    <div class="val-row"><div class="val-cmd">Write to safety-instrumented system register</div><div class="val-badge deny">DENY</div><div class="val-risk">risk 98</div></div>
-                    <div class="val-row"><div class="val-cmd">Agent email containing detected PII payload</div><div class="val-badge approval">APPROVAL</div><div class="val-risk">risk 72</div></div>
-                </div>
-                <p class="val-note reveal">These are results from our validation environment, not production deployments — <em>and we say so, because the audit trail is the product.</em> A 35-year OT/ICS veteran is currently setting up an independent cyber range to test MIG further. Independent results will be published here.</p>
-            </section>
-        </div>
-
-        <!-- COMPARE -->
-        <section class="section" id="compared">
-            <div class="reveal">
-                <div class="eyebrow">Positioning</div>
-                <h2 class="section-title">Detection tools watch. MIG decides.</h2>
-            </div>
-            <div class="compare-scroll reveal">
-                <table class="compare-table">
-                    <thead>
-                        <tr><th></th><th>Claroty / Dragos</th><th>Microsoft AGT</th><th>MIG</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Approach</td><td>Monitor after execution</td><td>Check tool permissions</td><td class="yes">Validate before execution</td></tr>
-                        <tr><td>Content inspection</td><td class="no">No</td><td class="no">No</td><td class="yes">Full payload analysis</td></tr>
-                        <tr><td>PII detection</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
-                        <tr><td>Risk scoring</td><td>Severity levels</td><td>Binary allow/deny</td><td class="yes">0–100 continuous</td></tr>
-                        <tr><td>Operator approval</td><td class="no">No</td><td class="no">No</td><td class="yes">3-tier decisions</td></tr>
-                        <tr><td>OT protocol support</td><td>Yes (passive)</td><td class="no">No</td><td class="yes">Yes (active prevention)</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p class="compare-note reveal"><b>Complementary, not competitive.</b> Detection platforms like Claroty and Dragos are excellent at what they do — visibility and threat detection across OT networks. MIG adds the layer they don't: an enforcement boundary that stops the dangerous command before it executes. You want both.</p>
+        <section class="how section-shell" id="how" aria-labelledby="how-title">
+            <div class="how-intro reveal"><div class="section-index">03 / The mechanism</div><p class="overline">A decision you can explain</p><h2 id="how-title">Eight checks.<br>One verdict.<br><em>Zero ambiguity.</em></h2><p>Every check contributes evidence. Higher-risk findings override lower-risk ones, and any system failure closes the gate.</p><a class="text-link" href="playground.html">Watch the pipeline run <span aria-hidden="true">↗</span></a></div>
+            <ol class="pipeline-list">
+                <li class="reveal"><span>01</span><div><h3>PII scan</h3><p>Detect sensitive data before it can leave its boundary.</p></div><b>Content</b></li>
+                <li class="reveal"><span>02</span><div><h3>Action classification</h3><p>Identify intent: read, write, firmware, safety, export.</p></div><b>Intent</b></li>
+                <li class="reveal"><span>03</span><div><h3>Payload inspection</h3><p>Examine values, destinations, and operational impact.</p></div><b>Context</b></li>
+                <li class="reveal"><span>04</span><div><h3>Policy matching</h3><p>Resolve the governing rule through the policy graph.</p></div><b>Policy</b></li>
+                <li class="reveal"><span>05</span><div><h3>Mode check</h3><p>Compare the action with the system’s live operating state.</p></div><b>State</b></li>
+                <li class="reveal"><span>06</span><div><h3>Zone enforcement</h3><p>Enforce allowed paths across network and trust boundaries.</p></div><b>Boundary</b></li>
+                <li class="reveal"><span>07</span><div><h3>Override logic</h3><p>Let the highest-risk evidence determine the outcome.</p></div><b>Control</b></li>
+                <li class="reveal"><span>08</span><div><h3>Audit trail</h3><p>Write the evidence, rule, score, and verdict to the trace.</p></div><b>Proof</b></li>
+            </ol>
         </section>
 
-        <!-- FOUNDER -->
-        <div class="founder-wrap" id="founder">
-            <section class="section">
-                <div class="reveal">
-                    <div class="eyebrow">The Founder</div>
-                    <h2 class="section-title">Built by someone who understands the machines.</h2>
-                </div>
-                <div class="founder-grid reveal">
-                    <div>
-                        <div class="founder-name">Indrooneel Panday</div>
-                        <div class="founder-role">Mechanical Engineer · Solo Founder</div>
-                        <div class="creds">
-                            <div class="cred"><span>▸</span>BEng Mechanical Engineering, Coventry University, UK</div>
-                            <div class="cred"><span>▸</span>Patent pending: USPTO Provisional #63/821,489</div>
-                            <div class="cred"><span>▸</span>Build3 Impact Accelerator</div>
-                            <div class="cred"><span>▸</span>Self-taught: Python, Neo4j, Docker, FastAPI, Modbus TCP</div>
-                            <div class="cred"><span>▸</span>Offensive security training: exploitation, SQLi, privesc</div>
-                        </div>
-                    </div>
-                    <div class="founder-bio">
-                        <p>Most security founders come from networking. I come from the machines themselves — pump curves, turbine dynamics, valve failure modes. When I read about the Oldsmar attack, I didn't see a network breach. I saw a dosing pump that should never have accepted that command.</p>
-                        <p>I built the entire MIG stack solo — engine, API, dashboard, OT connector, playground. Two years of building. Zero funding. Family-supported. Still shipping every week.</p>
-                        <p>The audit trail is the product, so honesty is the operating principle. MIG's limitations are documented as openly as its capabilities.</p>
-                        <div class="ask">LOOKING FOR → Strategic hires(enterprise sales / cybersecurity) · Pre-seed funding · Pilot partners in manufacturing &amp; water treatment</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- CTA -->
-        <section class="cta" id="contact">
-            <div class="reveal">
-                <h2>Watch MIG <span class="glow">deny an attack</span> in real time.</h2>
-                <p>Private demos available for investors, pilot partners, and OT security teams. Or try the public playground right now — no signup.</p>
-                <a href="mailto:neel@houseofgalatine.com" class="cta-email">neel@houseofgalatine.com</a>
-                <div class="cta-links">
-                    <a href="/playground">Playground</a>
-                    <a href="https://github.com/Indrooneel/mig-core" target="_blank" rel="noopener">GitHub: mig-core</a>
-                    <a href="https://github.com/Indrooneel/mig-architecture" target="_blank" rel="noopener">Architecture Docs</a>
-                </div>
+        <section class="verdict-section" aria-labelledby="verdict-title"><div class="section-shell">
+            <div class="verdict-heading reveal"><p class="overline">Three possible outcomes</p><h2 id="verdict-title">A decision — not another alert.</h2></div>
+            <div class="verdict-grid">
+                <article class="verdict verdict-allow reveal"><div><span>01</span><i></i></div><h3>Allow</h3><p>Within policy and acceptable risk. Forward the command and record the trace.</p></article>
+                <article class="verdict verdict-approval reveal"><div><span>02</span><i></i></div><h3>Approval</h3><p>Legitimate but sensitive. Hold execution until the right human explicitly confirms.</p></article>
+                <article class="verdict verdict-deny reveal"><div><span>03</span><i></i></div><h3>Deny</h3><p>Outside policy or above risk tolerance. The protected system never sees the command.</p></article>
             </div>
+            <div class="fail-closed reveal"><span>Fail-closed rule</span><p>No policy match → deny&nbsp;&nbsp; / &nbsp;&nbsp;MIG unreachable → deny&nbsp;&nbsp; / &nbsp;&nbsp;Pipeline error → deny</p></div>
+        </div></section>
+
+        <section class="proof section-shell" id="proof" aria-labelledby="proof-title">
+            <div class="section-intro reveal"><div class="section-index">04 / Validation</div><div><p class="overline">Real controller. Honest scope.</p><h2 id="proof-title">Tested against live PLC hardware.<br><em>Nothing unsafe got through.</em></h2><p class="section-copy">MIG was exercised with real Modbus TCP traffic in a simulated oil-processing environment. These are validation results — not production-deployment claims.</p></div></div>
+            <div class="proof-stats reveal"><div><strong>06</strong><span>Attack scenarios tested</span></div><div><strong>00</strong><span>Unsafe commands reached the PLC</span></div><div><strong>9,500%</strong><span>Setpoint deviation blocked</span></div><div><strong>100%</strong><span>Fail-closed under induced faults</span></div></div>
+            <div class="test-record reveal">
+                <div class="test-record-head"><span>Validation record / LabShock environment</span><span>5 representative events</span></div>
+                <div class="test-row"><span>001</span><p>Read temperature sensor register</p><b class="state-allow">Allow</b><i>08 risk</i></div>
+                <div class="test-row"><span>002</span><p>Write dosing pump setpoint to 9,500% of safe range</p><b class="state-deny">Deny</b><i>94 risk</i></div>
+                <div class="test-row"><span>003</span><p>Firmware update outside maintenance window</p><b class="state-approval">Approval</b><i>67 risk</i></div>
+                <div class="test-row"><span>004</span><p>Write to safety-instrumented system register</p><b class="state-deny">Deny</b><i>98 risk</i></div>
+                <div class="test-row"><span>005</span><p>Agent email containing detected PII payload</p><b class="state-approval">Approval</b><i>72 risk</i></div>
+            </div>
+            <p class="honesty-note reveal"><span>Independent testing next.</span> A 35-year OT/ICS veteran is preparing a separate cyber range evaluation. Results will be published whether they are flattering or not — because the audit trail is the product.</p>
         </section>
+
+        <section class="positioning" aria-labelledby="positioning-title"><div class="section-shell">
+            <div class="section-intro section-intro-light reveal"><div class="section-index">05 / Positioning</div><div><p class="overline">A missing layer, not a replacement</p><h2 id="positioning-title">Detection tools watch.<br>MIG decides.</h2></div></div>
+            <div class="comparison-wrap reveal"><table class="comparison-table"><caption class="sr-only">How MIG complements OT detection and agent permission tools</caption><thead><tr><th scope="col">Capability</th><th scope="col">OT detection</th><th scope="col">Agent permissions</th><th scope="col">MIG</th></tr></thead><tbody><tr><th scope="row">Control point</th><td>After execution</td><td>Before tool access</td><td>Before action execution</td></tr><tr><th scope="row">Payload inspection</th><td>Observe</td><td>Limited</td><td>Full content analysis</td></tr><tr><th scope="row">Risk model</th><td>Alert severity</td><td>Binary access</td><td>Continuous 0–100</td></tr><tr><th scope="row">Human approval</th><td>External workflow</td><td>Tool-dependent</td><td>Native held state</td></tr><tr><th scope="row">OT enforcement</th><td>Typically passive</td><td>Not designed for OT</td><td>Active prevention</td></tr></tbody></table></div>
+            <p class="position-note reveal"><strong>Use both.</strong> Visibility platforms remain essential for asset intelligence and threat detection. MIG adds an inline decision boundary for the action itself.</p>
+        </div></section>
+
+        <section class="founder section-shell" id="founder" aria-labelledby="founder-title">
+            <div class="founder-heading reveal"><div class="section-index">06 / Founder</div><p class="overline">Built from the machine outward</p><h2 id="founder-title">“I didn’t see a network breach. I saw a pump that should never have accepted that command.”</h2></div>
+            <div class="founder-body reveal">
+                <div class="founder-id"><div class="founder-monogram" aria-hidden="true">IP</div><div><h3>Indrooneel Panday</h3><p>Mechanical engineer / Founder</p></div></div>
+                <div class="founder-story"><p>Most security founders begin with the network. I began with pump curves, turbine dynamics, valve failure modes, and the physical consequence of a bad instruction.</p><p>I built the MIG engine, API, dashboard, OT connector, and playground as a solo founder. The operating principle is simple: if the product promises traceability, the company should communicate with the same honesty.</p></div>
+                <ul class="founder-credentials"><li>BEng Mechanical Engineering, Coventry University</li><li>USPTO provisional patent pending</li><li>Build3 Impact Accelerator</li><li>Python / Neo4j / FastAPI / Modbus TCP</li></ul>
+            </div>
+            <div class="founder-ask reveal"><span>Currently looking for</span><p>Pilot partners in manufacturing and water treatment / strategic security hires / pre-seed capital</p></div>
+        </section>
+
+        <section class="final-cta" id="contact" aria-labelledby="contact-title"><div class="final-cta-grid" aria-hidden="true"></div><div class="final-cta-inner reveal"><span class="cta-code">MIG / DEMO-REQUEST</span><h2 id="contact-title">Bring one dangerous command.<br><em>Watch MIG stop it.</em></h2><p>Private demos for investors, pilot partners, and OT security teams. The public playground needs no signup.</p><div class="final-actions"><a class="button button-dark" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a private demo <span aria-hidden="true">↗</span></a><a class="button button-outline-dark" href="playground.html">Try the playground</a></div></div></section>
     </main>
 
-    <footer>
-        <div class="foot-brand">HOUSE OF GALATINE</div>
-        <div class="foot-right">Made in India · Patent Pending · Fail-Closed by Default · © 2026</div>
+    <footer class="site-footer">
+        <div class="footer-brand"><img class="brand-mark" src="assets/galatine.png" alt="" width="40" height="42"><div><strong>House of Galatine</strong><span>Execution control infrastructure</span></div></div>
+        <nav class="footer-links" aria-label="Footer navigation">
+            <a href="https://github.com/Indrooneel/mig-core" target="_blank" rel="noopener noreferrer">MIG Core ↗</a>
+            <a href="https://github.com/Indrooneel/mig-architecture" target="_blank" rel="noopener noreferrer">Architecture ↗</a>
+            <a href="mailto:neel@houseofgalatine.com">Email ↗</a>
+            <a class="footer-legal-link" href="legal/terms-of-service.pdf" type="application/pdf">Terms of Service (PDF)</a>
+            <a class="footer-legal-link" href="legal/privacy-policy.pdf" type="application/pdf">Privacy Policy (PDF)</a>
+        </nav>
+        <p>Made in India / Patent pending / © 2026</p>
     </footer>
-
-    <script>
-        // ---- Scroll reveal ----
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-            });
-        }, { threshold: 0.12 });
-        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-        // ---- Marquee duplication for seamless loop ----
-        const mq = document.getElementById('marquee');
-        mq.innerHTML += mq.innerHTML;
-
-        // ---- Simulated decision feed (labeled as simulated) ----
-        const scenarios = [
-            { src: 'OT · MODBUS', cmd: 'Read temperature sensor register 40021', v: 'allow', risk: '08' },
-            { src: 'OT · MODBUS', cmd: 'Write dosing pump setpoint → 9,500% of safe range', v: 'deny', risk: '94' },
-            { src: 'AI AGENT · NOVA', cmd: 'send_email(to: vendor) — PII detected in payload', v: 'approval', risk: '72' },
-            { src: 'OT · MODBUS', cmd: 'Firmware push to PLC-03 outside maintenance window', v: 'approval', risk: '67' },
-            { src: 'AI AGENT · NOVA', cmd: 'write_file(config/production.env)', v: 'deny', risk: '88' },
-            { src: 'OT · MODBUS', cmd: 'Write to safety-instrumented system register', v: 'deny', risk: '98' },
-            { src: 'AI AGENT · NOVA', cmd: 'search_web("supplier lead times Q3")', v: 'allow', risk: '05' },
-            { src: 'OT · MODBUS', cmd: 'Valve V-114 position read', v: 'allow', risk: '06' }
-        ];
-        const labels = { allow: 'ALLOW', deny: 'DENY', approval: 'APPROVAL' };
-        const feed = document.getElementById('feed');
-        const MAX_ROWS = 5;
-        let idx = 0;
-
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function pushRow() {
-            const s = scenarios[idx % scenarios.length];
-            idx++;
-            const row = document.createElement('div');
-            row.className = 'feed-row';
-            row.innerHTML = `
-                <div>
-                    <div class="feed-src">${s.src}</div>
-                    <div class="feed-cmd">${s.cmd}</div>
-                </div>
-                <div>
-                    <div class="feed-verdict ${s.v}">${labels[s.v]}</div>
-                    <div class="feed-risk">risk ${s.risk}</div>
-                </div>`;
-            feed.appendChild(row);
-            while (feed.children.length > MAX_ROWS) feed.removeChild(feed.firstChild);
-        }
-
-        if (reduced) {
-            for (let i = 0; i < MAX_ROWS; i++) pushRow();
-        } else {
-            for (let i = 0; i < 3; i++) pushRow();
-            setInterval(pushRow, 2600);
-        }
-    </script>
 </body>
 </html>
-            

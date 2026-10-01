@@ -1,13 +1,20 @@
-!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIG Playground — Try It Live | House of Galatine</title>
     <meta name="description" content="Type any command and watch MIG's 8-step validation pipeline process it in real time. No signup. No install. Try the OT execution boundary live.">
+    <meta name="theme-color" content="#131313">
+    <meta property="og:title" content="MIG Playground — Test the Execution Boundary">
+    <meta property="og:description" content="Run an OT command through MIG's simulated 8-step validation pipeline.">
+    <meta property="og:image" content="https://houseofgalatine.com/assets/galatine-mark.png">
+    <meta name="twitter:card" content="summary">
+    <link rel="canonical" href="https://houseofgalatine.com/playground.html">
+    <link rel="icon" href="assets/galatine-mark.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #08060d;
@@ -300,23 +307,24 @@
             .hero-label,.hero h1,.hero p,.hero-note,.plant-state,.input-section { opacity:1 !important; transform:none !important; }
         }
     </style>
+    <link rel="stylesheet" href="playground.css">
 </head>
 <body>
 <div class="ambient"></div>
 <div class="grid-overlay"></div>
 
 <nav>
-    <a href="https://houseofgalatine.com" class="nav-brand">HOUSE OF <span>GALATINE</span></a>
+    <a href="index.html" class="nav-brand"><img class="nav-emblem" src="assets/galatine.png" alt="" width="34" height="36"> HOUSE OF <span>GALATINE</span></a>
     <div class="nav-right">
         <span class="nav-badge">PLAYGROUND</span>
-        <a href="https://houseofgalatine.com" class="nav-link">← Back to site</a>
+        <a href="index.html" class="nav-link">← Back to site</a>
     </div>
 </nav>
 
 <div class="hero">
     <p class="hero-label">MIG Playground · Interactive Demo</p>
     <h1>Type a command. Watch it get <span class="glow">validated.</span></h1>
-    <p>See MIG's 8-step validation pipeline process any OT command in real time. Every step visible. Every decision deterministic.</p>
+    <p>See MIG's 8-step validation pipeline process an OT command in real time. Every check visible. Every policy outcome reproducible.</p>
     <p class="hero-note">Client-side demo with simplified policies · Production MIG uses Neo4j graph policies + direct OT protocol integration</p>
     <div class="plant-state">
         <span>SIMULATED PLANT STATE</span>
@@ -326,7 +334,7 @@
     </div>
 </div>
 
-<div class="main">
+<main class="main">
     <div class="input-section">
         <div class="input-header">
             <span class="input-label">Enter OT Command</span>
@@ -351,7 +359,7 @@
                 <span class="card-label accent">VALIDATION PIPELINE</span>
                 <span class="pipe-count" id="pipeCount">8 STEPS</span>
             </div>
-            <div class="pipeline-steps" id="pipelineSteps">
+            <div class="pipeline-steps" id="pipelineSteps" aria-live="polite">
                 <div class="empty-state">
                     <div class="empty-icon">◈</div>
                     Enter a command — or hit a sample above — to watch the pipeline fire
@@ -363,7 +371,7 @@
             <div class="card-header">
                 <span class="card-label">DECISION</span>
             </div>
-            <div id="decisionBody">
+            <div id="decisionBody" aria-live="polite">
                 <div class="empty-state">
                     <div class="empty-icon">◆</div>
                     Waiting for validation
@@ -371,10 +379,14 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <footer>
     <span><b>MIG</b> — Execution Control Engine · House of Galatine · USPTO Provisional #63/821,489</span>
+    <div class="legal-links" role="navigation" aria-label="Legal">
+        <a href="legal/terms-of-service.pdf" type="application/pdf">Terms of Service (PDF)</a>
+        <a href="legal/privacy-policy.pdf" type="application/pdf">Privacy Policy (PDF)</a>
+    </div>
     <span>"Nothing executes without MIG approval."</span>
 </footer>
 
@@ -395,6 +407,7 @@ const POLICIES = [
     { id:"POL-OT-DENY-002",  direction:"DENY",     rule:"Setpoint changes exceeding 5% of current operating value are blocked as they risk process instability", enforcement:"critical", notify:["control_engineer","shift_operator","safety_officer"] },
     { id:"POL-OT-DENY-003",  direction:"DENY",     rule:"Firmware updates during production mode are never allowed as they risk controller failure", enforcement:"critical", notify:["control_engineer","plant_supervisor","safety_officer"] },
     { id:"POL-OT-DENY-004",  direction:"DENY",     rule:"Exporting control system configuration outside the OT network boundary is never allowed", enforcement:"critical", notify:["ciso","plant_supervisor"] },
+    { id:"POL-OT-DENY-005",  direction:"DENY",     rule:"Commands crossing the OT trust boundary require an explicitly authorized conduit; unmatched external destinations are blocked", enforcement:"critical", notify:["ciso","plant_supervisor"] },
     { id:"POL-FAILCLOSED",   direction:"DENY",     rule:"No matching policy found. MIG is fail-closed: the default is never ALLOW", enforcement:"critical", notify:["plant_supervisor"] },
 ];
 
@@ -418,7 +431,7 @@ const KW = {
 };
 
 const SAMPLES = {
-    read:     "Read current pump 1 speed from PLC control zone",
+    read:     "Read current pump 1 speed sensor from PLC control zone",
     minor:    "Set pump 1 speed to 52 RPM for flow optimization",
     oldsmar:  "Set pump 1 speed to 5000 RPM for emergency pressure boost",
     firmware: "Upload new firmware program to PLC controller during production",
@@ -430,13 +443,30 @@ function loadSample(key){
     const el = document.getElementById('commandInput');
     el.value = SAMPLES[key];
     el.focus();
+    validate();
 }
 
-function has(text, list){ return list.some(k => text.includes(k)); }
+function containsTerm(text, term){
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+    return new RegExp(`(^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`, 'i').test(text);
+}
 
-function extractNumber(text){
-    const m = text.match(/(\d+(?:\.\d+)?)\s*(rpm|%|psi|bar|°?c|l\/min)?/i);
-    return m ? parseFloat(m[1]) : null;
+function has(text, list){ return list.some(k => containsTerm(text, k)); }
+
+function extractSetpoint(text){
+    const relative = text.match(/\b(increase|decrease|raise|lower)\b[^.!?]{0,45}?\bby\s+(-?\d+(?:\.\d+)?)\s*(rpm|%|psi|bar|°?c|l\/min)?\b/i);
+    if(relative){
+        const delta = parseFloat(relative[2]) * (/decrease|lower/i.test(relative[1]) ? -1 : 1);
+        const unit = (relative[3] || '').toLowerCase();
+        return unit === 'rpm' || text.includes('speed') ? { value: PLANT.pumpRPM + delta, unit: 'rpm', relative: true } : { value: null, unit, unsupported: true };
+    }
+    const assigned = text.match(/\b(?:set|change|adjust|write|update|target)\b[^.!?]{0,55}?\b(?:to|at|=)\s*(-?\d+(?:\.\d+)?)\s*(rpm|%|psi|bar|°?c|l\/min)?\b/i);
+    const measured = text.match(/(-?\d+(?:\.\d+)?)\s*(rpm|psi|bar|°?c|l\/min)\b/i);
+    const match = assigned || measured;
+    if(!match) return null;
+    const value = parseFloat(match[1]);
+    const unit = (match[2] || (text.includes('speed') ? 'rpm' : '')).toLowerCase();
+    return unit === 'rpm' ? { value, unit, relative: false } : { value, unit, unsupported: true };
 }
 
 // ---- The 8 steps, mirroring production MIG ----
@@ -458,14 +488,16 @@ function analyze(cmdRaw){
     });
 
     // 2. ACTION CLASSIFICATION
-    const isRead = has(cmd, KW.read) && !has(cmd, KW.write);
+    const requestsRead = has(cmd, KW.read);
     const isWrite = has(cmd, KW.write);
     const isFirmware = has(cmd, KW.firmware);
     const isSafety = has(cmd, KW.safety);
     const isConfig = has(cmd, KW.config);
     const isLogic = has(cmd, KW.logic);
     const isSetpoint = has(cmd, KW.setpoint) && isWrite;
-    let action = isRead ? "READ" : isFirmware ? "FIRMWARE" : isSafety && isWrite ? "SAFETY-WRITE" : isSetpoint ? "SETPOINT-WRITE" : isLogic ? "LOGIC-MODIFY" : isConfig ? "CONFIG-EXPORT" : isWrite ? "WRITE" : "UNCLASSIFIED";
+    const isKnownSensor = has(cmd, KW.sensor);
+    const isRead = requestsRead && isKnownSensor && !isWrite && !isFirmware && !isConfig;
+    let action = isSafety && isWrite ? "SAFETY-WRITE" : isFirmware ? "FIRMWARE" : isSetpoint ? "SETPOINT-WRITE" : isLogic ? "LOGIC-MODIFY" : isConfig ? "CONFIG-EXPORT" : isRead ? "READ" : isWrite ? "WRITE" : "UNCLASSIFIED";
     if(action === "READ") risk += 5;
     if(action === "WRITE" || action === "SETPOINT-WRITE") risk += 30;
     if(action === "FIRMWARE") { risk += 45; flags.push({t:"FIRMWARE", c:"crit"}); }
@@ -480,24 +512,39 @@ function analyze(cmdRaw){
 
     // 3. PAYLOAD INSPECTION — setpoint deviation math
     let deviation = null;
-    const num = extractNumber(cmd);
-    if(isSetpoint && num !== null && (cmd.includes("rpm") || cmd.includes("speed"))){
+    const setpoint = isSetpoint ? extractSetpoint(cmd) : null;
+    const unsupportedSetpoint = isSetpoint && (!setpoint || setpoint.unsupported || setpoint.value === null);
+    const num = setpoint && !setpoint.unsupported ? setpoint.value : null;
+    if(unsupportedSetpoint){
+        risk += 30;
+        flags.push({t:"NO TRUSTED BASELINE", c:"crit"});
+    } else if(isSetpoint && num !== null){
         deviation = Math.round(Math.abs(num - PLANT.pumpRPM) / PLANT.pumpRPM * 100);
-        if(deviation > 5){ risk += Math.min(35, 15 + deviation/300); flags.push({t:`+${deviation}% DEVIATION`, c: deviation > 100 ? "crit" : "warn"}); }
+        if(deviation > 5){
+            risk += Math.min(35, 15 + deviation / 300);
+            flags.push({t:`${deviation}% DEVIATION`, c: deviation > 100 ? "crit" : "warn"});
+        }
     }
     steps.push({
         name:"Payload Inspection",
-        status: deviation !== null && deviation > 5 ? "fail" : "pass",
-        detail: deviation !== null
+        status: unsupportedSetpoint || (deviation !== null && deviation > 5) ? "fail" : "pass",
+        detail: unsupportedSetpoint
+            ? "No trusted live baseline exists for this setpoint or unit — fail-closed"
+            : deviation !== null
             ? `Requested ${num} RPM vs current ${PLANT.pumpRPM} RPM → ${deviation}% deviation ${deviation > 5 ? "(exceeds 5% threshold)" : "(within 5% threshold)"}`
             : "Content and destination analyzed. Sensitivity graded.",
     });
 
+    const modeConflict = isFirmware && PLANT.mode === "PRODUCTION";
+    const crossesBoundary = has(cmd, KW.external);
+
     // 4. POLICY MATCHING
     let policy;
     if(action === "SAFETY-WRITE") policy = POLICIES.find(p=>p.id==="POL-OT-DENY-001");
-    else if(action === "FIRMWARE" && PLANT.mode === "PRODUCTION") policy = POLICIES.find(p=>p.id==="POL-OT-DENY-003");
-    else if(action === "CONFIG-EXPORT" && has(cmd, KW.external)) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-004");
+    else if(modeConflict) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-003");
+    else if(action === "CONFIG-EXPORT" && crossesBoundary) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-004");
+    else if(crossesBoundary) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-005");
+    else if(unsupportedSetpoint) policy = POLICIES.find(p=>p.id==="POL-FAILCLOSED");
     else if(action === "CONFIG-EXPORT") policy = POLICIES.find(p=>p.id==="POL-OT-APPR-003");
     else if(action === "SETPOINT-WRITE" && deviation !== null && deviation > 5) policy = POLICIES.find(p=>p.id==="POL-OT-DENY-002");
     else if(action === "SETPOINT-WRITE") policy = POLICIES.find(p=>p.id==="POL-OT-APPR-001");
@@ -511,7 +558,6 @@ function analyze(cmdRaw){
     });
 
     // 5. MODE CHECK
-    const modeConflict = isFirmware && PLANT.mode === "PRODUCTION";
     if(modeConflict) risk += 10;
     steps.push({
         name:"Mode Check",
@@ -522,7 +568,6 @@ function analyze(cmdRaw){
     });
 
     // 6. ZONE ENFORCEMENT
-    const crossesBoundary = has(cmd, KW.external);
     if(crossesBoundary){ risk += 15; flags.push({t:"BOUNDARY CROSS", c:"crit"}); }
     steps.push({
         name:"Zone Enforcement",
@@ -535,7 +580,7 @@ function analyze(cmdRaw){
     // 7. OVERRIDE LOGIC
     let verdict = policy.direction;
     let overridden = false;
-    if(verdict !== "DENY" && (crossesBoundary && isConfig)){ verdict = "DENY"; overridden = true; }
+    if(verdict !== "DENY" && (crossesBoundary || modeConflict || unsupportedSetpoint)){ verdict = "DENY"; overridden = true; }
     if(verdict === "ALLOW" && piiFound.length){ verdict = "APPROVAL"; overridden = true; }
     steps.push({
         name:"Override Logic",
@@ -554,7 +599,7 @@ function analyze(cmdRaw){
     steps.push({
         name:"Audit Trail",
         status:"pass",
-        detail:`Decision ${decisionId} logged with full trace — deterministic and reproducible`,
+        detail:`Decision ${decisionId} logged with full trace — policy outcome is reproducible`,
     });
 
     return { steps, verdict, risk, policy, flags, decisionId, action, deviation };
@@ -578,6 +623,8 @@ async function validate(){
     const result = analyze(cmd);
     const stepsEl = document.getElementById('pipelineSteps');
     const decisionEl = document.getElementById('decisionBody');
+    stepsEl.setAttribute('aria-busy', 'true');
+    decisionEl.setAttribute('aria-busy', 'true');
 
     decisionEl.innerHTML = '<div class="empty-state"><div class="empty-icon">◆</div>Pipeline running…</div>';
     stepsEl.innerHTML = result.steps.map((s,i) => `
@@ -606,6 +653,8 @@ async function validate(){
     }
 
     renderDecision(result, cmd);
+    stepsEl.setAttribute('aria-busy', 'false');
+    decisionEl.setAttribute('aria-busy', 'false');
     btn.disabled = false; btn.textContent = "VALIDATE";
     running = false;
 }
@@ -657,7 +706,7 @@ function renderDecision(r, cmd){
                 <div class="audit-row"><span class="audit-key">timestamp</span><span class="audit-val">${new Date().toISOString()}</span></div>
                 <div class="audit-row"><span class="audit-key">action_class</span><span class="audit-val">${r.action}</span></div>
                 <div class="audit-row"><span class="audit-key">enforcement</span><span class="audit-val">${r.policy.enforcement.toUpperCase()}</span></div>
-                <div class="audit-row"><span class="audit-key">deterministic</span><span class="audit-val">TRUE — same input, same output</span></div>
+                <div class="audit-row"><span class="audit-key">policy_outcome</span><span class="audit-val">REPRODUCIBLE — same policy input, same verdict</span></div>
             </div>
         </div>`;
     requestAnimationFrame(()=>{ 
