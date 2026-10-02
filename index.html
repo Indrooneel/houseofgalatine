@@ -158,7 +158,18 @@
                 <div class="test-row"><span>004</span><p>Write to safety-instrumented system register</p><b class="state-deny">Deny</b><i>98 risk</i></div>
                 <div class="test-row"><span>005</span><p>Agent email containing detected PII payload</p><b class="state-approval">Approval</b><i>72 risk</i></div>
             </div>
-            <p class="honesty-note reveal"><span>Independent testing next.</span> A 35-year OT/ICS veteran is preparing a separate cyber range evaluation. Results will be published whether they are flattering or not — because the audit trail is the product.</p>
+            <article class="benchmark-brief reveal" aria-labelledby="benchmark-brief-title">
+                <div class="benchmark-brief-copy">
+                    <p class="benchmark-kicker">Runtime evidence / Internal Benchmark v1 / October 2026</p>
+                    <h3 id="benchmark-brief-title">1,600 measured requests. Zero observed HTTP failures.</h3>
+                    <p>At 25-way concurrency, MIG reached 26.10 requests per second while all 100 requests in that workload preserved the expected governance semantics.</p>
+                </div>
+                <dl class="benchmark-brief-stats">
+                    <div><dt>26.10 req/s</dt><dd>Peak tested throughput</dd></div>
+                    <div><dt>400/400</dt><dd>Concurrent semantic checks correct</dd></div>
+                </dl>
+                <p class="benchmark-scope">Internal Benchmark v1 under documented test conditions: MIG NEXT 4.2.0 on a 2-vCPU, 3.8-GiB co-resident deployment. Results reflect the tested workloads and infrastructure; they are not a production SLA or independent security certification.</p>
+            </article>
         </section>
 
         <section class="positioning" aria-labelledby="positioning-title"><div class="section-shell">
