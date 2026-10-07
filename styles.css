@@ -303,6 +303,8 @@ h1, h2, h3, p { margin-top: 0; }
 .product-card ul { margin: 18px 0 0; padding: 18px 0 0; display: grid; gap: 9px; border-top: 1px solid var(--line-dark); list-style: none; }
 .product-card li { font: 400 10px/1.5 var(--mono); color: #454941; }
 .product-card li::before { content: "+"; margin-right: 9px; color: #6a8d11; }
+.product-deployment-note { max-width: 940px; margin: 32px 0 0 auto; color: #55594f; }
+.product-deployment-note strong { color: var(--ink); }
 
 .how { padding-top: 160px; padding-bottom: 160px; display: grid; grid-template-columns: .75fr 1.25fr; gap: clamp(65px, 9vw, 150px); align-items: start; }
 .how-intro { position: sticky; top: 120px; }
@@ -355,11 +357,15 @@ h1, h2, h3, p { margin-top: 0; }
 .benchmark-kicker { margin: 0 0 12px; color: var(--signal); font: 500 9px/1.4 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
 .benchmark-brief h3 { margin: 0 0 10px; color: var(--text); font-size: clamp(22px,2.2vw,31px); line-height: 1.08; letter-spacing: -.04em; }
 .benchmark-brief-copy > p:last-child { max-width: 740px; margin: 0; color: var(--muted); font-size: 14px; }
+.benchmark-brief-copy .evidence-link { margin-top: 18px; }
 .benchmark-brief-stats { min-width: 0; margin: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-left: 1px solid var(--line); }
 .benchmark-brief-stats > div { min-width: 0; padding: 12px 20px; border-right: 1px solid var(--line); }
 .benchmark-brief-stats dt { color: var(--signal); font-size: clamp(23px,2.3vw,33px); font-weight: 700; line-height: 1; letter-spacing: -.05em; white-space: nowrap; }
 .benchmark-brief-stats dd { margin: 10px 0 0; color: #858a7e; font: 400 9px/1.45 var(--mono); text-transform: uppercase; }
 .benchmark-scope { grid-column: 1 / -1; margin: 0; padding-top: 17px; border-top: 1px solid var(--line); color: #72776c; font: 400 9px/1.6 var(--mono); }
+.validation-track { max-width: 900px; margin: 76px 0 28px; }
+.validation-track h3 { margin: 0 0 14px; font-size: clamp(27px,3.2vw,43px); line-height: 1.08; letter-spacing: -.045em; }
+.validation-track > p:last-child { margin: 0; color: var(--muted); font-size: 15px; }
 .positioning { padding: 150px 0; background: var(--paper); color: var(--ink); }
 .comparison-wrap { overflow-x: auto; border: 1px solid var(--line-dark); }
 .comparison-table { width: 100%; min-width: 760px; border-collapse: collapse; text-align: left; }
@@ -398,6 +404,7 @@ h1, h2, h3, p { margin-top: 0; }
 .final-cta h2 { margin-bottom: 28px; font-size: clamp(48px, 7vw, 100px); line-height: .98; letter-spacing: -.07em; }
 .final-cta h2 em { color: var(--ink); text-decoration: underline; text-decoration-thickness: 4px; text-underline-offset: 10px; }
 .final-cta p { max-width: 690px; margin: 0 auto; font-size: 18px; }
+.final-cta .cta-status { margin-top: 28px; color: rgba(19,19,19,.68); font: 500 10px/1.6 var(--mono); text-transform: uppercase; }
 .final-actions { margin-top: 42px; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
 .button-dark { background: var(--ink); color: var(--text); }
 .button-dark:hover { background: #24271f; }
@@ -483,6 +490,7 @@ h1, h2, h3, p { margin-top: 0; }
     .architecture-arrow span { left: -2px; animation: none; }
     .product-grid { grid-template-columns: 1fr; }
     .product-card { min-height: 390px; }
+    .product-card p { min-height: 0; }
     .how { grid-template-columns: 1fr; }
     .how-intro { position: static; }
     .how-intro .section-index { margin-bottom: 55px; }

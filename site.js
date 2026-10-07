@@ -50,9 +50,9 @@ if (!('IntersectionObserver' in window) || reducedMotion) {
 const events = [
     { source: 'OT / MODBUS', command: 'Read temperature register 40021', verdict: 'allow' },
     { source: 'OT / MODBUS', command: 'Write dosing setpoint → 9,500% safe range', verdict: 'deny' },
-    { source: 'AI AGENT / NOVA', command: 'send_email() / PII present in payload', verdict: 'approval' },
+    { source: 'AI AGENT / CRM', command: 'send_email() / PII present in payload', verdict: 'approval' },
     { source: 'OT / MODBUS', command: 'Firmware push outside maintenance window', verdict: 'approval' },
-    { source: 'AI AGENT / NOVA', command: 'write_file() / production environment', verdict: 'deny' },
+    { source: 'AI AGENT / FILES', command: 'write_file() / production environment', verdict: 'deny' },
     { source: 'OT / MODBUS', command: 'Read valve V-114 position', verdict: 'allow' }
 ];
 const feed = document.getElementById('hero-feed');

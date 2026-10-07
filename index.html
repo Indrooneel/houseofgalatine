@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#131313">
-    <title>House of Galatine — Control What AI Can Execute</title>
-    <meta name="description" content="MIG is the deterministic execution-control layer between AI agents and critical systems. Every action is validated before it runs.">
-    <meta property="og:title" content="House of Galatine — Control What AI Can Execute">
-    <meta property="og:description" content="AI can propose anything. MIG decides what gets to execute.">
+    <title>MIG — Pre-execution control for AI agents | House of Galatine</title>
+    <meta name="description" content="MIG provides deterministic pre-execution control for consequential AI-agent actions, with Allow, Approval, or Deny decisions and attributable evidence.">
+    <meta property="og:title" content="MIG — Control consequential AI-agent actions before execution">
+    <meta property="og:description" content="Authenticate the agent and session, evaluate published policy, and authorize each integrated consequential action before it executes.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://houseofgalatine.com">
     <meta property="og:image" content="https://houseofgalatine.com/assets/galatine-mark.png">
@@ -34,166 +34,172 @@
             <span class="sr-only">Open navigation</span><span></span><span></span>
         </button>
         <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
-            <a href="#products">Products</a><a href="#how">How it works</a><a href="#proof">Proof</a><a href="#founder">Founder</a>
-            <a class="mobile-demo" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a demo ↗</a>
+            <a href="#products">MIG</a><a href="#how">Decision path</a><a href="#proof">Evidence</a><a href="#founder">Founder</a>
+            <a class="mobile-demo" href="mailto:neel@houseofgalatine.com?subject=MIG%20paid%20pilot">Apply for a paid pilot ↗</a>
         </nav>
-        <a class="header-cta" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a demo <span aria-hidden="true">↗</span></a>
+        <a class="header-cta" href="mailto:neel@houseofgalatine.com?subject=MIG%20paid%20pilot">Apply for a paid pilot <span aria-hidden="true">↗</span></a>
     </header>
 
     <main id="main">
         <section class="hero section-shell" aria-labelledby="hero-title">
             <div class="hero-copy">
-                <div class="signal-label reveal"><span class="signal-dot"></span>AI execution control / live</div>
-                <h1 id="hero-title" class="reveal">AI can propose anything.<br><em>MIG decides what runs.</em></h1>
-                <p class="hero-lede reveal">The deterministic control layer between AI agents and the real world. Every action is inspected, scored, and governed <strong>before</strong> it reaches critical infrastructure.</p>
+                <div class="signal-label reveal"><span class="signal-dot"></span>MIG / Pre-execution governance / Paid pilots open</div>
+                <h1 id="hero-title" class="reveal">Control consequential AI-agent actions <em>before they execute.</em></h1>
+                <p class="hero-lede reveal">MIG authenticates the organization and agent, binds each request to a runtime session, evaluates published policy and context, and returns <strong>Allow, Approval, or Deny</strong> before an integrated tool executes.</p>
                 <div class="hero-actions reveal">
-                    <a class="button button-primary" href="playground.html">Run a command <span aria-hidden="true">→</span></a>
-                    <a class="button button-secondary" href="#how">See how MIG works</a>
+                    <a class="button button-primary" href="mailto:neel@houseofgalatine.com?subject=MIG%20paid%20pilot">Apply for a paid pilot <span aria-hidden="true">→</span></a>
+                    <a class="button button-secondary" href="#proof">Review the evidence</a>
                 </div>
                 <div class="hero-qualifiers reveal" aria-label="Product qualities">
-                    <span>No LLM in the decision loop</span><span>Fail-closed by default</span><span>Full forensic trace</span>
+                    <span>Agent-bound identity</span><span>Shadow to Enforce</span><span>Versioned decision evidence</span>
                 </div>
             </div>
 
-            <div class="gate-shell reveal" aria-label="Simulated MIG execution gate">
+            <div class="gate-shell reveal" aria-label="Simulated MIG authorization boundary">
                 <div class="gate-topline">
-                    <div><span class="gate-kicker">MIG / Execution boundary</span><strong>Policy engine online</strong></div>
-                    <div class="live-pill"><span></span> Simulated live feed</div>
+                    <div><span class="gate-kicker">MIG / Authorization boundary</span><strong>Published policy active</strong></div>
+                    <div class="live-pill"><span></span> Simulated decision feed</div>
                 </div>
                 <div class="gate-flow" aria-hidden="true">
-                    <div class="flow-node"><span>01</span><strong>Agent</strong><small>Command source</small></div>
+                    <div class="flow-node"><span>01</span><strong>Agent</strong><small>Authenticated requester</small></div>
                     <div class="flow-line"><i></i></div>
-                    <div class="flow-node flow-node-core"><span>02</span><strong>MIG</strong><small>Execution gate</small></div>
+                    <div class="flow-node flow-node-core"><span>02</span><strong>MIG</strong><small>Policy + context</small></div>
                     <div class="flow-line flow-line-locked"><i></i></div>
-                    <div class="flow-node"><span>03</span><strong>System</strong><small>Protected target</small></div>
+                    <div class="flow-node"><span>03</span><strong>Tool</strong><small>Protected execution</small></div>
                 </div>
                 <div class="decision-window">
-                    <div class="decision-window-head"><span>Recent decisions</span><span id="decision-count">003 events</span></div>
+                    <div class="decision-window-head"><span>Simulated decisions</span><span id="decision-count">003 events</span></div>
                     <div id="hero-feed" class="hero-feed" aria-live="off"></div>
                 </div>
-                <div class="gate-footer"><span>Pipeline <b>8/8</b></span><span>Outcome <b>Reproducible</b></span><span>Mode <b>Fail-closed</b></span></div>
+                <div class="gate-footer"><span>Identity <b>Bound</b></span><span>Policy <b>Versioned</b></span><span>Mode <b>Shadow / Enforce</b></span></div>
             </div>
         </section>
 
         <div class="principle-rail" aria-label="MIG operating principles">
             <div class="rail-track">
-                <span>Validate before execution</span><i>◆</i><span>Same policy input → same verdict</span><i>◆</i><span>The default is never allow</span><i>◆</i><span>Every decision leaves evidence</span><i>◆</i>
-                <span>Validate before execution</span><i>◆</i><span>Same policy input → same verdict</span><i>◆</i><span>The default is never allow</span><i>◆</i><span>Every decision leaves evidence</span><i>◆</i>
+                <span>Identify the agent</span><i>◆</i><span>Evaluate before execution</span><i>◆</i><span>Hold sensitive actions</span><i>◆</i><span>Record the evidence</span><i>◆</i>
+                <span>Identify the agent</span><i>◆</i><span>Evaluate before execution</span><i>◆</i><span>Hold sensitive actions</span><i>◆</i><span>Record the evidence</span><i>◆</i>
             </div>
         </div>
 
-        <section class="credibility section-shell reveal" aria-label="Validation snapshot">
-            <div class="credibility-copy"><span>Validation snapshot / LabShock</span><strong>Real PLC hardware. Real Modbus traffic. Simulated plant.</strong></div>
-            <div class="credibility-stat"><strong>06</strong><span>Attack scenarios</span></div>
-            <div class="credibility-stat"><strong>00</strong><span>Unsafe executions</span></div>
-            <a href="#proof">Review the record <span aria-hidden="true">↓</span></a>
+        <section class="credibility section-shell reveal" aria-label="Internal benchmark snapshot">
+            <div class="credibility-copy"><span>Internal Benchmark v1 / MIG NEXT 4.2.0</span><strong>1,600 measured HTTP requests. Zero observed HTTP failures.</strong></div>
+            <div class="credibility-stat"><strong>400/400</strong><span>Concurrent semantic checks correct</span></div>
+            <div class="credibility-stat"><strong>26.10</strong><span>Peak tested requests per second</span></div>
+            <a href="evidence/mig-benchmark-v1.pdf" target="_blank" rel="noopener">Read the methodology <span aria-hidden="true">↗</span></a>
         </section>
 
         <section class="problem section-shell" id="problem" aria-labelledby="problem-title">
             <div class="section-intro reveal">
-                <div class="section-index">01 / The gap</div>
-                <div><p class="overline">The last unguarded boundary</p><h2 id="problem-title">Security watches what happens.<br>MIG controls <em>whether it happens.</em></h2></div>
+                <div class="section-index">01 / The control gap</div>
+                <div><p class="overline">Access is not authorization</p><h2 id="problem-title">A tool grant says what an agent can reach.<br>MIG decides <em>whether this action may run now.</em></h2></div>
             </div>
             <div class="problem-ledger">
-                <article class="ledger-row reveal"><span class="ledger-number">01</span><h3>Protocols trust the network.</h3><p>Industrial protocols like Modbus TCP were designed for availability, not adversarial environments. If a command reaches the controller, it is usually accepted.</p><span class="ledger-tag">No identity</span></article>
-                <article class="ledger-row reveal"><span class="ledger-number">02</span><h3>Controllers trust the command.</h3><p>A PLC cannot tell an operator from an attacker — or a capable AI agent from a confused one. It executes the instruction it receives.</p><span class="ledger-tag">No intent</span></article>
-                <article class="ledger-row reveal"><span class="ledger-number">03</span><h3>Detection arrives after execution.</h3><p>Alerts are essential, but they do not close the valve or reject the unsafe setpoint. For high-consequence actions, observation alone is too late.</p><span class="ledger-tag">No veto</span></article>
+                <article class="ledger-row reveal"><span class="ledger-number">01</span><h3>Identity needs context.</h3><p>A credential identifies the requester. It does not establish whether this operation, payload, destination, and moment are within policy.</p><span class="ledger-tag">Identity</span></article>
+                <article class="ledger-row reveal"><span class="ledger-number">02</span><h3>Tool access is broad.</h3><p>One tool can expose routine reads, sensitive exports, destructive writes, and external destinations with very different consequences.</p><span class="ledger-tag">Intent</span></article>
+                <article class="ledger-row reveal"><span class="ledger-number">03</span><h3>Logs arrive after the fact.</h3><p>Telemetry supports investigation. Consequential actions also need an authorization decision before the protected system accepts them.</p><span class="ledger-tag">Timing</span></article>
             </div>
-            <aside class="incident-note reveal"><div class="incident-mark" aria-hidden="true">!</div><p><strong>The common failure mode:</strong> a system received a syntactically valid command that should never have been allowed to execute. MIG creates the missing veto point.</p><a href="#proof">See the validation record <span aria-hidden="true">↓</span></a></aside>
+            <aside class="incident-note reveal"><div class="incident-mark" aria-hidden="true">!</div><p><strong>The missing control:</strong> a pre-execution decision tied to the organization, agent, session, policy version, proposed action, and runtime context.</p><a href="#how">See the decision path <span aria-hidden="true">↓</span></a></aside>
         </section>
 
         <section class="products" id="products" aria-labelledby="products-title">
             <div class="section-shell">
                 <div class="section-intro section-intro-light reveal">
-                    <div class="section-index">02 / The system</div>
-                    <div><p class="overline">One governance layer</p><h2 id="products-title">A control plane for machines,<br>software, and AI agents.</h2></div>
+                    <div class="section-index">02 / MIG and the paid pilot</div>
+                    <div><p class="overline">One product / A controlled path to enforcement</p><h2 id="products-title">Start in Shadow.<br>Prove the policy. Then Enforce.</h2></div>
                 </div>
                 <div class="architecture reveal">
-                    <div class="architecture-sources"><span>AI agents</span><span>Operators</span><span>Applications</span></div>
+                    <div class="architecture-sources"><span>AI agents</span><span>Agent frameworks</span><span>Automation</span></div>
                     <div class="architecture-arrow" aria-hidden="true"><span></span></div>
-                    <article class="mig-core"><div class="core-orbit orbit-one"></div><div class="core-orbit orbit-two"></div><span class="core-label">Execution control engine</span><h3>MIG</h3><p>Policy matching, content inspection, continuous risk scoring, and a complete decision trace — in one deterministic boundary.</p><a href="playground.html">Open the playground <span aria-hidden="true">↗</span></a></article>
+                    <article class="mig-core"><div class="core-orbit orbit-one"></div><div class="core-orbit orbit-two"></div><span class="core-label">Dedicated pre-execution runtime</span><h3>MIG</h3><p>Authenticate the tenant and agent, validate the runtime session, evaluate published policy and context, return an authorization state, and record attributable evidence.</p><a href="playground.html">Open the simulation <span aria-hidden="true">↗</span></a></article>
                     <div class="architecture-arrow" aria-hidden="true"><span></span></div>
-                    <div class="architecture-targets"><span>Industrial control</span><span>Enterprise tools</span><span>Critical data</span></div>
+                    <div class="architecture-targets"><span>Enterprise tools</span><span>Sensitive data</span><span>OT systems</span></div>
                 </div>
                 <div class="product-grid">
-                    <article class="product-card product-card-featured reveal"><div class="product-meta"><span>01 / Core engine</span><span>Available now</span></div><h3>MIG</h3><p>The enforcement boundary. Deploy it between any command source and target system to validate each action before execution.</p><ul><li>Deterministic 8-step pipeline</li><li>Graph-based policy matching</li><li>ALLOW / APPROVAL / DENY</li><li>Immutable audit context</li></ul></article>
-                    <article class="product-card reveal" id="nova"><div class="product-meta"><span>02 / Agent platform</span><span>Launching soon</span></div><h3>Nova</h3><p>AI agents that plan and complete real work with MIG governing every external action. Autonomy with an enforceable boundary.</p><ul><li>Natural-language automation</li><li>Extensible skill library</li><li>Governance on every tool call</li><li>Complete task-level audit</li></ul></article>
-                    <article class="product-card reveal"><div class="product-meta"><span>03 / Services</span><span>Limited engagements</span></div><h3>Galatine Labs</h3><p>Focused automation sprints for teams that need the speed of agents without handing them unrestricted access.</p><ul><li>2–4 week scoped delivery</li><li>Workflow and policy design</li><li>Audit-ready from day one</li></ul></article>
+                    <article class="product-card product-card-featured reveal"><div class="product-meta"><span>01 / Scope</span><span>Paid pilot</span></div><h3>Scope</h3><p>Choose one to three agents and the consequential actions MIG will govern. Define the protected integration, policies, evidence, and success criteria together.</p><ul><li>4–6 week engagement</li><li>Dedicated client runtime</li><li>Agreed success criteria</li></ul></article>
+                    <article class="product-card reveal"><div class="product-meta"><span>02 / Observe</span><span>Shadow mode</span></div><h3>Shadow</h3><p>Evaluate integrated actions without blocking them. Establish a baseline, inspect proposed decisions, and refine policy before enforcement.</p><ul><li>Agent-bound credentials and sessions</li><li>Policy and risk evaluation</li><li>Evidence for each evaluated action</li></ul></article>
+                    <article class="product-card reveal"><div class="product-meta"><span>03 / Control</span><span>Staged enforcement</span></div><h3>Enforce</h3><p>Turn on Allow, Approval, and Deny for agreed actions, then review what happened, which policy applied, and why.</p><ul><li>Controlled rollout</li><li>Versioned policy and decision records</li><li>Evidence pack and final pilot report</li></ul></article>
                 </div>
+                <p class="product-deployment-note reveal"><strong>Deployment:</strong> paid pilots use a dedicated MIG runtime VM for each client. Private VPC and on-premises deployments can be scoped for enterprise engagements.</p>
             </div>
         </section>
 
         <section class="how section-shell" id="how" aria-labelledby="how-title">
-            <div class="how-intro reveal"><div class="section-index">03 / The mechanism</div><p class="overline">A decision you can explain</p><h2 id="how-title">Eight checks.<br>One verdict.<br><em>Zero ambiguity.</em></h2><p>Every check contributes evidence. Higher-risk findings override lower-risk ones, and any system failure closes the gate.</p><a class="text-link" href="playground.html">Watch the pipeline run <span aria-hidden="true">↗</span></a></div>
+            <div class="how-intro reveal"><div class="section-index">03 / The decision path</div><p class="overline">From identity to evidence</p><h2 id="how-title">Five stages.<br>One governed action.</h2><p>The final authorization uses published policy and runtime context. An LLM does not decide whether an action is safe.</p><a class="text-link" href="playground.html">Explore the policy simulation <span aria-hidden="true">↗</span></a></div>
             <ol class="pipeline-list">
-                <li class="reveal"><span>01</span><div><h3>PII scan</h3><p>Detect sensitive data before it can leave its boundary.</p></div><b>Content</b></li>
-                <li class="reveal"><span>02</span><div><h3>Action classification</h3><p>Identify intent: read, write, firmware, safety, export.</p></div><b>Intent</b></li>
-                <li class="reveal"><span>03</span><div><h3>Payload inspection</h3><p>Examine values, destinations, and operational impact.</p></div><b>Context</b></li>
-                <li class="reveal"><span>04</span><div><h3>Policy matching</h3><p>Resolve the governing rule through the policy graph.</p></div><b>Policy</b></li>
-                <li class="reveal"><span>05</span><div><h3>Mode check</h3><p>Compare the action with the system’s live operating state.</p></div><b>State</b></li>
-                <li class="reveal"><span>06</span><div><h3>Zone enforcement</h3><p>Enforce allowed paths across network and trust boundaries.</p></div><b>Boundary</b></li>
-                <li class="reveal"><span>07</span><div><h3>Override logic</h3><p>Let the highest-risk evidence determine the outcome.</p></div><b>Control</b></li>
-                <li class="reveal"><span>08</span><div><h3>Audit trail</h3><p>Write the evidence, rule, score, and verdict to the trace.</p></div><b>Proof</b></li>
+                <li class="reveal"><span>01</span><div><h3>Authenticate organization and agent</h3><p>Resolve the client boundary and verify the agent-bound credential.</p></div><b>Identity</b></li>
+                <li class="reveal"><span>02</span><div><h3>Validate the runtime session</h3><p>Bind the request to an active execution context that can be disabled or quarantined.</p></div><b>Session</b></li>
+                <li class="reveal"><span>03</span><div><h3>Evaluate the proposed action</h3><p>Inspect the operation, target, destination, published policy, and available risk context.</p></div><b>Policy</b></li>
+                <li class="reveal"><span>04</span><div><h3>Return the authorization state</h3><p>Allow actions within policy, hold configured actions for approval, and deny prohibited actions.</p></div><b>Control</b></li>
+                <li class="reveal"><span>05</span><div><h3>Record the decision evidence</h3><p>Link the outcome to the tenant, agent, session, policy version, timestamp, and correlation record.</p></div><b>Evidence</b></li>
             </ol>
         </section>
 
         <section class="verdict-section" aria-labelledby="verdict-title"><div class="section-shell">
-            <div class="verdict-heading reveal"><p class="overline">Three possible outcomes</p><h2 id="verdict-title">A decision — not another alert.</h2></div>
+            <div class="verdict-heading reveal"><p class="overline">Deployment modes</p><h2 id="verdict-title">Observe first. Enforce when ready.</h2></div>
             <div class="verdict-grid">
-                <article class="verdict verdict-allow reveal"><div><span>01</span><i></i></div><h3>Allow</h3><p>Within policy and acceptable risk. Forward the command and record the trace.</p></article>
-                <article class="verdict verdict-approval reveal"><div><span>02</span><i></i></div><h3>Approval</h3><p>Legitimate but sensitive. Hold execution until the right human explicitly confirms.</p></article>
-                <article class="verdict verdict-deny reveal"><div><span>03</span><i></i></div><h3>Deny</h3><p>Outside policy or above risk tolerance. The protected system never sees the command.</p></article>
+                <article class="verdict verdict-allow reveal"><div><span>01</span><i></i></div><h3>Shadow</h3><p>Evaluate and record what policy would block while allowing the existing workflow to continue. Use the evidence to tune policy before enforcement.</p></article>
+                <article class="verdict verdict-deny reveal"><div><span>02</span><i></i></div><h3>Enforce</h3><p>The evaluated decision becomes effective. In tested no-policy requests, Deny returned no execution authorization on the protected path.</p></article>
+                <article class="verdict verdict-approval reveal"><div><span>03</span><i></i></div><h3>Approval</h3><p>Configured sensitive actions can be held for an authorized human to approve or reject before execution proceeds.</p></article>
             </div>
-            <div class="fail-closed reveal"><span>Fail-closed rule</span><p>No policy match → deny&nbsp;&nbsp; / &nbsp;&nbsp;MIG unreachable → deny&nbsp;&nbsp; / &nbsp;&nbsp;Pipeline error → deny</p></div>
+            <div class="fail-closed reveal"><span>Benchmark result</span><p>200/200 tested Enforce no-policy requests returned the expected blocking semantics.</p></div>
         </div></section>
 
         <section class="proof section-shell" id="proof" aria-labelledby="proof-title">
-            <div class="section-intro reveal"><div class="section-index">04 / Validation</div><div><p class="overline">Real controller. Honest scope.</p><h2 id="proof-title">Tested against live PLC hardware.<br><em>Nothing unsafe got through.</em></h2><p class="section-copy">MIG was exercised with real Modbus TCP traffic in a simulated oil-processing environment. These are validation results — not production-deployment claims.</p></div></div>
-            <div class="proof-stats reveal"><div><strong>06</strong><span>Attack scenarios tested</span></div><div><strong>00</strong><span>Unsafe commands reached the PLC</span></div><div><strong>9,500%</strong><span>Setpoint deviation blocked</span></div><div><strong>100%</strong><span>Fail-closed under induced faults</span></div></div>
-            <div class="test-record reveal">
-                <div class="test-record-head"><span>Validation record / LabShock environment</span><span>5 representative events</span></div>
-                <div class="test-row"><span>001</span><p>Read temperature sensor register</p><b class="state-allow">Allow</b><i>08 risk</i></div>
-                <div class="test-row"><span>002</span><p>Write dosing pump setpoint to 9,500% of safe range</p><b class="state-deny">Deny</b><i>94 risk</i></div>
-                <div class="test-row"><span>003</span><p>Firmware update outside maintenance window</p><b class="state-approval">Approval</b><i>67 risk</i></div>
-                <div class="test-row"><span>004</span><p>Write to safety-instrumented system register</p><b class="state-deny">Deny</b><i>98 risk</i></div>
-                <div class="test-row"><span>005</span><p>Agent email containing detected PII payload</p><b class="state-approval">Approval</b><i>72 risk</i></div>
-            </div>
+            <div class="section-intro reveal"><div class="section-index">04 / Measured evidence</div><div><p class="overline">Separate tests. Stated limits.</p><h2 id="proof-title">Publish the result.<br><em>Keep the scope attached.</em></h2><p class="section-copy">These are internal engineering results. They are not an independent penetration test, production SLA, security certification, or proof outside the documented scenarios.</p></div></div>
+
             <article class="benchmark-brief reveal" aria-labelledby="benchmark-brief-title">
                 <div class="benchmark-brief-copy">
-                    <p class="benchmark-kicker">Runtime evidence / Internal Benchmark v1 / October 2026</p>
-                    <h3 id="benchmark-brief-title">1,600 measured requests. Zero observed HTTP failures.</h3>
-                    <p>At 25-way concurrency, MIG reached 26.10 requests per second while all 100 requests in that workload preserved the expected governance semantics.</p>
+                    <p class="benchmark-kicker">Internal Benchmark v1 / October 2026</p>
+                    <h3 id="benchmark-brief-title">1,600 measured HTTP requests. Zero observed HTTP failures.</h3>
+                    <p>On MIG NEXT 4.2.0 in a 2-vCPU, 3.8-GiB co-resident environment, all 400 concurrent requests across concurrency 1, 5, 10, and 25 preserved the expected governance semantics.</p>
+                    <a class="text-link evidence-link" href="evidence/mig-benchmark-v1.pdf" target="_blank" rel="noopener">Read the full benchmark report <span aria-hidden="true">↗</span></a>
                 </div>
                 <dl class="benchmark-brief-stats">
-                    <div><dt>26.10 req/s</dt><dd>Peak tested throughput</dd></div>
-                    <div><dt>400/400</dt><dd>Concurrent semantic checks correct</dd></div>
+                    <div><dt>26.10 req/s</dt><dd>Peak tested throughput at concurrency 25</dd></div>
+                    <div><dt>~240–263 ms</dt><dd>Representative sequential full-governance p50</dd></div>
                 </dl>
-                <p class="benchmark-scope">Internal Benchmark v1 under documented test conditions: MIG NEXT 4.2.0 on a 2-vCPU, 3.8-GiB co-resident deployment. Results reflect the tested workloads and infrastructure; they are not a production SLA or independent security certification.</p>
+                <p class="benchmark-scope">At concurrency 25, the tested workload recorded 811.62 ms p50 and 1,298.39 ms p95 latency, showing the measured throughput/queueing trade-off. Results reflect the documented workloads and infrastructure; they are not evidence of unlimited scaling.</p>
             </article>
+
+            <div class="validation-track reveal">
+                <p class="benchmark-kicker">Separate internal validation / LabShock</p>
+                <h3>Real PLC hardware. Real Modbus TCP traffic. Simulated plant.</h3>
+                <p>MIG was exercised across six defined attack scenarios at an industrial execution boundary. Zero tested unsafe commands reached the PLC. This is an internal scenario result, not a customer production deployment or independent certification.</p>
+            </div>
+            <div class="proof-stats reveal"><div><strong>06</strong><span>Defined attack scenarios tested</span></div><div><strong>00</strong><span>Tested unsafe commands reached the PLC</span></div><div><strong>PLC</strong><span>Real controller hardware</span></div><div><strong>TCP</strong><span>Modbus traffic in a simulated plant</span></div></div>
+            <div class="test-record reveal">
+                <div class="test-record-head"><span>Internal LabShock record</span><span>4 representative OT decisions</span></div>
+                <div class="test-row"><span>001</span><p>Read temperature sensor register</p><b class="state-allow">Allow</b><i>Read only</i></div>
+                <div class="test-row"><span>002</span><p>Write dosing pump setpoint to 9,500% of safe range</p><b class="state-deny">Deny</b><i>Out of policy</i></div>
+                <div class="test-row"><span>003</span><p>Firmware update outside maintenance window</p><b class="state-approval">Approval</b><i>Maintenance</i></div>
+                <div class="test-row"><span>004</span><p>Write to safety-instrumented system register</p><b class="state-deny">Deny</b><i>Protected</i></div>
+            </div>
         </section>
 
         <section class="positioning" aria-labelledby="positioning-title"><div class="section-shell">
-            <div class="section-intro section-intro-light reveal"><div class="section-index">05 / Positioning</div><div><p class="overline">A missing layer, not a replacement</p><h2 id="positioning-title">Detection tools watch.<br>MIG decides.</h2></div></div>
-            <div class="comparison-wrap reveal"><table class="comparison-table"><caption class="sr-only">How MIG complements OT detection and agent permission tools</caption><thead><tr><th scope="col">Capability</th><th scope="col">OT detection</th><th scope="col">Agent permissions</th><th scope="col">MIG</th></tr></thead><tbody><tr><th scope="row">Control point</th><td>After execution</td><td>Before tool access</td><td>Before action execution</td></tr><tr><th scope="row">Payload inspection</th><td>Observe</td><td>Limited</td><td>Full content analysis</td></tr><tr><th scope="row">Risk model</th><td>Alert severity</td><td>Binary access</td><td>Continuous 0–100</td></tr><tr><th scope="row">Human approval</th><td>External workflow</td><td>Tool-dependent</td><td>Native held state</td></tr><tr><th scope="row">OT enforcement</th><td>Typically passive</td><td>Not designed for OT</td><td>Active prevention</td></tr></tbody></table></div>
-            <p class="position-note reveal"><strong>Use both.</strong> Visibility platforms remain essential for asset intelligence and threat detection. MIG adds an inline decision boundary for the action itself.</p>
+            <div class="section-intro section-intro-light reveal"><div class="section-index">05 / Deployment and evidence</div><div><p class="overline">Designed for a controlled rollout</p><h2 id="positioning-title">Start with one protected workflow.<br>Expand after the evidence is clear.</h2></div></div>
+            <div class="comparison-wrap reveal"><table class="comparison-table"><caption class="sr-only">MIG pilot and enterprise deployment approach</caption><thead><tr><th scope="col">Capability</th><th scope="col">Paid pilot approach</th><th scope="col">Enterprise scope</th></tr></thead><tbody><tr><th scope="row">Runtime isolation</th><td>Dedicated MIG runtime VM per client</td><td>Private VPC or on-premises deployment can be scoped</td></tr><tr><th scope="row">Protected path</th><td>Standard MCP or tool integration for agreed actions</td><td>Custom connectors are separately scoped</td></tr><tr><th scope="row">Decision evidence</th><td>Tenant, agent, session, policy version, action, and outcome</td><td>Contract-defined retention and evidence export</td></tr><tr><th scope="row">Adoption</th><td>Shadow evaluation before staged Enforce Mode</td><td>Rollout across additional agents, tools, or teams</td></tr><tr><th scope="row">Compliance role</th><td>Selected technical control mapping and evidence pack</td><td>Customer-specific framework and control mapping</td></tr></tbody></table></div>
+            <p class="position-note reveal"><strong>Control mapping and evidence—not certification.</strong> MIG can support compliance programs, audit readiness, and regulatory discussions. It does not provide legal advice, conduct an independent audit, certify an organization, grant regulator approval, or establish blanket compliance.</p>
         </div></section>
 
         <section class="founder section-shell" id="founder" aria-labelledby="founder-title">
-            <div class="founder-heading reveal"><div class="section-index">06 / Founder</div><p class="overline">Built from the machine outward</p><h2 id="founder-title">“I didn’t see a network breach. I saw a pump that should never have accepted that command.”</h2></div>
+            <div class="founder-heading reveal"><div class="section-index">06 / Founder</div><p class="overline">Built from the consequence backward</p><h2 id="founder-title">The question is concrete: should this agent action be allowed to affect the real world?</h2></div>
             <div class="founder-body reveal">
                 <div class="founder-id"><div class="founder-monogram" aria-hidden="true">IP</div><div><h3>Indrooneel Panday</h3><p>Mechanical engineer / Founder</p></div></div>
-                <div class="founder-story"><p>Most security founders begin with the network. I began with pump curves, turbine dynamics, valve failure modes, and the physical consequence of a bad instruction.</p><p>I built the MIG engine, API, dashboard, OT connector, and playground as a solo founder. The operating principle is simple: if the product promises traceability, the company should communicate with the same honesty.</p></div>
+                <div class="founder-story"><p>I built MIG after approaching agent security from the machine outward: what can this instruction change, who authorized it, and what evidence remains?</p><p>MIG has one focused job: govern integrated consequential actions before execution and leave a decision record that security, operations, and audit teams can review.</p></div>
                 <ul class="founder-credentials"><li>BEng Mechanical Engineering, Coventry University</li><li>USPTO provisional patent pending</li><li>Build3 Impact Accelerator</li><li>Python / Neo4j / FastAPI / Modbus TCP</li></ul>
             </div>
-            <div class="founder-ask reveal"><span>Currently looking for</span><p>Pilot partners in manufacturing and water treatment / strategic security hires / pre-seed capital</p></div>
+            <div class="founder-ask reveal"><span>Now accepting</span><p>Scoped paid pilots for enterprise tools, regulated data workflows, and operational technology.</p></div>
         </section>
 
-        <section class="final-cta" id="contact" aria-labelledby="contact-title"><div class="final-cta-grid" aria-hidden="true"></div><div class="final-cta-inner reveal"><span class="cta-code">MIG / DEMO-REQUEST</span><h2 id="contact-title">Bring one dangerous command.<br><em>Watch MIG stop it.</em></h2><p>Private demos for investors, pilot partners, and OT security teams. The public playground needs no signup.</p><div class="final-actions"><a class="button button-dark" href="mailto:neel@houseofgalatine.com?subject=MIG%20private%20demo">Request a private demo <span aria-hidden="true">↗</span></a><a class="button button-outline-dark" href="playground.html">Try the playground</a></div></div></section>
+        <section class="final-cta" id="contact" aria-labelledby="contact-title"><div class="final-cta-grid" aria-hidden="true"></div><div class="final-cta-inner reveal"><span class="cta-code">MIG / Paid pilot</span><h2 id="contact-title">Put one consequential workflow <em>behind MIG.</em></h2><p>Bring one to three agents, one protected integration, and the actions you cannot leave ungoverned. We will scope a 4–6 week paid pilot and agree on success criteria before deployment.</p><div class="final-actions"><a class="button button-dark" href="mailto:neel@houseofgalatine.com?subject=MIG%20paid%20pilot">Apply for a paid MIG pilot <span aria-hidden="true">↗</span></a><a class="button button-outline-dark" href="playground.html">Explore the simulation</a></div><p class="cta-status">MIG is currently offered through scoped paid pilots. Deployment and support commitments are defined by contract.</p></div></section>
     </main>
 
     <footer class="site-footer">
-        <div class="footer-brand"><img class="brand-mark" src="assets/galatine.png" alt="" width="40" height="42"><div><strong>House of Galatine</strong><span>Execution control infrastructure</span></div></div>
+        <div class="footer-brand"><img class="brand-mark" src="assets/galatine.png" alt="" width="40" height="42"><div><strong>House of Galatine</strong><span>Pre-execution governance for AI agents</span></div></div>
         <nav class="footer-links" aria-label="Footer navigation">
+            <a href="evidence/mig-benchmark-v1.pdf" target="_blank" rel="noopener">Benchmark v1 ↗</a>
             <a href="https://github.com/Indrooneel/mig-core" target="_blank" rel="noopener noreferrer">MIG Core ↗</a>
             <a href="https://github.com/Indrooneel/mig-architecture" target="_blank" rel="noopener noreferrer">Architecture ↗</a>
             <a href="mailto:neel@houseofgalatine.com">Email ↗</a>
