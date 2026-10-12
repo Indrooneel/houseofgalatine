@@ -306,6 +306,29 @@ h1, h2, h3, p { margin-top: 0; }
 .product-deployment-note { max-width: 940px; margin: 32px 0 0 auto; color: #55594f; }
 .product-deployment-note strong { color: var(--ink); }
 
+.interface-showcase { padding: 160px 0; border-bottom: 1px solid var(--line); background: #10110f; }
+.interface-showcase .section-copy { margin-top: 28px; }
+.interface-frame { margin: 0; overflow: hidden; border: 1px solid rgba(199,163,79,.28); background: #0d0e0c; box-shadow: 0 28px 80px rgba(0,0,0,.28); }
+.interface-frame-head { min-height: 48px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); color: #777c70; font: 500 8px/1 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+.interface-frame-head span:first-child::before { content: ""; width: 6px; height: 6px; margin-right: 9px; display: inline-block; border-radius: 50%; background: var(--signal); box-shadow: 0 0 14px rgba(199,163,79,.7); }
+.interface-frame-head a { color: #9da195; text-decoration: none; }
+.interface-frame-head a:hover { color: var(--signal); }
+.interface-media { display: block; overflow: hidden; background: #151613; }
+.interface-media img { width: 100%; height: auto; transition: transform .45s ease; }
+.interface-media:hover img { transform: scale(1.012); }
+.interface-frame figcaption { padding: 22px 24px; display: grid; grid-template-columns: minmax(220px,.42fr) 1fr; gap: 30px; border-top: 1px solid var(--line); }
+.interface-frame figcaption strong { color: var(--text); font-size: 14px; }
+.interface-frame figcaption span { color: #8f9488; font-size: 12px; }
+.interface-detail-grid { margin-top: 30px; display: grid; grid-template-columns: minmax(0,1.7fr) minmax(300px,.6fr); gap: 30px; align-items: stretch; }
+.interface-evidence-copy { padding: clamp(30px,4vw,54px); display: flex; flex-direction: column; border: 1px solid rgba(199,163,79,.28); background: linear-gradient(145deg, rgba(199,163,79,.09), transparent 52%), var(--ink-3); }
+.interface-evidence-copy h3 { margin: 0 0 18px; font-size: clamp(28px,3vw,43px); line-height: 1.05; letter-spacing: -.05em; }
+.interface-evidence-copy > p:not(.overline):not(.interface-disclaimer) { color: var(--muted); font-size: 14px; }
+.interface-evidence-copy dl { margin: auto 0 0; border-top: 1px solid var(--line); }
+.interface-evidence-copy dl > div { padding: 14px 0; display: grid; grid-template-columns: 62px 1fr; gap: 14px; border-bottom: 1px solid var(--line); }
+.interface-evidence-copy dt { color: var(--signal); font: 500 9px/1.5 var(--mono); text-transform: uppercase; }
+.interface-evidence-copy dd { margin: 0; color: #b5b9ad; font-size: 12px; }
+.interface-disclaimer { margin: 24px 0 0; color: #71766b; font: 400 8px/1.6 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+
 .how { padding-top: 160px; padding-bottom: 160px; display: grid; grid-template-columns: .75fr 1.25fr; gap: clamp(65px, 9vw, 150px); align-items: start; }
 .how-intro { position: sticky; top: 120px; }
 .how-intro .section-index { margin-bottom: 80px; }
@@ -491,6 +514,8 @@ h1, h2, h3, p { margin-top: 0; }
     .product-grid { grid-template-columns: 1fr; }
     .product-card { min-height: 390px; }
     .product-card p { min-height: 0; }
+    .interface-detail-grid { grid-template-columns: 1fr; }
+    .interface-evidence-copy dl { margin-top: 34px; }
     .how { grid-template-columns: 1fr; }
     .how-intro { position: static; }
     .how-intro .section-index { margin-bottom: 55px; }
@@ -529,7 +554,7 @@ h1, h2, h3, p { margin-top: 0; }
     .decision-window { margin-inline: 12px; }
     .gate-footer { padding-inline: 12px; }
     .gate-footer span:nth-child(2) { display: none; }
-    .problem, .products, .how, .verdict-section, .proof, .positioning, .founder { padding-top: 105px; padding-bottom: 105px; }
+    .problem, .products, .interface-showcase, .how, .verdict-section, .proof, .positioning, .founder { padding-top: 105px; padding-bottom: 105px; }
     .section-intro h2, .verdict-heading h2 { font-size: 40px; }
     .ledger-row { padding-block: 30px; }
     .ledger-row h3 { font-size: 21px; }
@@ -541,6 +566,14 @@ h1, h2, h3, p { margin-top: 0; }
     .mig-core h3 { font-size: 58px; }
     .product-card { padding: 24px; }
     .product-meta { display: grid; }
+    .interface-frame-head { padding-block: 14px; align-items: flex-start; flex-direction: column; gap: 10px; }
+    .interface-frame figcaption { grid-template-columns: 1fr; gap: 8px; }
+    .interface-overview-media { aspect-ratio: 1.15; }
+    .interface-overview-media img { width: 100%; height: 100%; object-fit: cover; object-position: 47% center; }
+    .interface-evidence-media { aspect-ratio: 1.05; }
+    .interface-evidence-media img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
+    .interface-media:hover img { transform: none; }
+    .interface-evidence-copy { padding: 28px 24px; }
     .pipeline-list li { grid-template-columns: 38px 1fr; }
     .pipeline-list li > b { grid-column: 2; width: max-content; }
     .proof-stats { grid-template-columns: 1fr; }

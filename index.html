@@ -124,8 +124,48 @@
             </div>
         </section>
 
+        <section class="interface-showcase" id="interface" aria-labelledby="interface-title">
+            <div class="section-shell">
+                <div class="section-intro reveal">
+                    <div class="section-index">03 / Inside MIG</div>
+                    <div><p class="overline">The operational control plane</p><h2 id="interface-title">See the posture.<br><em>Inspect the decision.</em></h2><p class="section-copy">Move from fleet-level runtime posture to the exact identity, session, policy version, and outcome behind one governed action.</p></div>
+                </div>
+
+                <figure class="interface-frame interface-overview reveal">
+                    <div class="interface-frame-head"><span>MIG / Security overview</span><a href="assets/mig-control-overview.png" target="_blank" rel="noopener">Open full resolution <span aria-hidden="true">↗</span></a></div>
+                    <a class="interface-media interface-overview-media" href="assets/mig-control-overview.png" target="_blank" rel="noopener" aria-label="Open the MIG security overview interface at full resolution">
+                        <img src="assets/mig-control-overview.png" width="1865" height="956" loading="lazy" alt="MIG control plane security overview showing Monitor Only status, managed agents, active sessions, detections, incidents, approvals, session risk, and the priority queue.">
+                    </a>
+                    <figcaption><strong>Operational posture at a glance.</strong><span>Track governed agents, active sessions, protection mode, approvals, detections, incidents, and rollout readiness from one workspace.</span></figcaption>
+                </figure>
+
+                <div class="interface-detail-grid">
+                    <figure class="interface-frame interface-evidence reveal">
+                        <div class="interface-frame-head"><span>MIG / Decision evidence</span><a href="assets/mig-decision-evidence.png" target="_blank" rel="noopener">Open full resolution <span aria-hidden="true">↗</span></a></div>
+                        <a class="interface-media interface-evidence-media" href="assets/mig-decision-evidence.png" target="_blank" rel="noopener" aria-label="Open the MIG decision evidence interface at full resolution">
+                            <img src="assets/mig-decision-evidence.png" width="1865" height="956" loading="lazy" alt="MIG Decision Evidence interface showing governed send-email actions and a selected Deny record with agent, session, matched policy, policy version, enforcement mode, and timestamp.">
+                        </a>
+                        <figcaption><strong>One action. One attributable record.</strong><span>Evaluated and effective decisions stay connected to the policy and runtime context that produced them.</span></figcaption>
+                    </figure>
+
+                    <aside class="interface-evidence-copy reveal" aria-label="Decision evidence fields">
+                        <p class="overline">Decision evidence</p>
+                        <h3>Every governed action leaves a reviewable trail.</h3>
+                        <p>Security and audit teams can trace a decision without reconstructing it from disconnected application logs.</p>
+                        <dl>
+                            <div><dt>Who</dt><dd>Client, agent, and runtime session</dd></div>
+                            <div><dt>What</dt><dd>Proposed action and effective outcome</dd></div>
+                            <div><dt>Why</dt><dd>Matched policy, version, and confidence</dd></div>
+                            <div><dt>When</dt><dd>Timestamp and correlation-ready decision ID</dd></div>
+                        </dl>
+                        <p class="interface-disclaimer">Product interface shown with representative workspace data.</p>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
         <section class="how section-shell" id="how" aria-labelledby="how-title">
-            <div class="how-intro reveal"><div class="section-index">03 / The decision path</div><p class="overline">From identity to evidence</p><h2 id="how-title">Five stages.<br>One governed action.</h2><p>The final authorization uses published policy and runtime context. An LLM does not decide whether an action is safe.</p><a class="text-link" href="playground.html">Explore the policy simulation <span aria-hidden="true">↗</span></a></div>
+            <div class="how-intro reveal"><div class="section-index">04 / The decision path</div><p class="overline">From identity to evidence</p><h2 id="how-title">Five stages.<br>One governed action.</h2><p>The final authorization uses published policy and runtime context. An LLM does not decide whether an action is safe.</p><a class="text-link" href="playground.html">Explore the policy simulation <span aria-hidden="true">↗</span></a></div>
             <ol class="pipeline-list">
                 <li class="reveal"><span>01</span><div><h3>Authenticate organization and agent</h3><p>Resolve the client boundary and verify the agent-bound credential.</p></div><b>Identity</b></li>
                 <li class="reveal"><span>02</span><div><h3>Validate the runtime session</h3><p>Bind the request to an active execution context that can be disabled or quarantined.</p></div><b>Session</b></li>
@@ -146,7 +186,7 @@
         </div></section>
 
         <section class="proof section-shell" id="proof" aria-labelledby="proof-title">
-            <div class="section-intro reveal"><div class="section-index">04 / Measured evidence</div><div><p class="overline">Separate tests. Stated limits.</p><h2 id="proof-title">Publish the result.<br><em>Keep the scope attached.</em></h2><p class="section-copy">These are internal engineering results. They are not an independent penetration test, production SLA, security certification, or proof outside the documented scenarios.</p></div></div>
+            <div class="section-intro reveal"><div class="section-index">05 / Measured evidence</div><div><p class="overline">Separate tests. Stated limits.</p><h2 id="proof-title">Publish the result.<br><em>Keep the scope attached.</em></h2><p class="section-copy">These are internal engineering results. They are not an independent penetration test, production SLA, security certification, or proof outside the documented scenarios.</p></div></div>
 
             <article class="benchmark-brief reveal" aria-labelledby="benchmark-brief-title">
                 <div class="benchmark-brief-copy">
@@ -178,13 +218,13 @@
         </section>
 
         <section class="positioning" aria-labelledby="positioning-title"><div class="section-shell">
-            <div class="section-intro section-intro-light reveal"><div class="section-index">05 / Deployment and evidence</div><div><p class="overline">Designed for a controlled rollout</p><h2 id="positioning-title">Start with one protected workflow.<br>Expand after the evidence is clear.</h2></div></div>
+            <div class="section-intro section-intro-light reveal"><div class="section-index">06 / Deployment and evidence</div><div><p class="overline">Designed for a controlled rollout</p><h2 id="positioning-title">Start with one protected workflow.<br>Expand after the evidence is clear.</h2></div></div>
             <div class="comparison-wrap reveal"><table class="comparison-table"><caption class="sr-only">MIG pilot and enterprise deployment approach</caption><thead><tr><th scope="col">Capability</th><th scope="col">Paid pilot approach</th><th scope="col">Enterprise scope</th></tr></thead><tbody><tr><th scope="row">Runtime isolation</th><td>Dedicated MIG runtime VM per client</td><td>Private VPC or on-premises deployment can be scoped</td></tr><tr><th scope="row">Protected path</th><td>Standard MCP or tool integration for agreed actions</td><td>Custom connectors are separately scoped</td></tr><tr><th scope="row">Decision evidence</th><td>Tenant, agent, session, policy version, action, and outcome</td><td>Contract-defined retention and evidence export</td></tr><tr><th scope="row">Adoption</th><td>Shadow evaluation before staged Enforce Mode</td><td>Rollout across additional agents, tools, or teams</td></tr><tr><th scope="row">Compliance role</th><td>Selected technical control mapping and evidence pack</td><td>Customer-specific framework and control mapping</td></tr></tbody></table></div>
             <p class="position-note reveal"><strong>Control mapping and evidence—not certification.</strong> MIG can support compliance programs, audit readiness, and regulatory discussions. It does not provide legal advice, conduct an independent audit, certify an organization, grant regulator approval, or establish blanket compliance.</p>
         </div></section>
 
         <section class="founder section-shell" id="founder" aria-labelledby="founder-title">
-            <div class="founder-heading reveal"><div class="section-index">06 / Founder</div><p class="overline">Built from the consequence backward</p><h2 id="founder-title">The question is concrete: should this agent action be allowed to affect the real world?</h2></div>
+            <div class="founder-heading reveal"><div class="section-index">07 / Founder</div><p class="overline">Built from the consequence backward</p><h2 id="founder-title">The question is concrete: should this agent action be allowed to affect the real world?</h2></div>
             <div class="founder-body reveal">
                 <div class="founder-id"><div class="founder-monogram" aria-hidden="true">IP</div><div><h3>Indrooneel Panday</h3><p>Mechanical engineer / Founder</p></div></div>
                 <div class="founder-story"><p>I built MIG after approaching agent security from the machine outward: what can this instruction change, who authorized it, and what evidence remains?</p><p>MIG has one focused job: govern integrated consequential actions before execution and leave a decision record that security, operations, and audit teams can review.</p></div>
