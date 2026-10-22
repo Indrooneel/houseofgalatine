@@ -8,7 +8,7 @@ const menuLabel = menuButton?.querySelector('.sr-only');
 
 const tubesHost = document.querySelector('.hero, .home-hero, .automation-hero');
 
-async function mountGalatineTubes() {
+function mountGalatineTubes() {
     if (!tubesHost) return;
 
     tubesHost.classList.add('tubes-host');
@@ -27,36 +27,111 @@ async function mountGalatineTubes() {
         return;
     }
 
-    try {
-        // Adapted from the threejs-components Tubes cursor reference.
-        const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
-        const TubesCursor = module.default;
-
-        if (typeof TubesCursor !== 'function' || !canvas.isConnected) throw new Error('Tubes cursor unavailable');
-
-        TubesCursor(canvas, {
-            tubes: {
-                colors: ['#c7a34f', '#8f6e27', '#f1f2e9'],
-                lights: {
-                    intensity: 120,
-                    colors: ['#c7a34f', '#e3c56f', '#8f6e27', '#f1f2e9']
-                }
-            }
-        });
-
-        tubesHost.classList.add('tubes-ready');
-
-        // Keep content clickable while forwarding movement to the visual layer.
-        tubesHost.addEventListener('mousemove', (event) => {
-            canvas.dispatchEvent(new MouseEvent('mousemove', {
-                clientX: event.clientX,
-                clientY: event.clientY,
-                bubbles: false
-            }));
-        }, { passive: true });
-    } catch {
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    if (!context) {
         tubesHost.classList.add('tubes-static');
+        return;
     }
+
+    const strands = [
+        { phase: 0, speed: .92, amplitude: .105, width: 6, color: '199,163,79', alpha: .56 },
+        { phase: 1.3, speed: .72, amplitude: .078, width: 3, color: '227,197,111', alpha: .42 },
+        { phase: 2.7, speed: 1.08, amplitude: .12, width: 2, color: '143,110,39', alpha: .46 },
+        { phase: 4.1, speed: .81, amplitude: .062, width: 1.5, color: '241,242,233', alpha: .26 }
+    ];
+    let width = 0;
+    let height = 0;
+    let pointerX = .76;
+    let pointerY = .5;
+    let targetX = pointerX;
+    let targetY = pointerY;
+    let lastFrame = 0;
+    let frameId;
+    let inView = true;
+
+    function resizeCanvas() {
+        width = Math.max(1, Math.round(tubesHost.clientWidth));
+        height = Math.max(1, Math.round(tubesHost.clientHeight));
+        canvas.width = width;
+        canvas.height = height;
+    }
+
+    function drawFrame(timestamp) {
+        frameId = undefined;
+        if (document.hidden || !inView) return;
+
+        if (timestamp - lastFrame >= 33) {
+            lastFrame = timestamp;
+            pointerX += (targetX - pointerX) * .045;
+            pointerY += (targetY - pointerY) * .045;
+            context.clearRect(0, 0, width, height);
+            context.save();
+            context.globalCompositeOperation = 'screen';
+
+            const time = timestamp * .00035;
+            const startX = width * .36;
+            const travel = width - startX + 80;
+
+            strands.forEach((strand, strandIndex) => {
+                const gradient = context.createLinearGradient(startX, 0, width, 0);
+                gradient.addColorStop(0, `rgba(${strand.color},0)`);
+                gradient.addColorStop(.28, `rgba(${strand.color},${strand.alpha * .55})`);
+                gradient.addColorStop(.72, `rgba(${strand.color},${strand.alpha})`);
+                gradient.addColorStop(1, `rgba(${strand.color},0)`);
+
+                context.beginPath();
+                for (let step = 0; step <= 64; step += 1) {
+                    const progress = step / 64;
+                    const envelope = Math.sin(Math.PI * progress);
+                    const x = startX + travel * progress;
+                    const wave = Math.sin(progress * 6.4 + time * strand.speed + strand.phase);
+                    const cursorBend = (pointerY - .5) * height * .3 * progress;
+                    const horizontalPull = (pointerX - .5) * height * .08 * (progress - .35);
+                    const y = height * (.5 + (strandIndex - 1.5) * .025)
+                        + wave * height * strand.amplitude * envelope
+                        + cursorBend
+                        + horizontalPull;
+                    if (step === 0) context.moveTo(x, y);
+                    else context.lineTo(x, y);
+                }
+                context.strokeStyle = gradient;
+                context.lineWidth = strand.width;
+                context.lineCap = 'round';
+                context.shadowColor = `rgba(${strand.color},${strand.alpha})`;
+                context.shadowBlur = strand.width * 2.4;
+                context.stroke();
+            });
+
+            context.restore();
+        }
+
+        frameId = window.requestAnimationFrame(drawFrame);
+    }
+
+    function startDrawing() {
+        if (!frameId && !document.hidden && inView) frameId = window.requestAnimationFrame(drawFrame);
+    }
+
+    tubesHost.addEventListener('pointermove', (event) => {
+        const bounds = tubesHost.getBoundingClientRect();
+        targetX = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+        targetY = Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height));
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', startDrawing);
+    new ResizeObserver(resizeCanvas).observe(tubesHost);
+    new IntersectionObserver(([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView) startDrawing();
+        else if (frameId) {
+            window.cancelAnimationFrame(frameId);
+            frameId = undefined;
+        }
+    }, { threshold: .01 }).observe(tubesHost);
+
+    resizeCanvas();
+    tubesHost.classList.add('tubes-ready');
+    startDrawing();
 }
 
 mountGalatineTubes();
