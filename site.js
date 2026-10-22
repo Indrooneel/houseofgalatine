@@ -6,6 +6,61 @@ const menuButton = document.querySelector('.nav-toggle');
 const navigation = document.querySelector('.site-nav');
 const menuLabel = menuButton?.querySelector('.sr-only');
 
+const tubesHost = document.querySelector('.hero, .home-hero, .automation-hero');
+
+async function mountGalatineTubes() {
+    if (!tubesHost) return;
+
+    tubesHost.classList.add('tubes-host');
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'galatine-tubes';
+    canvas.setAttribute('aria-hidden', 'true');
+    tubesHost.prepend(canvas);
+
+    const keepStatic = reducedMotion
+        || window.matchMedia('(max-width: 820px)').matches
+        || navigator.connection?.saveData;
+
+    if (keepStatic) {
+        tubesHost.classList.add('tubes-static');
+        return;
+    }
+
+    try {
+        // Adapted from the threejs-components Tubes cursor reference.
+        const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
+        const TubesCursor = module.default;
+
+        if (typeof TubesCursor !== 'function' || !canvas.isConnected) throw new Error('Tubes cursor unavailable');
+
+        TubesCursor(canvas, {
+            tubes: {
+                colors: ['#c7a34f', '#8f6e27', '#f1f2e9'],
+                lights: {
+                    intensity: 120,
+                    colors: ['#c7a34f', '#e3c56f', '#8f6e27', '#f1f2e9']
+                }
+            }
+        });
+
+        tubesHost.classList.add('tubes-ready');
+
+        // Keep content clickable while forwarding movement to the visual layer.
+        tubesHost.addEventListener('mousemove', (event) => {
+            canvas.dispatchEvent(new MouseEvent('mousemove', {
+                clientX: event.clientX,
+                clientY: event.clientY,
+                bubbles: false
+            }));
+        }, { passive: true });
+    } catch {
+        tubesHost.classList.add('tubes-static');
+    }
+}
+
+mountGalatineTubes();
+
 function closeMenu() {
     if (!menuButton || !navigation) return;
     menuButton.setAttribute('aria-expanded', 'false');
@@ -91,7 +146,7 @@ for (let i = 0; i < 3; i += 1) pushEvent();
 
 let feedTimer;
 function startFeed() {
-    if (reducedMotion || feedTimer || document.hidden) return;
+    if (!feed || reducedMotion || feedTimer || document.hidden) return;
     feedTimer = window.setInterval(pushEvent, 3200);
 }
 function stopFeed() {
