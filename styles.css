@@ -100,7 +100,10 @@ h1, h2, h3, p { margin-top: 0; }
     height: 42px;
     flex: none;
     object-fit: cover;
+    animation: brandForge .8s cubic-bezier(.2,.8,.2,1) both;
+    transition: transform .35s ease, filter .35s ease;
 }
+.brand:hover .brand-mark { transform: translateY(-1px) scale(1.045); filter: drop-shadow(0 0 9px rgba(199,163,79,.52)); }
 .brand-name { font-weight: 700; font-size: 14px; letter-spacing: -.01em; }
 .site-nav { display: flex; align-items: center; gap: clamp(24px, 3vw, 50px); }
 .site-nav a,
@@ -221,6 +224,38 @@ h1, h2, h3, p { margin-top: 0; }
 .tubes-host > :not(.galatine-tubes) { position: relative; z-index: 2; }
 .home-hero.tubes-host,
 .automation-hero.tubes-host { overflow: clip; }
+
+/* Signature sigil motion — SVG/CSS only, no canvas runtime */
+.tubes-host > .hero-sigil {
+    position: absolute;
+    z-index: 1;
+    width: clamp(390px, 40vw, 620px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    opacity: .28;
+    color: var(--signal);
+    filter: drop-shadow(0 0 28px rgba(199,163,79,.12));
+}
+.hero-sigil-home { right: -8%; top: 17%; }
+.hero-sigil-mig { right: -10%; top: 16%; }
+.hero-sigil-automation { right: -9%; top: 16%; }
+.hero-sigil svg { width: 100%; height: 100%; overflow: visible; }
+.sigil-ring,
+.sigil-sword,
+.sigil-guard,
+.sigil-pulse {
+    fill: none;
+    stroke: currentColor;
+    vector-effect: non-scaling-stroke;
+}
+.sigil-ring { stroke-width: 9; stroke-dasharray: 604; stroke-dashoffset: 604; animation: sigilDrawRing 1.4s .18s cubic-bezier(.35,.05,.2,1) forwards; }
+.sigil-sword { stroke-width: 10; stroke-linecap: round; stroke-dasharray: 236; stroke-dashoffset: 236; animation: sigilDrawSword 1s .85s cubic-bezier(.2,.75,.2,1) forwards; }
+.sigil-guard { stroke-width: 10; stroke-linecap: round; stroke-dasharray: 124; stroke-dashoffset: 124; animation: sigilDrawGuard .7s 1.28s ease forwards; }
+.sigil-point { fill: currentColor; opacity: 0; animation: sigilPointIn .45s 1.45s ease forwards; }
+.sigil-point-bottom { animation-delay: 1.55s; }
+.sigil-pulse { stroke-width: 1; opacity: 0; transform-origin: 160px 190px; animation: sigilPulse 5.6s 2s ease-out infinite; }
+.sigil-orbit { transform-origin: 160px 190px; animation: sigilOrbit 13s 2s linear infinite; }
+.sigil-orbit circle { fill: #efd27e; filter: drop-shadow(0 0 7px rgba(239,210,126,.9)); }
 
 /* House landing */
 .home-hero {
@@ -624,6 +659,13 @@ h1, h2, h3, p { margin-top: 0; }
 @keyframes signalTravel { from { left: -8px; } to { left: calc(100% + 4px); } }
 @keyframes feedSlide { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
 @keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes brandForge { from { opacity: 0; transform: translateY(7px) scale(.84); filter: drop-shadow(0 0 0 rgba(199,163,79,0)); } to { opacity: 1; transform: none; filter: drop-shadow(0 0 5px rgba(199,163,79,.16)); } }
+@keyframes sigilDrawRing { to { stroke-dashoffset: 0; } }
+@keyframes sigilDrawSword { to { stroke-dashoffset: 0; } }
+@keyframes sigilDrawGuard { to { stroke-dashoffset: 0; } }
+@keyframes sigilPointIn { from { opacity: 0; transform: scale(.65); transform-origin: center; } to { opacity: 1; transform: none; } }
+@keyframes sigilPulse { 0% { opacity: 0; transform: scale(.82); } 14% { opacity: .48; } 42%, 100% { opacity: 0; transform: scale(1.18); } }
+@keyframes sigilOrbit { to { transform: rotate(360deg); } }
 
 @media (max-width: 1120px) {
     .site-header { grid-template-columns: 1fr auto; }
@@ -646,6 +688,7 @@ h1, h2, h3, p { margin-top: 0; }
     .automation-map { width: min(100%,780px); }
     .hero-copy { max-width: 850px; }
     .gate-shell { width: min(100%, 720px); }
+    .tubes-host > .hero-sigil { width: min(540px,68vw); right: -15%; top: 33%; opacity: .2; }
     .architecture { padding: 28px; grid-template-columns: .8fr 42px 1.4fr 42px .8fr; }
     .mig-core { padding: 38px; }
     .core-label { left: 38px; }
@@ -676,6 +719,7 @@ h1, h2, h3, p { margin-top: 0; }
     .automation-hero { padding-top: 125px; padding-bottom: 80px; gap: 55px; }
     .home-hero h1,
     .automation-hero h1 { font-size: clamp(46px,11.5vw,76px); }
+    .tubes-host > .hero-sigil { width: 430px; right: -180px; top: 35%; opacity: .16; }
     .choice-row { min-height: 200px; }
     .path-grid { grid-template-columns: 1fr; }
     .path-card { min-height: 500px; }
@@ -734,6 +778,7 @@ h1, h2, h3, p { margin-top: 0; }
 @media (max-width: 560px) {
     .brand-name { font-size: 12px; }
     .brand-mark { width: 34px; height: 36px; }
+    .tubes-host > .hero-sigil { width: 350px; right: -185px; top: 38%; opacity: .13; }
     .hero { padding-top: 115px; }
     .hero h1 { font-size: clamp(43px, 13vw, 63px); }
     .home-hero,
