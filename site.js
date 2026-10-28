@@ -11,6 +11,11 @@ const tubesHost = document.querySelector('.hero, .home-hero, .automation-hero');
 function mountGalatineTubes() {
     if (!tubesHost) return;
 
+    // Keep the branded atmosphere static. Runtime drawing is intentionally
+    // disabled after device-specific stability issues with animated canvases.
+    tubesHost.classList.add('tubes-host', 'tubes-static');
+    return;
+
     tubesHost.classList.add('tubes-host');
 
     const canvas = document.createElement('canvas');

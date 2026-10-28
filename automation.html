@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="site.js?v=3" defer></script>
+    <script src="site.js?v=4" defer></script>
 </head>
 <body class="automation-page">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -28,7 +28,7 @@
         <a class="brand" href="index.html" aria-label="House of Galatine home"><img class="brand-mark" src="assets/galatine.png" alt="" width="40" height="42"><span class="brand-name">House of Galatine</span></a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Open navigation</span><span></span><span></span></button>
         <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
-            <a href="index.html">Home</a><a href="mig.html">MIG</a><a href="automation.html" aria-current="page">Automation</a><a href="#services">Services</a><a href="#contact">Contact</a>
+            <a href="index.html">Home</a><a href="mig.html">MIG</a><a href="automation.html" aria-current="page">Automation</a><a href="#recent-work">Recent work</a><a href="#contact">Contact</a>
             <a class="mobile-demo" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow ↗</a>
         </nav>
         <a class="header-cta" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow <span aria-hidden="true">↗</span></a>
@@ -40,7 +40,7 @@
                 <div class="signal-label reveal"><span class="signal-dot"></span>Business AI / Custom delivery / Ongoing support</div>
                 <h1 id="automation-title" class="reveal">Your business does not need another chatbot.<br><em>It needs AI that gets work done.</em></h1>
                 <p class="home-lede reveal">We design, build, integrate, and support AI-powered workflows around the way your team actually operates—not around a generic software package.</p>
-                <div class="hero-actions reveal"><a class="button button-primary" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow <span aria-hidden="true">→</span></a><a class="button button-secondary" href="#services">See the services</a></div>
+                <div class="hero-actions reveal"><a class="button button-primary" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow <span aria-hidden="true">→</span></a><a class="button button-secondary" href="#recent-work">See a recent build</a></div>
             </div>
             <div class="automation-map reveal" aria-label="Automation delivery map">
                 <div class="automation-map-head"><span>Workflow map</span><span>From friction to outcome</span></div>
@@ -52,9 +52,58 @@
             </div>
         </section>
 
+        <section class="client-case-study" id="recent-work" aria-labelledby="case-study-title">
+            <div class="section-shell">
+                <div class="section-intro section-intro-light reveal">
+                    <div class="section-index">01 / Recent client automation</div>
+                    <div><p class="overline">Built for Padho TV</p><h2 id="case-study-title">One textbook chapter in.<br>A structured video script out.</h2><p class="section-copy">House of Galatine designed and delivered Script Studio: a private two-agent workflow that helps Padho TV turn CBSE textbook chapters into grounded educational content.</p></div>
+                </div>
+
+                <div class="case-study-lead">
+                    <div class="case-study-summary reveal">
+                        <p class="case-study-kicker">Padhotv Script Studio / Education automation</p>
+                        <h3>From source material to an editable teaching package.</h3>
+                        <p>Agent 1 analyzes the uploaded chapter, extracts key concepts, creates structured notes, and generates practice questions. Agent 2 uses that reviewed material to write a 15–20 minute educational video script with narration, visual directions, and chapter flow.</p>
+                        <dl class="case-study-facts">
+                            <div><dt>02</dt><dd>Coordinated AI agents</dd></div>
+                            <div><dt>03</dt><dd>PDF, DOCX, and Markdown outputs</dd></div>
+                            <div><dt>Private</dt><dd>Authenticated team access</dd></div>
+                            <div><dt>Editable</dt><dd>Human review between stages</dd></div>
+                        </dl>
+                        <p class="case-study-stack"><strong>Delivered with:</strong> React, FastAPI, Claude API, Docker, AWS EC2, and Caddy.</p>
+                    </div>
+
+                    <figure class="case-study-frame case-study-workflow reveal">
+                        <div class="case-study-frame-head"><span>System workflow</span><span>Two agents / One reviewable path</span></div>
+                        <a href="assets/padhotv-script-studio-workflow.png" target="_blank" rel="noopener" aria-label="Open the Padho TV Script Studio workflow graphic at full resolution">
+                            <img src="assets/padhotv-script-studio-workflow.png" width="1484" height="1060" loading="lazy" alt="Padho TV Script Studio workflow showing a textbook PDF moving through chapter analysis and script generation agents into PDF, Word, and Markdown outputs.">
+                        </a>
+                        <figcaption><strong>The complete delivery path.</strong><span>Source-grounded analysis, editable handoff, script generation, and exportable outputs.</span></figcaption>
+                    </figure>
+                </div>
+
+                <div class="case-study-gallery">
+                    <figure class="case-study-frame reveal">
+                        <div class="case-study-frame-head"><span>Production workspace</span><span>Private client application</span></div>
+                        <a href="assets/padhotv-script-studio-dashboard.png" target="_blank" rel="noopener" aria-label="Open the Script Studio production workspace screenshot at full resolution">
+                            <img src="assets/padhotv-script-studio-dashboard.png" width="1791" height="960" loading="lazy" alt="Script Studio workspace showing chapter upload, Claude model selection, analyst and writer agents, editing space, and document export controls.">
+                        </a>
+                        <figcaption><strong>One workspace for the full content flow.</strong><span>Upload, configure, generate, review, edit, and download without moving between disconnected tools.</span></figcaption>
+                    </figure>
+                    <figure class="case-study-frame reveal">
+                        <div class="case-study-frame-head"><span>Access boundary</span><span>Public capture redacted</span></div>
+                        <a href="assets/padhotv-script-studio-login-redacted.png" target="_blank" rel="noopener" aria-label="Open the privacy-safe Script Studio sign-in screenshot at full resolution">
+                            <img src="assets/padhotv-script-studio-login-redacted.png" width="1713" height="918" loading="lazy" alt="Script Studio private team sign-in screen with empty username and password fields.">
+                        </a>
+                        <figcaption><strong>Built as a private team product.</strong><span>Credentials were removed from this public capture before publication.</span></figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
         <section class="services" id="services" aria-labelledby="services-title">
             <div class="section-shell">
-                <div class="section-intro reveal"><div class="section-index">01 / Business AI services</div><div><p class="overline">Custom automation and agentic workflows</p><h2 id="services-title">Start with the work.<br><em>Build the system around it.</em></h2><p class="section-copy">Every engagement is shaped around a defined workflow, the systems it touches, the people who review it, and the outcome worth measuring.</p></div></div>
+                <div class="section-intro reveal"><div class="section-index">02 / Business AI services</div><div><p class="overline">Custom automation and agentic workflows</p><h2 id="services-title">Start with the work.<br><em>Build the system around it.</em></h2><p class="section-copy">Every engagement is shaped around a defined workflow, the systems it touches, the people who review it, and the outcome worth measuring.</p></div></div>
                 <div class="services-grid">
                     <article class="service-card reveal"><div class="service-card-meta"><span>01</span><span>Automate</span></div><h3>Business workflow automation</h3><p>Remove repetitive handoffs and turn fragmented operational work into reliable, reviewable workflows.</p><ul><li>Lead generation, qualification, and outreach</li><li>Document processing, reporting, and data extraction</li><li>CRM updates and sales operations</li></ul></article>
                     <article class="service-card reveal"><div class="service-card-meta"><span>02</span><span>Coordinate</span></div><h3>Custom AI agents</h3><p>Build agents that coordinate tasks, use approved tools, and interact with the business systems your team already depends on.</p><ul><li>Research and content workflows</li><li>Multi-step business processes</li><li>Human review for sensitive actions</li></ul></article>
@@ -64,7 +113,7 @@
         </section>
 
         <section class="workflow-examples" aria-labelledby="workflow-title"><div class="section-shell">
-            <div class="section-intro section-intro-light reveal"><div class="section-index">02 / Example workflows</div><div><p class="overline">Where automation can help</p><h2 id="workflow-title">Practical work.<br>Clear business outcomes.</h2></div></div>
+            <div class="section-intro section-intro-light reveal"><div class="section-index">03 / Example workflows</div><div><p class="overline">Where automation can help</p><h2 id="workflow-title">Practical work.<br>Clear business outcomes.</h2></div></div>
             <div class="workflow-grid">
                 <article class="workflow-item reveal"><span>01</span><h3>Lead operations</h3><p>Research, qualify, route, and prepare outreach while keeping review points explicit.</p></article>
                 <article class="workflow-item reveal"><span>02</span><h3>Document intelligence</h3><p>Extract, classify, compare, summarize, and move information into the right system.</p></article>
@@ -77,7 +126,7 @@
 
         <section class="automation-engagement section-shell" aria-labelledby="engagement-title">
             <div class="services-engagement reveal">
-                <div class="services-engagement-copy"><p class="overline">03 / A scoped engagement</p><h2 id="engagement-title">Useful. Controllable. Commercially practical.</h2><p>We scope each engagement around the workflow, systems, and support you actually need—not an unnecessary enterprise package. Pricing is tailored after discovery.</p><a class="button button-primary" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow <span aria-hidden="true">→</span></a></div>
+                <div class="services-engagement-copy"><p class="overline">04 / A scoped engagement</p><h2 id="engagement-title">Useful. Controllable. Commercially practical.</h2><p>We scope each engagement around the workflow, systems, and support you actually need—not an unnecessary enterprise package. Pricing is tailored after discovery.</p><a class="button button-primary" href="mailto:neel@houseofgalatine.com?subject=Business%20AI%20automation%20inquiry">Discuss your workflow <span aria-hidden="true">→</span></a></div>
                 <ol class="services-process" aria-label="Service engagement process"><li><span>01</span><div><strong>Discover</strong><p>Map the work, systems, constraints, and measurable outcome.</p></div></li><li><span>02</span><div><strong>Build and integrate</strong><p>Develop the automation or agentic workflow around your operating reality.</p></div></li><li><span>03</span><div><strong>Deploy and support</strong><p>Launch with documentation, handover, and separately scoped ongoing support.</p></div></li></ol>
             </div>
         </section>
